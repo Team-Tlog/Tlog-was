@@ -10,6 +10,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/tbti")
@@ -35,4 +37,13 @@ public class TbtiController {
         return ResponseEntity.ok()
                 .body(SuccessRes.from(SuccessType.OK));
     }
+    @DeleteMapping("/{tbtiQuestionId}")
+    public ResponseEntity<?> deleteTbtiQuestion(@PathVariable(name = "tbtiQuestionId") UUID tbtiQuestionId) {
+        tbtiService.deleteTbtiQuestion(tbtiQuestionId);
+        return ResponseEntity.ok()
+                .body(SuccessRes.from(SuccessType.OK));
+    }
+
+
+
 }
