@@ -19,7 +19,7 @@ public class TbtiQuestionTest {
 
     String content = "너는 여행을 계획할 때 활동적인게 좋아?";
     TraitCategory traitCategory = TraitCategory.ACTIVITY_LEVEL;
-    TbtiQuestion tbtiQuestion = TbtiQuestion.creation(content, traitCategory);
+    TbtiQuestion tbtiQuestion = TbtiQuestion.create(content, traitCategory);
 
 
     @Test

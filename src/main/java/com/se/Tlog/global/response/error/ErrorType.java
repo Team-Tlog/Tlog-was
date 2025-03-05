@@ -28,6 +28,7 @@ public enum ErrorType {
     NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 데이터 입니다."),
     NOT_FOUND_TAG(HttpStatus.NOT_FOUND, "존재하지 않는 태그 입니다."),
     ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "역할이 존재하지 않습니다."),
+    INVALID_TBTI_CATEGORY(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리 입니다."),
     //데이터 충돌
     ALREADY_EXISTS_TAG(HttpStatus.CONFLICT, "이미 존재하는 태그입니다."),
     ALREADY_EXISTS_DESTINATION(HttpStatus.CONFLICT, "이미 존재하는 여행지입니다."),
