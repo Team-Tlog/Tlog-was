@@ -23,18 +23,15 @@ public class TbtiQuestion {
     @Enumerated(EnumType.STRING)
     private TraitCategory traitCategory;
 
-    @Builder
     public TbtiQuestion(String content, TraitCategory traitCategory) {
+        validateContent(content);
         this.content = content;
         this.traitCategory = traitCategory;
     }
 
     // 질문 생성 메서드
-    public static TbtiQuestion creation(String content, TraitCategory traitCategory) {
-        return TbtiQuestion.builder()
-                .content(content)
-                .traitCategory(traitCategory)
-                .build();
+    public static TbtiQuestion create(String content, TraitCategory traitCategory) {
+        return new TbtiQuestion(content, traitCategory);
     }
 
     // 유효성 검사 메서드
