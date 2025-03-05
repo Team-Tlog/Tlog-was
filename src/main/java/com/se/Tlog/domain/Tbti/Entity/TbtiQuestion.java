@@ -3,11 +3,11 @@ package com.se.Tlog.domain.Tbti.Entity;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
+import java.util.UUID;
+
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -15,8 +15,8 @@ import static lombok.AccessLevel.*;
 @NoArgsConstructor(access = PROTECTED)
 public class TbtiQuestion {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     private String content;
 
@@ -41,6 +41,11 @@ public class TbtiQuestion {
         }
         // 필요한 검사가 있다면 지속적으로 추가할 예정!
     }
+
+    public void delete(){
+
+    }
+
 
 
 }
