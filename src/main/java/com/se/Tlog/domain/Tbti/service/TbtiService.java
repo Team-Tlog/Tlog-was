@@ -5,11 +5,15 @@ import com.se.Tlog.domain.Tbti.Entity.TraitCategory;
 import com.se.Tlog.domain.Tbti.Entity.repository.TbtiQuestionRepository;
 import com.se.Tlog.domain.Tbti.dto.TbtiQuestionReq;
 import com.se.Tlog.domain.Tbti.dto.TbtiQuestionRes;
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -36,5 +40,13 @@ public class TbtiService {
         TraitCategory traitCategoryEnum = TraitCategory.fromString(traitCategory);
         return tbtiQuestionRepository.findByTraitCategory(traitCategoryEnum, pageable)
                 .map(TbtiQuestionRes::from);
+    }
+
+    @Transactional
+    public void deleteTbtiQuestion(UUID tbtiQuestionId) {
+        TbtiQuestion tbtiQuestion = tbtiQuestionRepository.findById(tbtiQuestionId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
+
+        tbtiQuestionRepository.delete(tbtiQuestion);
     }
 }
