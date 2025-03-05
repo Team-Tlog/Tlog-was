@@ -1,11 +1,10 @@
 package com.se.Tlog.domain.User.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.se.Tlog.domain.User.Service.SsoAuthService;
+import com.se.Tlog.domain.User.dto.LoginRequest;
+import com.se.Tlog.domain.User.dto.TokenDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.se.Tlog.domain.User.SsoType;
 import com.se.Tlog.domain.User.Service.AuthenticationService;
@@ -21,9 +20,10 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-	@Autowired
+
 	private final AuthenticationService authService;
-	
+	private final SsoAuthService ssoService;
+
 	@GetMapping("/sso/login/kakao")
 	public ResponseEntity<SsoLoginRequest> getSsoLoginByKakao() {
 		return ResponseEntity.ok(authService.getSsoLoginRequest(SsoType.KAKAO));
@@ -58,5 +58,16 @@ public class AuthController {
 		return ResponseEntity
                 .status(SuccessType.LOGIN_SSO_SUCCESS.getStatus())
                 .body(SuccessRes.from(SuccessType.LOGIN_SSO_SUCCESS));
+	}
+
+	@PostMapping("login/user")
+	public ResponseEntity<?> login(@RequestBody LoginRequest request){
+
+		TokenDto tokenDto = ssoService.login(request);
+
+		return ResponseEntity.ok()
+				.header("Authorization",tokenDto.accessToken())
+				.header("Set-Cookie",tokenDto.refreshToken())
+				.body(SuccessRes.from(SuccessType.LOGIN_SSO_SUCCESS));
 	}
 }

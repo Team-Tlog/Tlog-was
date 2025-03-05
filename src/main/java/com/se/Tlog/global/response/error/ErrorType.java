@@ -19,7 +19,8 @@ public enum ErrorType {
     // 401
     UN_AUTHENTICATION(HttpStatus.UNAUTHORIZED, "인증이 실패되었습니다."),
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "로그인 실패입니다."),
-
+    KAKAO_AUTH_FAIL(HttpStatus.UNAUTHORIZED, "카카오 인증이 실패되었습니다."),
+    GOOGLE_AUTH_FAIL(HttpStatus.UNAUTHORIZED, "구글 인증이 실패되었습니다."),
     // 인가
     // 403
     UN_AUTHORIZATION(HttpStatus.FORBIDDEN, "허용되지 않은 접근입니다."),
