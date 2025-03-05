@@ -12,23 +12,21 @@ import com.se.Tlog.global.util.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class SsoAuthService {
-    private final KakaoSsoService kakaoSsoService;
-    private final GoogleSsoService googleSsoService;
+    private final Map<SsoType, SsoService> ssoServiceMap;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
     public TokenDto login(LoginRequest loginRequest){
-        String ssoAccessToken = loginRequest.accessToken();
-        SsoType type = loginRequest.type();
+        SsoService ssoService = Optional.ofNullable(ssoServiceMap.get(loginRequest.type()))
+                .orElseThrow(() -> new CustomException(ErrorType.UNSUPPORTED_SSO_LOGIN));
 
-        SsoUserInfo ssoUserInfo = switch (type){
-            case KAKAO -> kakaoSsoService.getUserInfo(ssoAccessToken);
-            case GOOGLE -> googleSsoService.getUserInfo(ssoAccessToken);
-            default -> throw new CustomException(ErrorType.UNSUPPORTED_SSO_LOGIN);
-        };
+        SsoUserInfo ssoUserInfo = ssoService.getUserInfo(loginRequest.accessToken());
         System.out.println("ssoUserInfo = " + ssoUserInfo);
         String providerUserInfo = ssoUserInfo.provider() + " " + ssoUserInfo.providerId();
 

@@ -2,6 +2,7 @@ package com.se.Tlog.domain.User.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.se.Tlog.domain.User.SsoType;
 import com.se.Tlog.domain.User.dto.SsoUserInfo;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
@@ -32,5 +33,10 @@ public class GoogleSsoService implements SsoService{
         } catch (Exception e) {
             throw new CustomException(ErrorType.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public SsoType getType() {
+        return SsoType.GOOGLE;
     }
 }
