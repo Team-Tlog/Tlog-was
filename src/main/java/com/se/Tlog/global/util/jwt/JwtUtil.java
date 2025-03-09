@@ -60,7 +60,9 @@ public class JwtUtil {
                 .parseSignedClaims(token)   //jwt 토큰 전체
                 .getPayload();
     }
-
+    public long getRefreshTokenDuration(){
+        return refreshTokenDuration.toMillis();
+    }
     private Date createExpire(Long expiration){
         return new Date(System.currentTimeMillis() + expiration);
     }

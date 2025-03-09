@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<?> handleCustomException(CustomException e) {
         ErrorType errorType = e.getErrorType();
         ErrorRes error = ErrorRes.of(errorType.getStatusCode(), errorType.getMessage());
-        log.error("Error occurred : [errorCode={}, message={}]",e.getClass(), e.getMessage());;
+        log.error("Error occurred : [errorCode={}, message={}]",e.getClass(), e.getMessage(),e);;
         return ResponseEntity.status(error.status()).body(error);
     }
 

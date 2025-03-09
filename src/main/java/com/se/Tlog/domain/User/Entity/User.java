@@ -1,11 +1,9 @@
 package com.se.Tlog.domain.User.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
+import com.se.Tlog.domain.User.dto.SsoUserInfo;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,26 +18,30 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
-    private String userId;
-    private String password;
+
+    String providerUserInfo;
 
     private String name;
     private String email;
-    private String telephoneNumber;
+    //private String telephoneNumber; 사용자가 동의하지 않은 경우 못받을 수 있음 nullable 하게 관리
+
+    @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Builder
-    public User(
+    private User(
             String name,
-            String userId,
-            String email,
-            String telephoneNumber
+            String provider,
+            String providerId,
+            String email
+
     ) {
         this.name = name;
-        this.userId = userId;
-        //this.providerUserInfo = provider + " " + providerId;
+        this.providerUserInfo = provider + " " + providerId;
         this.email = email;
-        this.telephoneNumber = telephoneNumber;
+//        this.telephoneNumber = telephoneNumber;
         this.role = Role.USER;
+    }
+    public static User create(SsoUserInfo ssoUserInfo){
+        return new User(ssoUserInfo.email(), ssoUserInfo.provider(),ssoUserInfo.providerId(), ssoUserInfo.email());
     }
 }
