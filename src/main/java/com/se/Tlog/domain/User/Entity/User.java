@@ -42,6 +42,6 @@ public class User {
         this.role = Role.USER;
     }
     public static User create(SsoUserInfo ssoUserInfo){
-        return new User(ssoUserInfo.email(), ssoUserInfo.provider(),ssoUserInfo.providerId(), ssoUserInfo.email());
+        return new User(ssoUserInfo.nickname(), ssoUserInfo.provider(),ssoUserInfo.providerId(), ssoUserInfo.email());
     }
 }
