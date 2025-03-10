@@ -1,0 +1,68 @@
+package com.se.Tlog.domain.Reward.Service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import com.se.Tlog.domain.Reward.Entity.RewardCriteria;
+import com.se.Tlog.domain.Reward.Entity.RewardCriteriaType;
+import com.se.Tlog.domain.Reward.Entity.RewardInfo;
+import com.se.Tlog.domain.Reward.repository.RewardInfoRepository;
+import com.se.Tlog.domain.User.Entity.User;
+import com.se.Tlog.domain.User.dto.SsoUserInfo;
+import com.se.Tlog.domain.User.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
+
+@SpringBootTest
+class RewardServiceTest {
+	@Autowired
+	private RewardService rewardService;
+	@Autowired
+	private RewardInfoRepository rewardInfoRepository;
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Transactional
+	@Test
+	@DisplayName("개발자 유형의 보상 지급 테스트")
+	void testAddRewardToUser() {
+		User testUser = User.create(new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"));
+		RewardInfo testReward = new RewardInfo("보상 1", new RewardCriteria(RewardCriteriaType.IS_DEVELOPER, ""));
+
+		userRepository.save(testUser);
+		rewardInfoRepository.save(testReward);
+		
+		assertThat(rewardService.addRewardToUser(testUser, testReward))
+		.isEqualTo(true);
+	}
+
+	@Transactional
+	@Test
+	@DisplayName("유저가 보유한 모든 보상 조회 테스트")
+	void testGetReward() {
+		User testUser = User.create(new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"));
+		
+		List<RewardInfo> added = new ArrayList<RewardInfo>();
+		added.add(rewardInfoRepository.save(new RewardInfo("보상 1", new RewardCriteria(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(new RewardInfo("보상 2", new RewardCriteria(RewardCriteriaType.IS_DEVELOPER, ""))));
+		added.add(rewardInfoRepository.save(new RewardInfo("보상 3", new RewardCriteria(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(new RewardInfo("보상 4", new RewardCriteria(RewardCriteriaType.IS_DEVELOPER, ""))));
+		
+		userRepository.save(testUser);
+		
+		assertThat(rewardService.addRewardToUser(testUser, added.get(0))).isEqualTo(true);
+		assertThat(rewardService.addRewardToUser(testUser, added.get(1))).isEqualTo(true);
+		assertThat(rewardService.addRewardToUser(testUser, added.get(2))).isEqualTo(true);
+		assertThat(rewardService.addRewardToUser(testUser, added.get(3))).isEqualTo(true);
+		
+		assertThat(rewardService.getAllRewardOfUser(testUser))
+		.containsAll(added);
+	}
+}
