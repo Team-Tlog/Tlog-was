@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.User.Entity;
 
+
 import com.se.Tlog.domain.User.dto.SsoUserInfo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -16,6 +17,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
+
 
     String providerUserInfo;
 
@@ -42,5 +44,4 @@ public class User {
     public static User create(SsoUserInfo ssoUserInfo){
         return new User(ssoUserInfo.email(), ssoUserInfo.provider(),ssoUserInfo.providerId(), ssoUserInfo.email());
     }
-
 }

@@ -19,6 +19,7 @@ public enum ErrorType {
     // 401
     UN_AUTHENTICATION(HttpStatus.UNAUTHORIZED, "인증이 실패되었습니다."),
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "로그인 실패입니다."),
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다." ),
     KAKAO_AUTH_FAIL(HttpStatus.UNAUTHORIZED, "카카오 인증이 실패되었습니다."),
     GOOGLE_AUTH_FAIL(HttpStatus.UNAUTHORIZED, "구글 인증이 실패되었습니다."),
     // 인가
@@ -30,6 +31,8 @@ public enum ErrorType {
     NOT_FOUND_TAG(HttpStatus.NOT_FOUND, "존재하지 않는 태그 입니다."),
     ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "역할이 존재하지 않습니다."),
     INVALID_TBTI_CATEGORY(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리 입니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 사용자 입니다."),
+    ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 관리자 입니다."),
     //데이터 충돌
     ALREADY_EXISTS_TAG(HttpStatus.CONFLICT, "이미 존재하는 태그입니다."),
     ALREADY_EXISTS_DESTINATION(HttpStatus.CONFLICT, "이미 존재하는 여행지입니다."),

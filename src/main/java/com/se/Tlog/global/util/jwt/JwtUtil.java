@@ -63,8 +63,6 @@ public class JwtUtil {
     public long getRefreshTokenDuration(){
         return refreshTokenDuration.toMillis();
     }
-
-
     private Date createExpire(Long expiration){
         return new Date(System.currentTimeMillis() + expiration);
     }

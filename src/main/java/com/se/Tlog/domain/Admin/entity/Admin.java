@@ -1,4 +1,4 @@
-package com.se.Tlog.domain.Admin;
+package com.se.Tlog.domain.Admin.entity;
 
 import com.se.Tlog.domain.User.Entity.Role;
 import jakarta.persistence.*;

@@ -25,12 +25,14 @@ spring:
       hibernate:
         format_sql: true
         show-sql: true
+
 # 🔹 로깅 레벨 추가
 logging:
   level:
     org.springframework.data.mongodb.core: TRACE
     org.mongodb.driver: INFO
     org.springframework.data.mongodb.core.MongoTemplate: TRACE
+
 --- #jwt
 
 jwt:
@@ -38,7 +40,7 @@ jwt:
   issuer: ${JWT_ISSUER}
   access-expiration: ${JWT_ACCESS_EXPIRATION}
   refresh-expiration: ${JWT_REFRESH_EXPIRATION}
-  
+
 sso:
   clientId:
     kakao: ${SSO_KAKAO_CLIENT_ID}
@@ -48,7 +50,7 @@ sso:
     google: ${SSO_CALLBACK_URL}/google
   clientSecret:
     google: ${SSO_GOOGLE_SECRET}
-    
+
 # springdoc swagger
 springdoc:
   api-docs:

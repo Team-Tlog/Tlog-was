@@ -2,7 +2,10 @@ package com.se.Tlog.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.se.Tlog.global.security.filter.FormLoginFilter;
+import com.se.Tlog.domain.Admin.repository.AdminRepository;
+import com.se.Tlog.domain.User.repository.UserRepository;
+import com.se.Tlog.global.security.filter.JwtAuthenticationFilter;
+import com.se.Tlog.global.security.filter.JwtExceptionFilter;
 import com.se.Tlog.global.util.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +41,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, UserRepository userRepository, AdminRepository adminRepository) throws Exception {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -46,7 +49,6 @@ public class WebSecurityConfig {
                 .formLogin(FormLoginConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
 
-                .addFilterAt(new FormLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, objectMapper), UsernamePasswordAuthenticationFilter.class)
 
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -60,7 +62,10 @@ public class WebSecurityConfig {
                             .anyRequest().permitAll();
 
 
-                });
+                })
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil,userRepository,adminRepository), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(objectMapper), JwtAuthenticationFilter.class);
+
         return http.build();
     }
 }
