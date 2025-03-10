@@ -8,19 +8,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class AppUserDetails implements CustomUserDetails{
-
     private final User user;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-
-        authorities.add(new SimpleGrantedAuthority(user.getRole().getValue()));
-        return authorities;
-    }
 
     @Override
     public String getId() {
@@ -33,12 +25,21 @@ public class AppUserDetails implements CustomUserDetails{
     }
 
     @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(user.getRole().getValue()));
+
+        return authorities;
+    }
+
+    @Override
     public String getPassword() {
         return null;
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return "";
     }
 }
