@@ -14,6 +14,9 @@ public enum ErrorType {
     
     // 사용자로부터 소셜 로그인 인증 실패
     SSO_LOGIN_FAIL(HttpStatus.BAD_REQUEST,"외부 소셜 로그인이 취소되거나 실패했습니다."),
+    
+    // 보상 형식 조건이 유효하지 않음
+    INVALID_REWARD_CRITERIA(HttpStatus.BAD_REQUEST,"제시된 보상 조건이 올바르지 않은 형식입니다."),
 
     // 인증
     // 401
@@ -44,7 +47,8 @@ public enum ErrorType {
     SSO_ACCESSTOKEN_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "외부 인증 서버로부터 인증을 받는데 실패했습니다."),
 
     // 501 구현되지 않은 기능
-    UNSUPPORTED_SSO_LOGIN(HttpStatus.NOT_IMPLEMENTED, "현재 해당 소셜 로그인 방식은 아직 지원되지 않습니다.");
+    UNSUPPORTED_SSO_LOGIN(HttpStatus.NOT_IMPLEMENTED, "현재 해당 소셜 로그인 방식은 아직 지원되지 않습니다."),
+	UNSUPPORTED_REWARD_CRITERIA(HttpStatus.NOT_IMPLEMENTED, "현재 해당 보상 기준은 아직 지원되지 않습니다.");
 
 
     private final HttpStatus status;
