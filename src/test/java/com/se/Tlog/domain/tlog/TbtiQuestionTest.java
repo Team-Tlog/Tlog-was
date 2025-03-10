@@ -4,6 +4,8 @@ import com.se.Tlog.domain.Tbti.Entity.TbtiAnswer;
 import com.se.Tlog.domain.Tbti.Entity.TbtiQuestion;
 import com.se.Tlog.domain.Tbti.Entity.TraitCategory;
 import com.se.Tlog.domain.User.Entity.User;
+import com.se.Tlog.domain.User.dto.SsoUserInfo;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,12 +37,17 @@ public class TbtiQuestionTest {
     @Test
     @DisplayName("질문 응답 테스트")
     void tbtiAnswerTest() {
-        User user = User.builder()
-                .userId("test1")
-                .email("aaa@naver.com")
-                .name("강진후")
-                .telephoneNumber("010-2222-2222")
-                .build();
+    	// User 객체의 생성 로직 설계중임에 따라,
+    	// 임시로 로직 변경
+    	// -> (소셜 로그인 형태로 User 생성하도록 임시조치)
+    	User user = User.create(
+    			new SsoUserInfo(
+    					"TEST_PROVIDER_ID", 
+		    			"aaa@naver.com", 
+		    			"강진후",
+		    			"TEST_PROVIDER"));
+    	// phoneNumber : "010-2222-2222"
+    	
         int score = 3;
         TbtiAnswer tbtiAnswer = TbtiAnswer.createAnswer(user,tbtiQuestion,score);
         log.info("creation answer with score: '{}' and question content: '{}'", score, tbtiQuestion.getContent());
