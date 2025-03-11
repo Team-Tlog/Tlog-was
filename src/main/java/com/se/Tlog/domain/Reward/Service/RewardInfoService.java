@@ -26,12 +26,12 @@ public class RewardInfoService {
 	public RewardInfo addNewRewardInfo(String name, RewardCriteriaType type, String parameter) {
 		RewardCriteria criteria = null;
 		try {
-			criteria = new RewardCriteria(type, parameter);
+			criteria = RewardCriteria.create(type, parameter);
 		} catch (Exception e) {
 			return null;
 		}
 		
-		return rewardInfoRepository.save(new RewardInfo(name, criteria));
+		return rewardInfoRepository.save(RewardInfo.create(name, criteria));
 	}
 
 	/**

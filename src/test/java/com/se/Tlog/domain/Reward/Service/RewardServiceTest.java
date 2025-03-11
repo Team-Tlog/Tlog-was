@@ -34,7 +34,7 @@ class RewardServiceTest {
 	@DisplayName("개발자 유형의 보상 지급 테스트")
 	void testAddRewardToUser() {
 		User testUser = User.create(new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"));
-		RewardInfo testReward = new RewardInfo("보상 1", new RewardCriteria(RewardCriteriaType.IS_DEVELOPER, ""));
+		RewardInfo testReward = RewardInfo.create("보상 1", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""));
 
 		userRepository.save(testUser);
 		rewardInfoRepository.save(testReward);
@@ -50,10 +50,10 @@ class RewardServiceTest {
 		User testUser = User.create(new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"));
 		
 		List<RewardInfo> added = new ArrayList<RewardInfo>();
-		added.add(rewardInfoRepository.save(new RewardInfo("보상 1", new RewardCriteria(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
-		added.add(rewardInfoRepository.save(new RewardInfo("보상 2", new RewardCriteria(RewardCriteriaType.IS_DEVELOPER, ""))));
-		added.add(rewardInfoRepository.save(new RewardInfo("보상 3", new RewardCriteria(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
-		added.add(rewardInfoRepository.save(new RewardInfo("보상 4", new RewardCriteria(RewardCriteriaType.IS_DEVELOPER, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("보상 1", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("보상 2", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("보상 3", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("보상 4", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
 		
 		userRepository.save(testUser);
 		

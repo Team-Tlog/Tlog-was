@@ -31,8 +31,12 @@ public class Reward {
 	@JoinColumn(name = "reward_info")
 	private RewardInfo rewardInfo;
 	
-	public Reward(User user, RewardInfo rewardInfo) {
+	private Reward(User user, RewardInfo rewardInfo) {
 		this.user = user;
 		this.rewardInfo = rewardInfo;
+	}
+	
+	public static Reward create(User user, RewardInfo rewardInfo) {
+		return new Reward(user, rewardInfo);
 	}
 }

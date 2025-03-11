@@ -29,8 +29,12 @@ public class RewardInfo {
 	
 	// private String description = "팔로워 수를 100명 돌파했어요!!"
 	
-	public RewardInfo(String name, RewardCriteria rewardCriteria) {
+	private RewardInfo(String name, RewardCriteria rewardCriteria) {
 		this.name = name;
 		this.rewardCriteria = rewardCriteria;
+	}
+	
+	public static RewardInfo create(String name, RewardCriteria rewardCriteria) {
+		return new RewardInfo(name, rewardCriteria);
 	}
 }

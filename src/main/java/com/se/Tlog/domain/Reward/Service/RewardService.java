@@ -34,7 +34,7 @@ public class RewardService {
 			return false;
 		
 		if (!rewardRepository.existsByRewardInfo_IdAndUser_Id(reward.getId(), user.getId()))
-			rewardRepository.save(new Reward(user, reward));
+			rewardRepository.save(Reward.create(user, reward));
 		return true;
 	}
 	

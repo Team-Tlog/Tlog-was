@@ -27,11 +27,15 @@ public class RewardCriteria {
 	 */
 	private String criteriaParameter;
 	
-	public RewardCriteria(RewardCriteriaType type, String parameter) {
+	private RewardCriteria(RewardCriteriaType criteriaType, String criteriaParameter) {
+		this.criteriaType = criteriaType;
+		this.criteriaParameter = criteriaParameter;
+	}
+	
+	public static RewardCriteria create(RewardCriteriaType type, String parameter) {
 		if (!isAvailCriteria(type, parameter))
 			throw new IllegalArgumentException("사용할 수 없는 조건입니다!");
-		this.criteriaType = type;
-		this.criteriaParameter = parameter;
+		return new RewardCriteria(type, parameter);
 	}
 
 	/**
