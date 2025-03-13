@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  spring:
+    container_name: tlog-spring
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - mysql
+    environment:
+      #SPRING_PROFILES_ACTIVE: dev
+      MYSQL_URL: ${MYSQL_URL}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MONGO_URI: ${MONGO_URI}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_ACCESS_EXPIRATION: ${JWT_ACCESS_EXPIRATION}
+      JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
+      SSO_KAKAO_CLIENT_ID: ${SSO_KAKAO_CLIENT_ID}
+      SSO_GOOGLE_CLIENT_ID: ${SSO_GOOGLE_CLIENT_ID}
+      SSO_GOOGLE_SECRET: ${SSO_GOOGLE_SECRET}
+      SSO_CALLBACK_URL: ${SSO_CALLBACK_URL}
+    networks:
+      - tlog-network
+  mysql:
+    container_name: tlog-mysql
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: tlog
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: tloguser
+      MYSQL_PASSWORD: tlogpw
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tlog-network
+  redis:
+    container_name: redis-server
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - tlog-network
+
+networks:
+  tlog-network:
+    driver: bridge
