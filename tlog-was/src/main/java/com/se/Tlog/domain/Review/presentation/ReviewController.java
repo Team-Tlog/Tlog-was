@@ -1,7 +1,7 @@
-package com.se.Tlog.domain.Travel.presentation;
+package com.se.Tlog.domain.Review.presentation;
 
-import com.se.Tlog.domain.Travel.application.ReviewService;
-import com.se.Tlog.domain.Travel.domain.Review;
+import com.se.Tlog.domain.Review.application.ReviewService;
+import com.se.Tlog.domain.Review.domain.Review;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

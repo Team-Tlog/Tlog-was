@@ -1,4 +1,4 @@
-package com.se.Tlog.domain.Travel.domain;
+package com.se.Tlog.domain.Review.domain;
 
 
 import jakarta.persistence.Id;

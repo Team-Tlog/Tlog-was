@@ -1,7 +1,7 @@
-package com.se.Tlog.domain.Travel.application;
+package com.se.Tlog.domain.Review.application;
 
-import com.se.Tlog.domain.Travel.domain.Review;
-import com.se.Tlog.domain.Travel.infrastructure.mongo.ReviewRepository;
+import com.se.Tlog.domain.Review.domain.Review;
+import com.se.Tlog.domain.Review.infrastructure.mongo.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
