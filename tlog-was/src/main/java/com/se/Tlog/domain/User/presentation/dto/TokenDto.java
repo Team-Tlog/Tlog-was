@@ -1,0 +1,9 @@
+package com.se.Tlog.domain.User.presentation.dto;
+
+import lombok.Builder;
+
+@Builder
+public record TokenDto(
+        String accessToken,
+        String refreshToken
+) { }

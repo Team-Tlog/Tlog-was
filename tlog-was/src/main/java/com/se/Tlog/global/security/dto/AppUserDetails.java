@@ -1,7 +1,7 @@
 package com.se.Tlog.global.security.dto;
 
-import com.se.Tlog.domain.User.Entity.Role;
-import com.se.Tlog.domain.User.Entity.User;
+import com.se.Tlog.domain.User.domain.Role;
+import com.se.Tlog.domain.User.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

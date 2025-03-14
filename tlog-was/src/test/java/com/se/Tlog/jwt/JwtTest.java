@@ -1,6 +1,6 @@
 package com.se.Tlog.jwt;
 
-import com.se.Tlog.domain.User.Entity.Role;
+import com.se.Tlog.domain.User.domain.Role;
 import com.se.Tlog.global.util.jwt.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

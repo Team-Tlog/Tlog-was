@@ -1,10 +1,10 @@
 package com.se.Tlog.domain.tlog;
 
-import com.se.Tlog.domain.Tbti.Entity.TbtiAnswer;
-import com.se.Tlog.domain.Tbti.Entity.TbtiQuestion;
-import com.se.Tlog.domain.Tbti.Entity.TraitCategory;
-import com.se.Tlog.domain.User.Entity.User;
-import com.se.Tlog.domain.User.dto.SsoUserInfo;
+import com.se.Tlog.domain.Tbti.domain.TbtiAnswer;
+import com.se.Tlog.domain.Tbti.domain.TbtiQuestion;
+import com.se.Tlog.domain.Tbti.domain.TraitCategory;
+import com.se.Tlog.domain.User.domain.User;
+import com.se.Tlog.domain.User.presentation.dto.SsoUserInfo;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
