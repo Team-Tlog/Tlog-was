@@ -1,13 +1,12 @@
 package com.se.Tlog.domain.Travel.application;
 
 import com.se.Tlog.domain.Travel.domain.Destination;
-import com.se.Tlog.domain.Travel.domain.Tag;
 import com.se.Tlog.domain.Travel.domain.TagInfo;
+import com.se.Tlog.domain.Travel.infrastructure.DestinationRepositoryServiceImplement;
+import com.se.Tlog.domain.Travel.infrastructure.TagRepositoryServiceImplement;
 import com.se.Tlog.domain.Travel.infrastructure.mongo.DestinationRepository;
-import com.se.Tlog.domain.Travel.infrastructure.mongo.TagRepository;
 import com.se.Tlog.domain.Travel.presentation.dto.DestinationDto;
-import com.se.Tlog.global.exception.CustomException;
-import com.se.Tlog.global.response.error.ErrorType;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,23 +15,25 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DestinationService {
+    private final DestinationRepositoryServiceImplement destinationRepoService;
     private final DestinationRepository destinationRepository;
-    private final TagRepository tagRepository;
+    private final TagRepositoryServiceImplement tagRepoService;
 
     public void createDestination(DestinationDto destinationDto) {
-        if(destinationRepository.existsByName(destinationDto.getName()))
-            throw new CustomException(ErrorType.ALREADY_EXISTS_DESTINATION);
-
+    	Destination.assertValidity(destinationDto.getName(), destinationRepoService);
         List<TagInfo> tagInfoList = destinationDto.getTags().stream()
-                .map(tagIdDto -> {
-                    Tag existingTag = tagRepository.findById(tagIdDto.getTagId())
-                            .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_TAG));
-                    return new TagInfo(existingTag.getId(), tagIdDto.getWeight());
-                })
+                .map(tagIdDto -> TagInfo.create(tagIdDto.getTagId(), tagIdDto.getWeight(), tagRepoService))
                 .toList();
-
-
-        Destination destination = DestinationDto.toEntity(destinationDto,tagInfoList);
+        Destination destination = Destination.create(
+        		destinationDto.getName(),
+                destinationDto.getLocation(),
+                destinationDto.getRating(),
+                destinationDto.getAddress(),
+                tagInfoList,
+                destinationDto.getCity(),
+                destinationDto.isHasParking(),
+                destinationDto.isPetFriendly(),
+                destinationRepoService);
         destinationRepository.save(destination);
     }
 
