@@ -2,17 +2,17 @@ package com.se.Tlog.domain.User.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.presentation.dto.SsoUserInfo;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
-@Service
+@ApplicationService
 public class KakaoSsoService implements SsoService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String KAKAO_USER_INFO_API = "https://kapi.kakao.com/v2/user/me";

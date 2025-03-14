@@ -3,6 +3,7 @@ package com.se.Tlog.domain.User.application;
 import com.se.Tlog.domain.User.presentation.dto.LoginRequest;
 import com.se.Tlog.domain.User.presentation.dto.SsoUserInfo;
 import com.se.Tlog.domain.User.presentation.dto.TokenDto;
+import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.infrastructure.jpa.UserRepository;
@@ -12,12 +13,11 @@ import com.se.Tlog.global.util.jwt.JwtUtil;
 import com.se.Tlog.global.util.redis.RedisProperties;
 import com.se.Tlog.global.util.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
 
-@Service
+@ApplicationService
 @RequiredArgsConstructor
 public class SsoAuthService {
     private final Map<SsoType, SsoService> ssoServiceMap;

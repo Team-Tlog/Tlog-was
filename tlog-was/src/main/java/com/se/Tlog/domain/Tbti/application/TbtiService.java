@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.Tbti.application;
 
+import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Tbti.domain.TbtiQuestion;
 import com.se.Tlog.domain.Tbti.domain.TraitCategory;
 import com.se.Tlog.domain.Tbti.infrastructure.jpa.TbtiQuestionRepository;
@@ -11,11 +12,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
+@ApplicationService
 @RequiredArgsConstructor
 public class TbtiService {
 

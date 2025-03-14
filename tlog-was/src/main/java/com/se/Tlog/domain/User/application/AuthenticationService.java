@@ -1,8 +1,8 @@
 package com.se.Tlog.domain.User.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.infrastructure.api.SsoApiWrapper;
 import com.se.Tlog.domain.User.presentation.dto.SsoLoginRequest;
@@ -10,7 +10,7 @@ import com.se.Tlog.global.exception.CustomException;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@ApplicationService
 @RequiredArgsConstructor
 public class AuthenticationService {
 	@Autowired

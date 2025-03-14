@@ -1,14 +1,14 @@
 package com.se.Tlog.domain.Review.application;
 
+import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Review.domain.Review;
 import com.se.Tlog.domain.Review.infrastructure.mongo.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@ApplicationService
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;

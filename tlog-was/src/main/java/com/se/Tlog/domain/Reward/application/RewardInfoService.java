@@ -2,8 +2,7 @@ package com.se.Tlog.domain.Reward.application;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
+import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Reward.domain.RewardCriteria;
 import com.se.Tlog.domain.Reward.domain.RewardCriteriaType;
 import com.se.Tlog.domain.Reward.domain.RewardInfo;
@@ -11,7 +10,7 @@ import com.se.Tlog.domain.Reward.infrastructure.jpa.RewardInfoRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@ApplicationService
 @RequiredArgsConstructor
 public class RewardInfoService {
 	private final RewardInfoRepository rewardInfoRepository;

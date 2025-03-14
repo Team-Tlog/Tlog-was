@@ -1,15 +1,15 @@
 package com.se.Tlog.domain.Travel.application;
 
+import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Travel.domain.Tag;
 import com.se.Tlog.domain.Travel.infrastructure.TagRepositoryServiceImplement;
 import com.se.Tlog.domain.Travel.infrastructure.mongo.TagRepository;
 import com.se.Tlog.domain.Travel.presentation.dto.TagDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@ApplicationService
 @RequiredArgsConstructor
 public class TagService {
     private final TagRepository tagRepository;

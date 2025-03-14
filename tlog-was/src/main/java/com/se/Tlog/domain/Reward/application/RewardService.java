@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import org.springframework.stereotype.Service;
-
+import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Reward.domain.Reward;
 import com.se.Tlog.domain.Reward.domain.RewardInfo;
 import com.se.Tlog.domain.Reward.infrastructure.jpa.RewardInfoRepository;
@@ -15,7 +14,7 @@ import com.se.Tlog.domain.User.infrastructure.jpa.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@ApplicationService
 @RequiredArgsConstructor
 public class RewardService {
 	private final RewardRepository rewardRepository;

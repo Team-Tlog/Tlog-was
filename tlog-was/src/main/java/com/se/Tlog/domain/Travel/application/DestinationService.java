@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.Travel.application;
 
+import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.TagInfo;
 import com.se.Tlog.domain.Travel.infrastructure.DestinationRepositoryServiceImplement;
@@ -8,11 +9,10 @@ import com.se.Tlog.domain.Travel.infrastructure.mongo.DestinationRepository;
 import com.se.Tlog.domain.Travel.presentation.dto.DestinationDto;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@ApplicationService
 @RequiredArgsConstructor
 public class DestinationService {
     private final DestinationRepositoryServiceImplement destinationRepoService;
