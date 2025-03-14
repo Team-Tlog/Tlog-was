@@ -23,17 +23,5 @@ public class DestinationDto {
     private boolean hasParking;
     private boolean petFriendly;
     private List<TagIdDto> tags;
-
-    public static Destination toEntity(DestinationDto destinationDto, List<TagInfo> tagInfoList) {
-        return Destination.builder()
-                .name(destinationDto.getName())
-                .address(destinationDto.getAddress())
-                .location(destinationDto.getLocation())
-                .rating(destinationDto.getRating())
-                .tags(tagInfoList)
-                .city(destinationDto.getCity())
-                .hasParking(destinationDto.isHasParking())
-                .petFriendly(destinationDto.isPetFriendly())
-                .build();
-    }
+    
 }
