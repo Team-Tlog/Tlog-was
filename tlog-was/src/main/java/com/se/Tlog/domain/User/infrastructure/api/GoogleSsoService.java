@@ -1,18 +1,18 @@
-package com.se.Tlog.domain.User.application;
+package com.se.Tlog.domain.User.infrastructure.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.presentation.dto.SsoUserInfo;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
-@ApplicationService
+@Service
 public class GoogleSsoService implements SsoService{
     private final String GOOGLE_USER_INFO_API = "https://www.googleapis.com/oauth2/v3/userinfo";
     private final ObjectMapper objectMapper = new ObjectMapper();

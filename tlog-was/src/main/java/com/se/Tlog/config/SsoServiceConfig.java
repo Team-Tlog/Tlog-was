@@ -1,7 +1,7 @@
 package com.se.Tlog.config;
 
-import com.se.Tlog.domain.User.application.SsoService;
 import com.se.Tlog.domain.User.domain.SsoType;
+import com.se.Tlog.domain.User.infrastructure.api.SsoService;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
