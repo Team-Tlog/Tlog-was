@@ -3,8 +3,8 @@ package com.se.Tlog.domain.Travel.application;
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.TagInfo;
-import com.se.Tlog.domain.Travel.infrastructure.DestinationRepositoryServiceImplement;
-import com.se.Tlog.domain.Travel.infrastructure.TagRepositoryServiceImplement;
+import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
+import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
 import com.se.Tlog.domain.Travel.infrastructure.mongo.DestinationRepository;
 import com.se.Tlog.domain.Travel.presentation.dto.DestinationDto;
 
@@ -15,9 +15,9 @@ import java.util.List;
 @ApplicationService
 @RequiredArgsConstructor
 public class DestinationService {
-    private final DestinationRepositoryServiceImplement destinationRepoService;
+    private final DestinationRepositoryService destinationRepoService;
     private final DestinationRepository destinationRepository;
-    private final TagRepositoryServiceImplement tagRepoService;
+    private final TagRepositoryService tagRepoService;
 
     public void createDestination(DestinationDto destinationDto) {
     	Destination.assertValidity(destinationDto.getName(), destinationRepoService);
