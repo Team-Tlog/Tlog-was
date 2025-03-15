@@ -1,0 +1,27 @@
+package com.se.Tlog.domain.Review.presentation;
+
+import com.se.Tlog.domain.Review.application.ReviewService;
+import com.se.Tlog.domain.Review.domain.Review;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/reviews")
+@RequiredArgsConstructor
+public class ReviewController {
+    private final ReviewService reviewService;
+
+    @PostMapping
+    public ResponseEntity<Review> createReview(@RequestBody Review review) {
+        return ResponseEntity.ok(reviewService.createReview(review));
+    }
+
+    @GetMapping("/{destinationId}")
+    public ResponseEntity<List<Review>> getReviewsByDestinationId(@PathVariable String destinationId) {
+        return ResponseEntity.ok(reviewService.getReviewsByDestinationId(destinationId));
+    }
+}

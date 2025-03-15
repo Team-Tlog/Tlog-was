@@ -10,10 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.se.Tlog.domain.Reward.Entity.RewardCriteria;
-import com.se.Tlog.domain.Reward.Entity.RewardCriteriaType;
-import com.se.Tlog.domain.Reward.Entity.RewardInfo;
-import com.se.Tlog.domain.Reward.repository.jpa.RewardInfoRepository;
+import com.se.Tlog.domain.Reward.application.RewardInfoService;
+import com.se.Tlog.domain.Reward.domain.RewardCriteria;
+import com.se.Tlog.domain.Reward.domain.RewardCriteriaType;
+import com.se.Tlog.domain.Reward.domain.RewardInfo;
+import com.se.Tlog.domain.Reward.infrastructure.jpa.RewardInfoRepository;
 
 import jakarta.transaction.Transactional;
 
