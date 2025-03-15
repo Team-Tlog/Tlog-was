@@ -1,6 +1,9 @@
 package com.se.Tlog.domain.Reward.domain;
 
+import com.se.Tlog.domain.Reward.domain.repository.RewardRepositoryService;
 import com.se.Tlog.domain.User.domain.User;
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,7 +39,11 @@ public class Reward {
 		this.rewardInfo = rewardInfo;
 	}
 	
-	public static Reward create(User user, RewardInfo rewardInfo) {
+	public static Reward create(User user, RewardInfo rewardInfo, RewardRepositoryService rewardRepo) {
+		if (!rewardInfo.getRewardCriteria().meetsCriteria(user))
+			throw new CustomException(ErrorType.NOT_FIT_ON_CRITERIA);
+		if (rewardRepo.isExist(rewardInfo.getId(), user.getId()))
+			throw new CustomException(ErrorType.ALREADY_OWN_REWARD);
 		return new Reward(user, rewardInfo);
 	}
 }
