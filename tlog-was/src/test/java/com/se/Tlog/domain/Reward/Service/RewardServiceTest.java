@@ -63,7 +63,7 @@ class RewardServiceTest {
 		assertThat(rewardService.addRewardToUser(testUser, added.get(2))).isEqualTo(true);
 		assertThat(rewardService.addRewardToUser(testUser, added.get(3))).isEqualTo(true);
 		
-		assertThat(rewardService.getAllRewardOfUser(testUser))
+		assertThat(rewardService.getAllRewardOfUser(testUser.getId()))
 		.containsAll(added);
 	}
 }

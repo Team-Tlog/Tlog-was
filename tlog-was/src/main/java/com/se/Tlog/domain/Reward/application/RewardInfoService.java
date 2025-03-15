@@ -17,20 +17,17 @@ public class RewardInfoService {
 	
 	/**
 	 * 특정 보상 형식을 등록합니다.
-	 * <br/> 보상 달성 조건이 올바르지 않은 형식이면 새 보상 형식 생성에 실패하며, <code>null</code>을 반환합니다.
+	 * @param name
 	 * @param type
 	 * @param parameter
 	 * @return
 	 */
 	public RewardInfo addNewRewardInfo(String name, RewardCriteriaType type, String parameter) {
-		RewardCriteria criteria = null;
-		try {
-			criteria = RewardCriteria.create(type, parameter);
-		} catch (Exception e) {
-			return null;
-		}
-		
-		return rewardInfoRepository.save(RewardInfo.create(name, criteria));
+		RewardInfo newRewardInfo = 
+				RewardInfo.create(
+						name,
+						RewardCriteria.create(type, parameter));
+		return rewardInfoRepository.save(newRewardInfo);
 	}
 
 	/**

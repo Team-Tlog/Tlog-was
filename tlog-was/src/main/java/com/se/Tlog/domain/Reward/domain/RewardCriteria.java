@@ -34,17 +34,8 @@ public class RewardCriteria {
 	
 	public static RewardCriteria create(RewardCriteriaType type, String parameter) {
 		if (!isAvailCriteria(type, parameter))
-			throw new IllegalArgumentException("사용할 수 없는 조건입니다!");
+			throw new CustomException(ErrorType.INVALID_REWARD_CRITERIA);
 		return new RewardCriteria(type, parameter);
-	}
-
-	/**
-	 * 보상 조건이 사용 가능한지 검사합니다.
-	 * @param criteria
-	 * @return
-	 */
-	public static boolean isAvailCriteria(RewardCriteria criteria) {
-		return isAvailCriteria(criteria);
 	}
 	
 	/**

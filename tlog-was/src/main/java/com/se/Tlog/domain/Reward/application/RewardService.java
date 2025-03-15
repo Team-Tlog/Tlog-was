@@ -11,6 +11,8 @@ import com.se.Tlog.domain.Reward.infrastructure.jpa.RewardInfoRepository;
 import com.se.Tlog.domain.Reward.infrastructure.jpa.RewardRepository;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.infrastructure.jpa.UserRepository;
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,17 +52,8 @@ public class RewardService {
 					userRepository.findById(userId).get(), 
 					rewardInfoRepository.findById(rewardInfoId).get());
 		} catch (NoSuchElementException e) {
-			throw new IllegalArgumentException("존재하지 않는 사용자 또는 보상 형식");
+			throw new CustomException(ErrorType.NOT_FOUND);
 		}
-	}
-	
-	/**
-	 * 특정 유저가 보유하고 있는 모든 보상을 조회합니다.
-	 * @param user
-	 * @return
-	 */
-	public List<RewardInfo> getAllRewardOfUser(User user) {
-		return getAllRewardOfUser(user.getId());
 	}
 	
 	/**
@@ -70,7 +63,7 @@ public class RewardService {
 	 */
 	public List<RewardInfo> getAllRewardOfUser(UUID userId) {
 		return rewardRepository.findAllByUser_Id(userId)
-				.stream().map((reward)-> {return reward.getRewardInfo();})
+				.stream().map(Reward::getRewardInfo)
 				.toList();
 	}
 }

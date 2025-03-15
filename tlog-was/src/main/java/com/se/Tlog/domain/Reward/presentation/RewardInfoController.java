@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.se.Tlog.domain.Reward.application.RewardInfoService;
 import com.se.Tlog.domain.Reward.presentation.dto.CreateRewardInfoRequest;
 import com.se.Tlog.domain.Reward.presentation.dto.RewardInfoDto;
-import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorRes;
-import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
 
@@ -72,12 +70,10 @@ public class RewardInfoController {
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
 	public ResponseEntity<SuccessRes<?>> createRewardInfo(@RequestBody CreateRewardInfoRequest requestData) {
-		if (null == rewardInfoService.addNewRewardInfo(
+		rewardInfoService.addNewRewardInfo(
 				requestData.name(),
 				requestData.criteriaType(),
-				requestData.criteriaParameter()))
-			throw new CustomException(ErrorType.INVALID_REWARD_CRITERIA);
-		
+				requestData.criteriaParameter());
 		return ResponseEntity.ok().body(SuccessRes.from(SuccessType.CREATED)); 
 	}
 	
