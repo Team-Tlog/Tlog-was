@@ -1,6 +1,5 @@
 package com.se.Tlog.domain.Tbti.presentation.dto;
 
-import com.se.Tlog.domain.Tbti.domain.TbtiQuestion;
 import com.se.Tlog.domain.Tbti.domain.TraitCategory;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,8 +16,5 @@ public class TbtiQuestionReq {
 	
 	@Schema(description = "TBTI 유형입니다.")
     TraitCategory traitCategory;
-
-    public static TbtiQuestion toEntity(TbtiQuestionReq tbtiQuestionReq){
-        return TbtiQuestion.create(tbtiQuestionReq.getContent(), tbtiQuestionReq.getTraitCategory());
-    }
+	
 }
