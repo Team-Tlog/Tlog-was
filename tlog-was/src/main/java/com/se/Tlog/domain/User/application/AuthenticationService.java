@@ -33,7 +33,6 @@ public class AuthenticationService {
 	 */
 	public void checkSsoAuthCode(SsoType type, String code) {
 		String token = apiWrapper.getAccessToken(type, code);
-		System.out.println("token = " + token);
 		// 토큰 확인시 로그인, 회원가입 등등 처리
 	}
 }

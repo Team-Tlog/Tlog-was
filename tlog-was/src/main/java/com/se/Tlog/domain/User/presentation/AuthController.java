@@ -39,23 +39,21 @@ public class AuthController {
 	public ResponseEntity<?> getSsoCallbackByKakao(
 			@RequestParam(name = "code", required = false) String code,
 			@RequestParam(name = "error", required = false) String error) {
-		if (error != null)
-			throw new CustomException(ErrorType.SSO_LOGIN_FAIL);
-		
-		authService.checkSsoAuthCode(SsoType.KAKAO, code);
-		return ResponseEntity
-                .status(SuccessType.LOGIN_SSO_SUCCESS.getStatus())
-                .body(SuccessRes.from(SuccessType.LOGIN_SSO_SUCCESS));
+		return ssoCallBack(SsoType.KAKAO, code, error);
 	}
 
 	@GetMapping("/sso/callback/google")
 	public ResponseEntity<?> getSsoCallbackByGoogle(
 			@RequestParam(name = "code", required = false) String code,
 			@RequestParam(name = "error", required = false) String error) {
+		return ssoCallBack(SsoType.GOOGLE, code, error);
+	}
+	
+	private ResponseEntity<?> ssoCallBack(SsoType type, String code, String error) {
 		if (error != null)
 			throw new CustomException(ErrorType.SSO_LOGIN_FAIL);
 		
-		authService.checkSsoAuthCode(SsoType.GOOGLE, code);
+		authService.checkSsoAuthCode(type, code);
 		return ResponseEntity
                 .status(SuccessType.LOGIN_SSO_SUCCESS.getStatus())
                 .body(SuccessRes.from(SuccessType.LOGIN_SSO_SUCCESS));
