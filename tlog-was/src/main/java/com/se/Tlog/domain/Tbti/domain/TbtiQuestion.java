@@ -23,7 +23,7 @@ public class TbtiQuestion {
     @Enumerated(EnumType.STRING)
     private TraitCategory traitCategory;
 
-    public TbtiQuestion(String content, TraitCategory traitCategory) {
+    private TbtiQuestion(String content, TraitCategory traitCategory) {
         validateContent(content);
         this.content = content;
         this.traitCategory = traitCategory;

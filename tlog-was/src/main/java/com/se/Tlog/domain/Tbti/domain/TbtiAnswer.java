@@ -28,7 +28,7 @@ public class TbtiAnswer {
     private int score;
 
     @Builder
-    public TbtiAnswer(User user, TbtiQuestion tbtiQuestion, int score) {
+    private TbtiAnswer(User user, TbtiQuestion tbtiQuestion, int score) {
         this.user = user;
         this.tbtiQuestion = tbtiQuestion;
         this.score = score;
