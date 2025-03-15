@@ -15,8 +15,9 @@ public enum ErrorType {
     // 사용자로부터 소셜 로그인 인증 실패
     SSO_LOGIN_FAIL(HttpStatus.BAD_REQUEST,"외부 소셜 로그인이 취소되거나 실패했습니다."),
     
-    // 보상 형식 조건이 유효하지 않음
+    // 보상 조건
     INVALID_REWARD_CRITERIA(HttpStatus.BAD_REQUEST,"제시된 보상 조건이 올바르지 않은 형식입니다."),
+    NOT_FIT_ON_CRITERIA(HttpStatus.BAD_REQUEST, "사용자가 해당 보상 조건을 충족하지 않았습니다."),
 
     // 인증
     // 401
@@ -39,6 +40,7 @@ public enum ErrorType {
     //데이터 충돌
     ALREADY_EXISTS_TAG(HttpStatus.CONFLICT, "이미 존재하는 태그입니다."),
     ALREADY_EXISTS_DESTINATION(HttpStatus.CONFLICT, "이미 존재하는 여행지입니다."),
+    ALREADY_OWN_REWARD(HttpStatus.CONFLICT, "이미 보유하고 있는 보상입니다."),
     // 서버 에러
     // 500
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. 서버 팀으로 연락주시기 바랍니다."),
