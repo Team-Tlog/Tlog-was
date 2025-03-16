@@ -1,6 +1,7 @@
 package com.se.Tlog.domain.Reward.Service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +41,7 @@ class RewardServiceTest {
 		userRepository.save(testUser);
 		rewardInfoRepository.save(testReward);
 		
-		assertThat(rewardService.addRewardToUser(testUser, testReward))
-		.isEqualTo(true);
+		assertThatNoException().isThrownBy(() -> rewardService.addRewardToUser(testUser.getId(), testReward.getId()));
 	}
 
 	@Transactional
@@ -58,12 +58,12 @@ class RewardServiceTest {
 		
 		userRepository.save(testUser);
 		
-		assertThat(rewardService.addRewardToUser(testUser, added.get(0))).isEqualTo(true);
-		assertThat(rewardService.addRewardToUser(testUser, added.get(1))).isEqualTo(true);
-		assertThat(rewardService.addRewardToUser(testUser, added.get(2))).isEqualTo(true);
-		assertThat(rewardService.addRewardToUser(testUser, added.get(3))).isEqualTo(true);
+		assertThatNoException().isThrownBy(()->rewardService.addRewardToUser(testUser.getId(), added.get(0).getId()));
+		assertThatNoException().isThrownBy(()->rewardService.addRewardToUser(testUser.getId(), added.get(1).getId()));
+		assertThatNoException().isThrownBy(()->rewardService.addRewardToUser(testUser.getId(), added.get(2).getId()));
+		assertThatNoException().isThrownBy(()->rewardService.addRewardToUser(testUser.getId(), added.get(3).getId()));
 		
-		assertThat(rewardService.getAllRewardOfUser(testUser))
+		assertThat(rewardService.getAllRewardOfUser(testUser.getId()))
 		.containsAll(added);
 	}
 }

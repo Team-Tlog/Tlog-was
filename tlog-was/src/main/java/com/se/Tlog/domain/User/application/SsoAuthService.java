@@ -6,6 +6,7 @@ import com.se.Tlog.domain.User.presentation.dto.TokenDto;
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.domain.User;
+import com.se.Tlog.domain.User.infrastructure.api.SsoService;
 import com.se.Tlog.domain.User.infrastructure.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;

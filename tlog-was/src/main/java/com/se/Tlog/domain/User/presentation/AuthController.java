@@ -26,36 +26,36 @@ public class AuthController {
 	private final SsoAuthService ssoService;
 
 	@GetMapping("/sso/login/kakao")
-	public ResponseEntity<SsoLoginRequest> getSsoLoginByKakao() {
-		return ResponseEntity.ok(authService.getSsoLoginRequest(SsoType.KAKAO));
+	public ResponseEntity<SuccessRes<SsoLoginRequest>> getSsoLoginByKakao() {
+		return ResponseEntity.ok(
+				SuccessRes.from(authService.getSsoLoginRequest(SsoType.KAKAO)));
 	}
 
 	@GetMapping("/sso/login/google")
-	public ResponseEntity<SsoLoginRequest> getSsoLoginByGoogle() {
-		return ResponseEntity.ok(authService.getSsoLoginRequest(SsoType.GOOGLE));
+	public ResponseEntity<SuccessRes<SsoLoginRequest>> getSsoLoginByGoogle() {
+		return ResponseEntity.ok(
+				SuccessRes.from(authService.getSsoLoginRequest(SsoType.GOOGLE)));
 	}
 
 	@GetMapping("/sso/callback/kakao")
-	public ResponseEntity<?> getSsoCallbackByKakao(
+	public ResponseEntity<SuccessRes<?>> getSsoCallbackByKakao(
 			@RequestParam(name = "code", required = false) String code,
 			@RequestParam(name = "error", required = false) String error) {
-		if (error != null)
-			throw new CustomException(ErrorType.SSO_LOGIN_FAIL);
-		
-		authService.checkSsoAuthCode(SsoType.KAKAO, code);
-		return ResponseEntity
-                .status(SuccessType.LOGIN_SSO_SUCCESS.getStatus())
-                .body(SuccessRes.from(SuccessType.LOGIN_SSO_SUCCESS));
+		return ssoCallBack(SsoType.KAKAO, code, error);
 	}
 
 	@GetMapping("/sso/callback/google")
-	public ResponseEntity<?> getSsoCallbackByGoogle(
+	public ResponseEntity<SuccessRes<?>> getSsoCallbackByGoogle(
 			@RequestParam(name = "code", required = false) String code,
 			@RequestParam(name = "error", required = false) String error) {
+		return ssoCallBack(SsoType.GOOGLE, code, error);
+	}
+	
+	private ResponseEntity<SuccessRes<?>> ssoCallBack(SsoType type, String code, String error) {
 		if (error != null)
 			throw new CustomException(ErrorType.SSO_LOGIN_FAIL);
 		
-		authService.checkSsoAuthCode(SsoType.GOOGLE, code);
+		authService.checkSsoAuthCode(type, code);
 		return ResponseEntity
                 .status(SuccessType.LOGIN_SSO_SUCCESS.getStatus())
                 .body(SuccessRes.from(SuccessType.LOGIN_SSO_SUCCESS));

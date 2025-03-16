@@ -49,12 +49,12 @@ public class RewardController {
 	)
 	public ResponseEntity<SuccessRes<Boolean>> addRewardToUser(@RequestBody AddRewardToUserRequest request) {
 		try {
-			return ResponseEntity
-					.ok(SuccessRes.from(rewardService.addRewardToUser(request.userId(), request.rewardInfoId())));
-		} catch (IllegalArgumentException e) {
-			throw new CustomException(ErrorType.NOT_FOUND);
-		} catch (RuntimeException e) {
-			throw e;
+			rewardService.addRewardToUser(request.userId(), request.rewardInfoId());
+			return ResponseEntity.ok(SuccessRes.from(true));
+		} catch (CustomException e) {
+			if (e.getErrorType() == ErrorType.NOT_FIT_ON_CRITERIA)
+				return ResponseEntity.ok(SuccessRes.from(false));
+			else throw e;
 		}
 	}
 	

@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.Location;
-import com.se.Tlog.domain.Travel.domain.TagInfo;
 
 @Getter
 @NoArgsConstructor
