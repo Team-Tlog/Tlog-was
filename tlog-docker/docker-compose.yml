@@ -32,6 +32,8 @@ services:
   mysql:
     container_name: tlog-mysql
     image: mysql:8.0
+    volumes:
+      - tlog-mysql-data:/var/lib/mysql
     ports:
       - "3306:3306"
     environment:
@@ -57,3 +59,5 @@ services:
 networks:
   tlog-network:
     driver: bridge
+volumes:
+  tlog-mysql-data:
