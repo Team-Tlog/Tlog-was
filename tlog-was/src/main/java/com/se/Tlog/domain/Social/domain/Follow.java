@@ -3,6 +3,7 @@ package com.se.Tlog.domain.Social.domain;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
         uniqueConstraints = @UniqueConstraint(columnNames = {"fromUserId", "toUserId"})
 )
 @NoArgsConstructor(access = PROTECTED)
+@Getter
 public class Follow {
 
     @Id
