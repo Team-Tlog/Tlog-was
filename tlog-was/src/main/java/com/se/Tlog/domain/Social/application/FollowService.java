@@ -5,7 +5,6 @@ import com.se.Tlog.domain.Social.domain.Follow;
 import com.se.Tlog.domain.Social.infrastructure.jpa.FollowRepository;
 import com.se.Tlog.domain.Social.presentation.dto.FollowDto;
 import com.se.Tlog.domain.Social.presentation.dto.FollowStatusDto;
-import com.se.Tlog.domain.User.application.UserValidator;
 import com.se.Tlog.domain.User.domain.service.UserDomainService;
 import com.se.Tlog.domain.User.presentation.dto.UserSummaryDto;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +21,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FollowService {
     private final FollowRepository followRepository;
-    private final UserValidator userValidator;
     private final UserDomainService userDomainService;
 
     public FollowStatusDto follow(FollowDto followDto) {
 
-        userValidator.validateExists(followDto.from_userId());
-        userValidator.validateExists(followDto.to_userId());
+        userDomainService.validateExists(followDto.from_userId());
+        userDomainService.validateExists(followDto.to_userId());
 
         Optional<Follow> existing = followRepository.findByFromUserIdAndToUserId(followDto.from_userId(), followDto.to_userId());
 
@@ -45,7 +43,7 @@ public class FollowService {
     }
 
     public Page<UserSummaryDto> getFollowingList(UUID fromUserId, Pageable pageable) {
-        userValidator.validateExists(fromUserId);
+        userDomainService.validateExists(fromUserId);
 
         Page<UUID> pagedToUserIds = followRepository.findToUserIdsByFromUserId(fromUserId,pageable);
 
@@ -55,7 +53,7 @@ public class FollowService {
     }
 
     public Page<UserSummaryDto> getFollowerList(UUID toUserId, Pageable pageable) {
-        userValidator.validateExists(toUserId);
+        userDomainService.validateExists(toUserId);
 
         Page<UUID> pagedFromUserIds = followRepository.findFromUserIdsByToUserId(toUserId,pageable);
 

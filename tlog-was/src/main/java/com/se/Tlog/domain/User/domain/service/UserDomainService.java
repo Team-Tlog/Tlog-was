@@ -3,6 +3,8 @@ package com.se.Tlog.domain.User.domain.service;
 
 import com.se.Tlog.domain.User.infrastructure.jpa.UserRepository;
 import com.se.Tlog.domain.User.presentation.dto.UserSummaryDto;
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,5 +20,11 @@ public class UserDomainService {
         return userRepository.findAllById(uuidList).stream()
                 .map(UserSummaryDto::from)
                 .toList();
+    }
+
+    public void validateExists(UUID userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new CustomException(ErrorType.USER_NOT_FOUND);
+        }
     }
 }
