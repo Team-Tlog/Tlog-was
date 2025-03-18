@@ -15,10 +15,10 @@ import com.se.Tlog.domain.Reward.application.RewardService;
 import com.se.Tlog.domain.Reward.domain.RewardCriteria;
 import com.se.Tlog.domain.Reward.domain.RewardCriteriaType;
 import com.se.Tlog.domain.Reward.domain.RewardInfo;
-import com.se.Tlog.domain.Reward.infrastructure.jpa.RewardInfoRepository;
+import com.se.Tlog.domain.Reward.repository.jpa.RewardInfoRepository;
+import com.se.Tlog.domain.User.controller.dto.SsoUserInfo;
 import com.se.Tlog.domain.User.domain.User;
-import com.se.Tlog.domain.User.infrastructure.jpa.UserRepository;
-import com.se.Tlog.domain.User.presentation.dto.SsoUserInfo;
+import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 
 import jakarta.transaction.Transactional;
 

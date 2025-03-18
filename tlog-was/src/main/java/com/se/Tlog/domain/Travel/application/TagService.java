@@ -1,10 +1,11 @@
 package com.se.Tlog.domain.Travel.application;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Travel.controller.dto.TagDto;
 import com.se.Tlog.domain.Travel.domain.Tag;
 import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
-import com.se.Tlog.domain.Travel.infrastructure.mongo.TagRepository;
-import com.se.Tlog.domain.Travel.presentation.dto.TagDto;
+import com.se.Tlog.domain.Travel.repository.mongo.TagRepository;
+
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.se.Tlog.domain.User.domain.service;
 
 
-import com.se.Tlog.domain.User.infrastructure.jpa.UserRepository;
-import com.se.Tlog.domain.User.presentation.dto.UserSummaryDto;
+import com.se.Tlog.domain.User.controller.dto.UserSummaryDto;
+import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;

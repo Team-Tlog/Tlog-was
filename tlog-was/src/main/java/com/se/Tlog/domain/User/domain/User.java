@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-import com.se.Tlog.domain.User.presentation.dto.SsoUserInfo;
+import com.se.Tlog.domain.User.controller.dto.SsoUserInfo;
 
 @Entity
 @Getter

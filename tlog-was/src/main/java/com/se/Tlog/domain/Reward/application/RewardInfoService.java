@@ -6,7 +6,7 @@ import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Reward.domain.RewardCriteria;
 import com.se.Tlog.domain.Reward.domain.RewardCriteriaType;
 import com.se.Tlog.domain.Reward.domain.RewardInfo;
-import com.se.Tlog.domain.Reward.infrastructure.jpa.RewardInfoRepository;
+import com.se.Tlog.domain.Reward.repository.jpa.RewardInfoRepository;
 
 import lombok.RequiredArgsConstructor;
 

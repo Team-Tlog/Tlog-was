@@ -2,8 +2,8 @@ package com.se.Tlog.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.se.Tlog.domain.Admin.infrastructure.jpa.AdminRepository;
-import com.se.Tlog.domain.User.infrastructure.jpa.UserRepository;
+import com.se.Tlog.domain.Admin.repository.jpa.AdminRepository;
+import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.security.filter.JwtAuthenticationFilter;
 import com.se.Tlog.global.security.filter.JwtExceptionFilter;
 import com.se.Tlog.global.util.jwt.JwtUtil;

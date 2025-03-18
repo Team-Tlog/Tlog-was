@@ -6,10 +6,10 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.se.Tlog.domain.**.infrastructure.jpa"
+        basePackages = "com.se.Tlog.domain.**.repository.jpa"
 )
 @EnableMongoRepositories(
-        basePackages = "com.se.Tlog.domain.**.infrastructure.mongo"
+        basePackages = "com.se.Tlog.domain.**.repository.mongo"
 )
 public class DataSourceConfig {
 }

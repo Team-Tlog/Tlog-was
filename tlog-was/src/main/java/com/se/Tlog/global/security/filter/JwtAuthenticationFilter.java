@@ -1,8 +1,8 @@
 package com.se.Tlog.global.security.filter;
 
-import com.se.Tlog.domain.Admin.infrastructure.jpa.AdminRepository;
+import com.se.Tlog.domain.Admin.repository.jpa.AdminRepository;
 import com.se.Tlog.domain.User.domain.Role;
-import com.se.Tlog.domain.User.infrastructure.jpa.UserRepository;
+import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.security.dto.AdminDetails;
 import com.se.Tlog.global.security.dto.AppUserDetails;

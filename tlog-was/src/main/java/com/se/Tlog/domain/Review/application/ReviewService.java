@@ -2,7 +2,7 @@ package com.se.Tlog.domain.Review.application;
 
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Review.domain.Review;
-import com.se.Tlog.domain.Review.infrastructure.mongo.ReviewRepository;
+import com.se.Tlog.domain.Review.repository.mongo.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
 
