@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.se.Tlog.domain.Reward.domain.Reward;
 
+@Repository
 public interface RewardRepository extends JpaRepository<Reward, Long> {
 	List<Reward> findAllByUser_Id(UUID id);
 	boolean existsByRewardInfo_IdAndUser_Id(Long rewardInfoId, UUID userId);
