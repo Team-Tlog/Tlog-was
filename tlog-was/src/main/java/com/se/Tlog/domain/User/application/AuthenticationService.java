@@ -6,9 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.User.controller.dto.SsoLoginRequest;
 import com.se.Tlog.domain.User.domain.SsoType;
-import com.se.Tlog.domain.User.infrastructure.api.SsoOauthManager;
-import com.se.Tlog.domain.User.presentation.dto.SsoLoginRequest;
+import com.se.Tlog.domain.User.repository.api.SsoOauthManager;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 

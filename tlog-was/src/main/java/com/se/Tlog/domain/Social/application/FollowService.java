@@ -1,12 +1,13 @@
 package com.se.Tlog.domain.Social.application;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Social.controller.dto.FollowDto;
+import com.se.Tlog.domain.Social.controller.dto.FollowStatusDto;
 import com.se.Tlog.domain.Social.domain.Follow;
-import com.se.Tlog.domain.Social.infrastructure.jpa.FollowRepository;
-import com.se.Tlog.domain.Social.presentation.dto.FollowDto;
-import com.se.Tlog.domain.Social.presentation.dto.FollowStatusDto;
+import com.se.Tlog.domain.Social.repository.jpa.FollowRepository;
+import com.se.Tlog.domain.User.controller.dto.UserSummaryDto;
 import com.se.Tlog.domain.User.domain.service.UserDomainService;
-import com.se.Tlog.domain.User.presentation.dto.UserSummaryDto;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

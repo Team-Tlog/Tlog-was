@@ -1,11 +1,11 @@
 package com.se.Tlog.domain.Tbti.application;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Tbti.controller.dto.TbtiQuestionReq;
+import com.se.Tlog.domain.Tbti.controller.dto.TbtiQuestionRes;
 import com.se.Tlog.domain.Tbti.domain.TbtiQuestion;
 import com.se.Tlog.domain.Tbti.domain.TraitCategory;
-import com.se.Tlog.domain.Tbti.infrastructure.jpa.TbtiQuestionRepository;
-import com.se.Tlog.domain.Tbti.presentation.dto.TbtiQuestionReq;
-import com.se.Tlog.domain.Tbti.presentation.dto.TbtiQuestionRes;
+import com.se.Tlog.domain.Tbti.repository.jpa.TbtiQuestionRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import jakarta.transaction.Transactional;

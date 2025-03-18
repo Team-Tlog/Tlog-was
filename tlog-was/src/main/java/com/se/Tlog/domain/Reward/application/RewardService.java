@@ -8,9 +8,9 @@ import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Reward.domain.Reward;
 import com.se.Tlog.domain.Reward.domain.RewardInfo;
 import com.se.Tlog.domain.Reward.domain.repository.RewardRepositoryService;
-import com.se.Tlog.domain.Reward.infrastructure.jpa.RewardInfoRepository;
-import com.se.Tlog.domain.Reward.infrastructure.jpa.RewardRepository;
-import com.se.Tlog.domain.User.infrastructure.jpa.UserRepository;
+import com.se.Tlog.domain.Reward.repository.jpa.RewardInfoRepository;
+import com.se.Tlog.domain.Reward.repository.jpa.RewardRepository;
+import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 

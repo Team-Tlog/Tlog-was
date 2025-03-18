@@ -1,12 +1,12 @@
 package com.se.Tlog.domain.Travel.application;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Travel.controller.dto.DestinationDto;
 import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.TagInfo;
 import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
 import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
-import com.se.Tlog.domain.Travel.infrastructure.mongo.DestinationRepository;
-import com.se.Tlog.domain.Travel.presentation.dto.DestinationDto;
+import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 
 import lombok.RequiredArgsConstructor;
 
