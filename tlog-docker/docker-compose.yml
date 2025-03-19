@@ -38,9 +38,9 @@ services:
       - "3306:3306"
     environment:
       MYSQL_DATABASE: tlog
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: tloguser
-      MYSQL_PASSWORD: tlogpw
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
