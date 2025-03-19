@@ -1,6 +1,9 @@
 
 # 실행환경 세팅
 spring:
+  config:
+    # 로컬 환경변수 파일 사용 (단, OS 환경변수보다 우선순위 낮음, 로컬에서만 적용됨, 빌드파일엔 포함 안됨)
+    import: optional:file:spring.env[.properties]
   profiles:
     group:
       # 개발모드 프로파일
