@@ -12,7 +12,7 @@ spring:
       prod: prod-env, common
     
     # 실행 모드 설정 (dev 또는 prod로 설정)
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE}
     
 ---
 
