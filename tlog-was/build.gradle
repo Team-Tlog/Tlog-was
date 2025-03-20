@@ -46,6 +46,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
 	implementation 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -57,6 +58,7 @@ dependencies {
 	
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
 }
 

@@ -1,4 +1,4 @@
-package com.se.Tlog.domain.Social.domain;
+package com.se.Tlog.domain.Social.Follow.domain;
 
 
 
