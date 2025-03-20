@@ -1,4 +1,4 @@
-package com.se.Tlog.domain.Social.controller.dto;
+package com.se.Tlog.domain.Social.Follow.controller.dto;
 
 public record FollowStatusDto(
         boolean status,

@@ -1,8 +1,8 @@
-package com.se.Tlog.domain.Social.controller;
+package com.se.Tlog.domain.Social.Follow.controller;
 
-import com.se.Tlog.domain.Social.application.FollowService;
-import com.se.Tlog.domain.Social.controller.dto.FollowDto;
-import com.se.Tlog.domain.Social.controller.dto.FollowStatusDto;
+import com.se.Tlog.domain.Social.Follow.application.FollowService;
+import com.se.Tlog.domain.Social.Follow.controller.dto.FollowDto;
+import com.se.Tlog.domain.Social.Follow.controller.dto.FollowStatusDto;
 import com.se.Tlog.global.response.success.SuccessRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

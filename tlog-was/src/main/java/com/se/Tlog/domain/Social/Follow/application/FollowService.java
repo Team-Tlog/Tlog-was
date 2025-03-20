@@ -1,10 +1,10 @@
-package com.se.Tlog.domain.Social.application;
+package com.se.Tlog.domain.Social.Follow.application;
 
 import com.se.Tlog.domain.ApplicationService;
-import com.se.Tlog.domain.Social.controller.dto.FollowDto;
-import com.se.Tlog.domain.Social.controller.dto.FollowStatusDto;
-import com.se.Tlog.domain.Social.domain.Follow;
-import com.se.Tlog.domain.Social.repository.jpa.FollowRepository;
+import com.se.Tlog.domain.Social.Follow.controller.dto.FollowDto;
+import com.se.Tlog.domain.Social.Follow.controller.dto.FollowStatusDto;
+import com.se.Tlog.domain.Social.Follow.domain.Follow;
+import com.se.Tlog.domain.Social.Follow.repository.jpa.FollowRepository;
 import com.se.Tlog.domain.User.controller.dto.UserSummaryDto;
 import com.se.Tlog.domain.User.domain.service.UserDomainService;
 

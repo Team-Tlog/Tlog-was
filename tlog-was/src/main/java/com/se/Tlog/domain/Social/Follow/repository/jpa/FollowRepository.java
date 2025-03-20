@@ -1,6 +1,6 @@
-package com.se.Tlog.domain.Social.repository.jpa;
+package com.se.Tlog.domain.Social.Follow.repository.jpa;
 
-import com.se.Tlog.domain.Social.domain.Follow;
+import com.se.Tlog.domain.Social.Follow.domain.Follow;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
