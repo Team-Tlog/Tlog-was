@@ -12,7 +12,8 @@ services:
       - redis
       - mysql
     environment:
-      #SPRING_PROFILES_ACTIVE: dev
+      # prod / dev 모드 설정
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       MYSQL_URL: ${MYSQL_URL}
       MYSQL_USERNAME: ${MYSQL_USERNAME}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -38,9 +39,9 @@ services:
       - "3306:3306"
     environment:
       MYSQL_DATABASE: tlog
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: tloguser
-      MYSQL_PASSWORD: tlogpw
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s

@@ -1,4 +1,53 @@
+
+# 실행환경 세팅
 spring:
+  config:
+    # 로컬 환경변수 파일 사용 (단, OS 환경변수보다 우선순위 낮음, 로컬에서만 적용됨, 빌드파일엔 포함 안됨)
+    import: optional:file:spring.env[.properties]
+  profiles:
+    group:
+      # 개발모드 프로파일
+      dev: dev-env, common 
+      # 배포모드 프로파일
+      prod: prod-env, common
+    
+    # 실행 모드 설정 (dev 또는 prod로 설정)
+    active: ${SPRING_PROFILES_ACTIVE}
+    
+---
+
+# 개발 전용 프로파일
+spring:
+  config:
+    activate:
+      on-profile: dev-env
+    
+  # JPA 테이블은 항상 삭제 후 새로 생성
+  jpa:
+    hibernate:
+      ddl-auto: create
+    
+---
+
+# 배포 전용 프로파일
+spring:
+  config:
+    activate:
+      on-profile: prod-env
+  
+  # JPA 테이블 삭제 안함
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+---
+
+# 공통 프로파일
+spring:
+  config:
+    activate:
+      on-profile: common
+  
   datasource:
     # MySQL
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -20,7 +69,6 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
     open-in-view: false
     hibernate:
-     ddl-auto: create
      naming:
        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
