@@ -35,7 +35,7 @@ public class ChatRoom {
         return new ChatRoom(hostId);
     }
 
-    public void modifyLashMessage(Long lastChatId) {
+    public void modifyLastMessage(Long lastChatId) {
         this.lastChatId = lastChatId;
     }
 

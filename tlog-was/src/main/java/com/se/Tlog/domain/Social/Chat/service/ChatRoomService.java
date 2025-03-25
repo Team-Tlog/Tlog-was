@@ -1,16 +1,25 @@
 package com.se.Tlog.domain.Social.Chat.service;
 
+import com.se.Tlog.domain.Social.Chat.controller.dto.ChatRoomListResponseDto;
+import com.se.Tlog.domain.Social.Chat.controller.dto.ChatRoomResponseDto;
+import com.se.Tlog.domain.Social.Chat.domain.ChatMessage;
+import com.se.Tlog.domain.Social.Chat.domain.ChatReadUsers;
 import com.se.Tlog.domain.Social.Chat.domain.ChatRoom;
 import com.se.Tlog.domain.Social.Chat.domain.ChatRoomUser;
+import com.se.Tlog.domain.Social.Chat.repository.jpa.ChatMessageRepository;
 import com.se.Tlog.domain.Social.Chat.repository.jpa.ChatRoomRepository;
 import com.se.Tlog.domain.Social.Chat.repository.jpa.ChatRoomUserRepository;
 import com.se.Tlog.domain.User.domain.User;
+import com.se.Tlog.domain.User.domain.service.UserDomainService;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -19,8 +28,12 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
+    private final UserDomainService userDomainService;
+    private final ChatMessageRepository chatMessageRepository;
+    private final ChatReadStatusService chatReadStatusService;
 
-    public ChatRoom create(UUID hostId) {
+
+    public ChatRoomResponseDto create(UUID hostId) {
         ChatRoom chatRoom = ChatRoom.create(hostId);
         chatRoomRepository.save(chatRoom);
         User host = userRepository.findById(hostId)
@@ -29,7 +42,30 @@ public class ChatRoomService {
         ChatRoomUser chatRoomUser = ChatRoomUser.join(chatRoom,host);
         chatRoomUserRepository.save(chatRoomUser);
 
-        return chatRoom;
+        return ChatRoomResponseDto.from(chatRoom.getId(),chatRoom.getHostId());
     }
 
+    public List<ChatRoomListResponseDto> getRoomList(UUID userId) {
+
+        userDomainService.validateExists(userId);
+        List<ChatRoomUser> chatRoomUserList = chatRoomUserRepository.findChatRoomByUserId(userId); // 유저가 참여중인 ChatRoomList
+        List<ChatRoom> rooms = chatRoomUserList.stream().map(ChatRoomUser::getChatRoom).toList();
+
+        List<Long> roomIds = rooms.stream().map(ChatRoom::getId).toList();
+
+        Map<Long, Integer> unreadCountMap = chatReadStatusService.unreadMessagesCount(userId, roomIds);
+
+        return rooms.stream().map(room -> toChatRoomListDto(room, unreadCountMap)).toList();
+    }
+
+    private ChatRoomListResponseDto toChatRoomListDto(ChatRoom room, Map<Long, Integer> unreadCountMap) {
+        ChatMessage lastMessage = room.getLastChatId() != null ?
+                chatMessageRepository.findById(room.getLastChatId()).orElse(null) : null;
+        String content = lastMessage != null ? lastMessage.getContent() : null;
+        LocalDateTime lastMessageSentAt = lastMessage != null ? lastMessage.getSendAt() : null;
+        int unreadCount = unreadCountMap.getOrDefault(room.getId(), 0);
+        int countChatRoomJoinUsers = chatRoomUserRepository.countChatRoomJoinUsers(room.getId());
+
+        return ChatRoomListResponseDto.from(room.getId(), content, lastMessageSentAt,countChatRoomJoinUsers,unreadCount);
+    }
 }
