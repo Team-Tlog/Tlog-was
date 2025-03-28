@@ -10,6 +10,8 @@ public enum ErrorType {
 
     // 400 잘못된 요청
     CONTENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "Content 내용이 비어있습니다."),
+    TEAM_NAME_NOT_FOUND(HttpStatus.BAD_REQUEST, "팀 이름이 비어있습니다."),
+    TEAM_CANNOT_BE_ORPHAN(HttpStatus.BAD_REQUEST, "팀에 최소 1명 이상의 팀원이 필요합니다."),
     ROLE_MISMATCH(HttpStatus.BAD_REQUEST,"Role 값을 잘못 입력하였습니다."),
     
     // 사용자로부터 소셜 로그인 인증 실패
@@ -39,13 +41,18 @@ public enum ErrorType {
     ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 관리자 입니다."),
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 채팅방 입니다."),
     MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않은 메시지 입니다."),
+    TEAM_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 팀입니다."),
+    TEAM_USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 팀원입니다."),
     //데이터 충돌
     ALREADY_EXISTS_TAG(HttpStatus.CONFLICT, "이미 존재하는 태그입니다."),
     ALREADY_EXISTS_DESTINATION(HttpStatus.CONFLICT, "이미 존재하는 여행지입니다."),
     ALREADY_OWN_REWARD(HttpStatus.CONFLICT, "이미 보유하고 있는 보상입니다."),
+    ALREADY_EXIST_IN_TEAM(HttpStatus.CONFLICT, "이미 팀에 속해있는 유저입니다."),
     // 서버 에러
     // 500
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. 서버 팀으로 연락주시기 바랍니다."),
+    NO_MORE_SPACE_FOR_INVITE_CODE(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. 팀 초대 코드를 더 이상 생성할 수 없습니다."),
+    INTERNAL_ERROR_BY_INVITE_CODE(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. 팀 초대 코드 에러."),
     
     // 외부 소셜 로그인 처리 중 에러
     SSO_ACCESSTOKEN_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "외부 인증 서버로부터 인증을 받는데 실패했습니다."),
