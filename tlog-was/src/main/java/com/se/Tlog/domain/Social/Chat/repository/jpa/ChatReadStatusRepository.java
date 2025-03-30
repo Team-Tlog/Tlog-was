@@ -17,4 +17,8 @@ public interface ChatReadStatusRepository extends JpaRepository<ChatReadStatus,L
             "where crs.user.id = :userId and crs.chatRoom.id IN :chatRoomIds")
     List<ChatReadStatus> findByUserIdAndChatRoomIds(@Param("userId") UUID userId,
                                                     @Param("chatRoomIds") List<Long> chatRoomIds);
+
+    @Query("select crs from ChatReadStatus crs where crs.user.id = :userId and crs.chatRoom.id = :chatRoomId")
+    ChatReadStatus findByUserIdAndChatRoomId(@Param("userId") UUID userId,
+                                             @Param("chatRoomId") Long chatRoomId);
 }
