@@ -3,6 +3,7 @@ package com.se.Tlog.domain.Social.Chat.service;
 import com.se.Tlog.domain.Social.Chat.domain.ChatReadStatus;
 import com.se.Tlog.domain.Social.Chat.repository.jpa.ChatMessageRepository;
 import com.se.Tlog.domain.Social.Chat.repository.jpa.ChatReadStatusRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,11 @@ public class ChatReadStatusService {
     private final ChatReadStatusRepository chatReadStatusRepository;
     private final ChatMessageRepository chatMessageRepository;
 
-    // 추후 작성
+    @Transactional
     public void updateReadStatus(UUID userId, Long roomId, Long lastReadMessageId) {
-
+        ChatReadStatus status = chatReadStatusRepository.findByUserIdAndChatRoomId(userId, roomId);
+        status.updateRead(lastReadMessageId);
+        chatReadStatusRepository.save(status);
     }
 
     public Map<Long, Integer> unreadMessagesCount(UUID userId, List<Long> roomIds) {

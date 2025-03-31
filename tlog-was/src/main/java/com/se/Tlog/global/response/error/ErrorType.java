@@ -43,6 +43,7 @@ public enum ErrorType {
     MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않은 메시지 입니다."),
     TEAM_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 팀입니다."),
     TEAM_USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 팀원입니다."),
+    INVALID_DESTINATION(HttpStatus.NOT_FOUND, "존재하지 않는 구독경로입니다."),
     //데이터 충돌
     ALREADY_EXISTS_TAG(HttpStatus.CONFLICT, "이미 존재하는 태그입니다."),
     ALREADY_EXISTS_DESTINATION(HttpStatus.CONFLICT, "이미 존재하는 여행지입니다."),

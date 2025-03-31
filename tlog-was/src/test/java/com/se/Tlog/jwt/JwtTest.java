@@ -1,15 +1,18 @@
 package com.se.Tlog.jwt;
 
 import com.se.Tlog.domain.User.domain.Role;
+import com.se.Tlog.global.util.jwt.AccessTokenProvider;
 import com.se.Tlog.global.util.jwt.JwtUtil;
+import com.se.Tlog.global.util.jwt.RefreshTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
 
 public class JwtTest {
 
     private JwtUtil jwtUtil;
+    private AccessTokenProvider accessTokenProvider;
+    private RefreshTokenProvider refreshTokenProvider;
 
 
     @BeforeEach
@@ -18,8 +21,6 @@ public class JwtTest {
 
         jwtUtil = new JwtUtil(
                 secretKey,
-                Duration.ofDays(10000),
-                Duration.ofDays(7),
                 "issuer"
         );
     }
@@ -27,8 +28,8 @@ public class JwtTest {
     @Test
     void generateTokenTest(){
 
-        String accessToken = jwtUtil.generateAccessToken("hello", Role.USER.toString());
-        String refreshToken = jwtUtil.generateRefreshToken("hello", Role.USER.toString());
+        String accessToken = accessTokenProvider.generateToken("hello", Role.USER.toString());
+        String refreshToken = refreshTokenProvider.generateToken("hello", Role.USER.toString());
         System.out.println("token = " + accessToken);
         System.out.println("refreshToken = " + refreshToken);
     }

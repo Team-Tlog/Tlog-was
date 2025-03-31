@@ -10,7 +10,8 @@ import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
-import com.se.Tlog.global.util.jwt.JwtUtil;
+import com.se.Tlog.global.util.jwt.AccessTokenProvider;
+import com.se.Tlog.global.util.jwt.RefreshTokenProvider;
 import com.se.Tlog.global.util.redis.RedisProperties;
 import com.se.Tlog.global.util.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,8 @@ import java.util.Optional;
 public class SsoAuthService {
     private final Map<SsoType, SsoService> ssoServiceMap;
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
+    private final AccessTokenProvider accessTokenProvider;
+    private final RefreshTokenProvider refreshTokenProvider;
     private final RedisUtil redisUtil;
 
     public TokenDto login(LoginRequest loginRequest){
@@ -37,10 +39,10 @@ public class SsoAuthService {
         User user = userRepository.findByProviderUserInfo(providerUserInfo)
                 .orElseGet(() -> userRepository.save(User.create(ssoUserInfo)));
 
-        String accessToken = jwtUtil.generateAccessToken(user.getId().toString(), user.getRole().getValue());
-        String refreshToken = jwtUtil.generateRefreshToken(user.getId().toString(), user.getRole().getValue());
+        String accessToken = accessTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue());
+        String refreshToken = refreshTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue());
 
-        redisUtil.save(RedisProperties.REFRESH_TOKEN_PREFIX + user.getId(), refreshToken, jwtUtil.getRefreshTokenDuration());
+        redisUtil.save(RedisProperties.REFRESH_TOKEN_PREFIX + user.getId(), refreshToken, refreshTokenProvider.getRefreshTokenDuration());
 
         return TokenDto.builder()
                 .accessToken(accessToken)
