@@ -2,8 +2,8 @@ package com.se.Tlog.domain.Social.Chat.service;
 
 import com.se.Tlog.domain.Social.Chat.controller.dto.ChatRoomListResponseDto;
 import com.se.Tlog.domain.Social.Chat.controller.dto.ChatRoomResponseDto;
+import com.se.Tlog.domain.Social.Chat.controller.dto.RequestInviteList;
 import com.se.Tlog.domain.Social.Chat.domain.ChatMessage;
-import com.se.Tlog.domain.Social.Chat.domain.ChatReadUsers;
 import com.se.Tlog.domain.Social.Chat.domain.ChatRoom;
 import com.se.Tlog.domain.Social.Chat.domain.ChatRoomUser;
 import com.se.Tlog.domain.Social.Chat.repository.jpa.ChatMessageRepository;
@@ -18,9 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,16 +31,24 @@ public class ChatRoomService {
     private final ChatReadStatusService chatReadStatusService;
 
 
-    public ChatRoomResponseDto create(UUID hostId) {
+    public ChatRoomResponseDto create(UUID hostId, RequestInviteList requestInviteList) {
         ChatRoom chatRoom = ChatRoom.create(hostId);
         chatRoomRepository.save(chatRoom);
-        User host = userRepository.findById(hostId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
 
-        ChatRoomUser chatRoomUser = ChatRoomUser.join(chatRoom,host);
-        chatRoomUserRepository.save(chatRoomUser);
+        Set<UUID> allUserIds = new HashSet<>(requestInviteList.inviteList());
+        allUserIds.add(hostId);
 
-        return ChatRoomResponseDto.from(chatRoom.getId(),chatRoom.getHostId());
+        List<User> users = userRepository.findAllById(allUserIds);
+        if(users.size() != allUserIds.size()){
+            throw new CustomException(ErrorType.NOT_FOUND);
+        }
+
+        List<ChatRoomUser> chatRoomUsers = users.stream()
+                .map(user -> ChatRoomUser.join(chatRoom, user))
+                .toList();
+        chatRoomUserRepository.saveAll(chatRoomUsers);
+
+        return ChatRoomResponseDto.from(chatRoom.getId(),chatRoom.getHostId(),users);
     }
 
     public List<ChatRoomListResponseDto> getRoomList(UUID userId) {
