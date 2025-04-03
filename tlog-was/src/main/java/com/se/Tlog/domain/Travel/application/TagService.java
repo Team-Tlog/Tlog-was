@@ -26,7 +26,7 @@ public class TagService {
     public List<TagRes> getAllTags() {
 
         return tagRepository.findAll().stream()
-                .map(tag -> TagRes.from(tag.getId(), tag.getName()))
+                .map(tag -> TagRes.from(tag.getId(), tag.getName(),tag.isDeleted()))
                 .toList();
     }
 
