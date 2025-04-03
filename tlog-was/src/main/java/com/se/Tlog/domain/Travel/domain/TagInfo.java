@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class TagInfo {
+public class TagInfo { // 여행지가 갖고 있는 태그 정보
     private String id;
     private int weight;
     
     public static TagInfo create(String tagId, int tagWeight, TagRepositoryService validator) {
     	if (!validator.existById(tagId))
-    		new CustomException(ErrorType.NOT_FOUND_TAG);
+    		throw new CustomException(ErrorType.NOT_FOUND_TAG);
     	return new TagInfo(tagId, tagWeight);
     }
 }
