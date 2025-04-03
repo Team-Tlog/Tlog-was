@@ -29,4 +29,13 @@ public class TagController {
                 .ok()
                 .body(SuccessRes.from(tagService.getAllTags()));
     }
+
+    @DeleteMapping("{tagId}")
+    public ResponseEntity<?> deleteTag(@PathVariable("tagId") String tagId) {
+
+        tagService.deleteTag(tagId);
+        return ResponseEntity
+                .status(SuccessType.TAG_DELETE.getStatus())
+                .body(SuccessRes.from(SuccessType.TAG_DELETE));
+    }
 }
