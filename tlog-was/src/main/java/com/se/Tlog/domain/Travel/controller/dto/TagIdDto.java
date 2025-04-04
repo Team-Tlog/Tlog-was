@@ -1,14 +1,12 @@
 package com.se.Tlog.domain.Travel.controller.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class TagIdDto {
-    private String tagId;
-    private int weight;
+public record TagIdDto(
+        String tagId,
+        int weight
+) {
+    public static TagIdDto from(String tagId, int weight) {
+        return new TagIdDto(tagId, weight);
+    }
 }
+
 

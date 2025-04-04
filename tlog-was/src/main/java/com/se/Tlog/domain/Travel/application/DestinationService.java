@@ -22,7 +22,7 @@ public class DestinationService {
     public void createDestination(DestinationDto destinationDto) {
     	Destination.assertValidity(destinationDto.getName(), destinationRepoService);
         List<TagInfo> tagInfoList = destinationDto.getTags().stream()
-                .map(tagIdDto -> TagInfo.create(tagIdDto.getTagId(), tagIdDto.getWeight(), tagRepoService))
+                .map(tagIdDto -> TagInfo.create(tagIdDto.tagId(), tagIdDto.weight(), tagRepoService))
                 .toList();
         Destination destination = Destination.create(
         		destinationDto.getName(),
