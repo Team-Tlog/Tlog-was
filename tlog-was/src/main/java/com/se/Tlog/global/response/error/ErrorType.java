@@ -13,6 +13,7 @@ public enum ErrorType {
     TEAM_NAME_NOT_FOUND(HttpStatus.BAD_REQUEST, "팀 이름이 비어있습니다."),
     TEAM_CANNOT_BE_ORPHAN(HttpStatus.BAD_REQUEST, "팀에 최소 1명 이상의 팀원이 필요합니다."),
     ROLE_MISMATCH(HttpStatus.BAD_REQUEST,"Role 값을 잘못 입력하였습니다."),
+    INVALID_FIREBASE_TOKEN(HttpStatus.BAD_REQUEST,"클라이언트 FCM Token이 유효하지 않습니다!"),
     
     // 사용자로부터 소셜 로그인 인증 실패
     SSO_LOGIN_FAIL(HttpStatus.BAD_REQUEST,"외부 소셜 로그인이 취소되거나 실패했습니다."),
@@ -54,6 +55,7 @@ public enum ErrorType {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. 서버 팀으로 연락주시기 바랍니다."),
     NO_MORE_SPACE_FOR_INVITE_CODE(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. 팀 초대 코드를 더 이상 생성할 수 없습니다."),
     INTERNAL_ERROR_BY_INVITE_CODE(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. 팀 초대 코드 에러."),
+    FIREBASE_INITIALIZE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. Firebase 라이브러리 초기화 에러."),
     
     // 외부 소셜 로그인 처리 중 에러
     SSO_ACCESSTOKEN_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "외부 인증 서버로부터 인증을 받는데 실패했습니다."),
