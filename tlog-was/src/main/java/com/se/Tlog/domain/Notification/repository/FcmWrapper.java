@@ -1,6 +1,7 @@
 package com.se.Tlog.domain.Notification.repository;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -34,7 +35,7 @@ public class FcmWrapper implements InitializingBean {
 	@Autowired
 	private InvalidTokenHandler invalidTokenHandler;
 	
-	@Value("${SERVICE_ACCOUNT_KEY_PATH}")
+	@Value("${firebase-env.key-path}")
 	private String SERVICE_ACCOUNT_KEY_PATH;
 
 	@Override
@@ -46,6 +47,9 @@ public class FcmWrapper implements InitializingBean {
 	private static final int MAX_MESSAGE_COUNT = 500;
 	
 	private void initializeFirebaseApp() {
+		if (!FirebaseApp.getApps().isEmpty())
+			return;
+		
 		try {
 			FileInputStream serviceAccount = new FileInputStream(SERVICE_ACCOUNT_KEY_PATH);
 			FirebaseOptions options = FirebaseOptions.builder()
@@ -54,7 +58,10 @@ public class FcmWrapper implements InitializingBean {
 
 			FirebaseApp.initializeApp(options);
 		} catch (Exception e) {
-			throw new CustomException(ErrorType.FIREBASE_INITIALIZE_FAIL);
+			if (e.getClass() == FileNotFoundException.class)
+				throw new CustomException(ErrorType.FIREBASE_INITIALIZE_FAIL_KEY_NOT_FOUND);
+			else
+				throw new CustomException(ErrorType.FIREBASE_INITIALIZE_FAIL);
 		}		
 	}
 	

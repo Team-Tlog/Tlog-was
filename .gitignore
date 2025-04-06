@@ -9,6 +9,9 @@ build/
 .env.*
 *.env
 
+## firebase key ##
+**/firebaseKey.json
+
 ### STS ###
 .apt_generated
 .classpath

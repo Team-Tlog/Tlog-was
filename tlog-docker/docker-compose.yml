@@ -1,5 +1,9 @@
 version: '3.8'
 
+secrets:
+  firebase_key:
+    file: ${FIREBASE_SERVICE_ACCOUNT_KEY_PATH}
+
 services:
   spring:
     container_name: tlog-spring
@@ -28,6 +32,9 @@ services:
       SSO_GOOGLE_CLIENT_ID: ${SSO_GOOGLE_CLIENT_ID}
       SSO_GOOGLE_SECRET: ${SSO_GOOGLE_SECRET}
       SSO_CALLBACK_URL: ${SSO_CALLBACK_URL}
+      FIREBASE_SERVICE_ACCOUNT_KEY_PATH: /run/secrets/firebase_key # Docker Secret으로 적용
+    secrets:
+      - firebase_key
     networks:
       - tlog-network
   mysql:
