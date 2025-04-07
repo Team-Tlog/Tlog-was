@@ -5,6 +5,8 @@ import com.se.Tlog.domain.Travel.controller.dto.TagDto;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,18 +26,19 @@ public class TagController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllTags() {
+    public ResponseEntity<?> getActiveAllTags(@PageableDefault(size = 10)Pageable pageable) {
         return ResponseEntity
                 .ok()
-                .body(SuccessRes.from(tagService.getAllTags()));
+                .body(SuccessRes.from(tagService.getAllActiveTags(pageable)));
     }
 
-    @DeleteMapping("{tagId}")
-    public ResponseEntity<?> deleteTag(@PathVariable("tagId") String tagId) {
+    @PutMapping("{tagId}")
+    public ResponseEntity<?> deleteTag(@PathVariable("tagId") String tagId,
+                                       @RequestParam boolean isDeleted) {
 
-        tagService.deleteTag(tagId);
+        tagService.updateTagDeletedStatus(tagId,isDeleted);
         return ResponseEntity
-                .status(SuccessType.TAG_DELETE.getStatus())
-                .body(SuccessRes.from(SuccessType.TAG_DELETE));
+                .status(SuccessType.TAG_UPDATE.getStatus())
+                .body(SuccessRes.from(SuccessType.TAG_UPDATE));
     }
 }

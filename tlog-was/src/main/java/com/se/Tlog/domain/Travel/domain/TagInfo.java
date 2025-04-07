@@ -15,10 +15,11 @@ import lombok.NoArgsConstructor;
 public class TagInfo { // 여행지가 갖고 있는 태그 정보
     private String id;
     private int weight;
+    private boolean isDeleted;
     
     public static TagInfo create(String tagId, int tagWeight, TagRepositoryService validator) {
     	if (!validator.existById(tagId))
     		throw new CustomException(ErrorType.NOT_FOUND_TAG);
-    	return new TagInfo(tagId, tagWeight);
+        return new TagInfo(tagId, tagWeight, false);
     }
 }
