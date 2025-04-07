@@ -15,7 +15,7 @@ public enum SuccessType {
     LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 성공하였습니다."),
     REISSUE_TOKEN_SUCCESS(HttpStatus.OK, "토큰 재발급에 성공하였습니다."),
     AVAILABLE_ID(HttpStatus.OK, "사용가능한 아이디입니다."),
-    TAG_DELETE(HttpStatus.OK, "태그 삭제에 성공하였습니다." ),
+    TAG_UPDATE(HttpStatus.OK, "태그 상태 업데이트에 성공하였습니다." ),
 
     // 201
     CREATED(HttpStatus.CREATED, "등록을 성공하였습니다."),

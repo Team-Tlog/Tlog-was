@@ -46,17 +46,17 @@ public class TagService {
     }
 
 
-    public void deleteTag(String tagId) {
+    public void updateTagDeletedStatus(String tagId, boolean isDeleted) {
 
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
-        tag.markAsDeleted();
+        tag.updateTagDeleted(isDeleted);
         tagRepository.save(tag);
 
         MongoCollection<Document> collection = mongoTemplate.getCollection("destinations");
 
         Bson filter = Filters.eq("tags._id", new ObjectId(tagId));
-        Bson update = Updates.set("tags.$[elem].isDeleted", true);
+        Bson update = Updates.set("tags.$[elem].isDeleted", isDeleted);
 
         UpdateOptions options = new UpdateOptions()
                 .arrayFilters(List.of(

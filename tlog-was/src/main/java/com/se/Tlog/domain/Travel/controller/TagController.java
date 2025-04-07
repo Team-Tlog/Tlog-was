@@ -32,12 +32,13 @@ public class TagController {
                 .body(SuccessRes.from(tagService.getAllActiveTags(pageable)));
     }
 
-    @DeleteMapping("{tagId}")
-    public ResponseEntity<?> deleteTag(@PathVariable("tagId") String tagId) {
+    @PutMapping("{tagId}")
+    public ResponseEntity<?> deleteTag(@PathVariable("tagId") String tagId,
+                                       @RequestParam boolean isDeleted) {
 
-        tagService.deleteTag(tagId);
+        tagService.updateTagDeletedStatus(tagId,isDeleted);
         return ResponseEntity
-                .status(SuccessType.TAG_DELETE.getStatus())
-                .body(SuccessRes.from(SuccessType.TAG_DELETE));
+                .status(SuccessType.TAG_UPDATE.getStatus())
+                .body(SuccessRes.from(SuccessType.TAG_UPDATE));
     }
 }

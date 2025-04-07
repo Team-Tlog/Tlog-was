@@ -31,7 +31,7 @@ public class Tag {
         return new Tag(name, weight);
 	}
 
-	public void markAsDeleted() {
-		this.isDeleted = true;
+	public void updateTagDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 }
