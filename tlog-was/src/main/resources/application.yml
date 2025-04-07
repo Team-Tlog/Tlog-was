@@ -102,6 +102,9 @@ sso:
   clientSecret:
     google: ${SSO_GOOGLE_SECRET}
 
+firebase-env:
+  key-path: ${FIREBASE_SERVICE_ACCOUNT_KEY_PATH}
+
 # springdoc swagger
 springdoc:
   api-docs:

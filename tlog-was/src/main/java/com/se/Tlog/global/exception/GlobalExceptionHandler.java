@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static com.se.Tlog.global.response.error.ErrorType.INTERNAL_SERVER_ERROR;
 
+import java.util.concurrent.RejectedExecutionException;
 
 @RestControllerAdvice
 @Slf4j
@@ -19,6 +20,15 @@ public class GlobalExceptionHandler {
         ErrorType errorType = e.getErrorType();
         ErrorRes error = ErrorRes.of(errorType.getStatusCode(), errorType.getMessage());
         log.error("Error occurred : [errorCode={}, message={}]",e.getClass(), e.getMessage(),e);;
+        return ResponseEntity.status(error.status()).body(error);
+    }
+    
+    // 비동기 요청 거부 에러
+    @ExceptionHandler(RejectedExecutionException.class)
+    protected ResponseEntity<?> handleRejectedExecutionException(RejectedExecutionException e) {
+    	ErrorRes error = ErrorRes.of(INTERNAL_SERVER_ERROR.getStatusCode(), INTERNAL_SERVER_ERROR.getMessage());
+    	log.error("Error occurred : Task rejected - Server Thread Overflow!!");
+    	log.error("\t\t : [errorCode={}, message={}]", e.getClass(), e.getMessage(), e);
         return ResponseEntity.status(error.status()).body(error);
     }
 
