@@ -19,7 +19,7 @@ public class Tag {
 	private String id;
 	private String name;
 
-	private boolean deleted = false;
+	private boolean isDeleted = false;
 
 	private Tag(String name, int weight) {
 		this.name = name;
@@ -32,6 +32,6 @@ public class Tag {
 	}
 
 	public void markAsDeleted() {
-		this.deleted = true;
+		this.isDeleted = true;
 	}
 }
