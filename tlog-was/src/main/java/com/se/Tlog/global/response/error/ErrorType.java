@@ -45,11 +45,13 @@ public enum ErrorType {
     TEAM_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 팀입니다."),
     TEAM_USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 팀원입니다."),
     INVALID_DESTINATION(HttpStatus.NOT_FOUND, "존재하지 않는 구독경로입니다."),
+    DESTINATION_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 여행지입니다."),
     //데이터 충돌
     ALREADY_EXISTS_TAG(HttpStatus.CONFLICT, "이미 존재하는 태그입니다."),
     ALREADY_EXISTS_DESTINATION(HttpStatus.CONFLICT, "이미 존재하는 여행지입니다."),
     ALREADY_OWN_REWARD(HttpStatus.CONFLICT, "이미 보유하고 있는 보상입니다."),
     ALREADY_EXIST_IN_TEAM(HttpStatus.CONFLICT, "이미 팀에 속해있는 유저입니다."),
+    ALREADY_SCRAPED_DESTINATION(HttpStatus.CONFLICT, "이미 스크랩 목록에 추가된 여행지입니다."),
     // 서버 에러
     // 500
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. 서버 팀으로 연락주시기 바랍니다."),
