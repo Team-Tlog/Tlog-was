@@ -29,17 +29,16 @@ public class WishlistService {
 	private final DestinationRepository destinationRepository;
 	
 	private void validateOwner(WishlistOwnerDto ownerDto, WishlistType listType) {
-		if (OwnerType.USER == ownerDto.ownerType()) {
+		switch (ownerDto.ownerType()) {
+		case USER:
 			if (!userRepository.existsById(ownerDto.ownerId()))
 				throw new CustomException(ErrorType.USER_NOT_FOUND);
-		}
-		else if (OwnerType.TEAM == ownerDto.ownerType()) {
+		case TEAM:
 			if (!teamRepository.existsById(ownerDto.ownerId()))
 				throw new CustomException(ErrorType.TEAM_NOT_FOUND);
 			if (WishlistType.SCRAP == listType)
 				throw new CustomException(ErrorType.SCRAP_UNSUPPORTED_TO_TEAM);
-		}
-		else {
+		default:
 			log.error("장바구니 주인 타입" + ownerDto.ownerType().toString() +"에 대한 처리가 구현되지 않았습니다!");
 			throw new CustomException(ErrorType.INTERNAL_SERVER_ERROR);
 		}
