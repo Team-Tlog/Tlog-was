@@ -26,6 +26,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+      
+# springdoc swagger
+springdoc:
+  api-docs:
+    # enable /v3/api-docs endpoint
+    enabled: true
+  swagger-ui:
+    # enable the swagger-ui
+    enabled: true
     
 ---
 
@@ -39,6 +48,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+      
+# springdoc swagger
+springdoc:
+  api-docs:
+    # disable /v3/api-docs endpoint
+    enabled: false
+  swagger-ui:
+    # disable swagger-ui
+    enabled: false
 
 ---
 
@@ -104,12 +122,3 @@ sso:
 
 firebase-env:
   key-path: ${FIREBASE_SERVICE_ACCOUNT_KEY_PATH}
-
-# springdoc swagger
-springdoc:
-  api-docs:
-    # false : Disabling the /v3/api-docs endpoint
-    enabled: true
-  swagger-ui:
-    # false : Disabling the swagger-ui
-    enabled: true
