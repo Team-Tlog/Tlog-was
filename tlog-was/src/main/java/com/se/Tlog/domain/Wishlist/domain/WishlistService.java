@@ -2,6 +2,7 @@ package com.se.Tlog.domain.Wishlist.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -53,11 +54,11 @@ public class WishlistService {
 	public List<Destination> getWishlistData(WishlistOwnerDto ownerDto, WishlistType wishlistType) {
 		validateOwner(ownerDto, wishlistType);
 		
-		Wishlist wishlist = wishlistRepository.
+		Optional<Wishlist> wishlist = wishlistRepository.
 				findByOwnerIdAndOwnerType(ownerDto.ownerId(), ownerDto.ownerType());
 		
-		if (wishlist != null)
-			return destinationRepository.findAllById(wishlist.getWishlistItems(wishlistType));
+		if (wishlist.isPresent())
+			return destinationRepository.findAllById(wishlist.get().getWishlistItems(wishlistType));
 		else
 			return new ArrayList<Destination>();
 	}
@@ -80,9 +81,8 @@ public class WishlistService {
 			throw new CustomException(ErrorType.DESTINATION_NOT_FOUND);
 
 		Wishlist wishlist = wishlistRepository.
-				findByOwnerIdAndOwnerType(ownerDto.ownerId(), ownerDto.ownerType());
-		if (wishlist == null)
-			wishlist = Wishlist.create(ownerDto.ownerType(), ownerDto.ownerId());
+				findByOwnerIdAndOwnerType(ownerDto.ownerId(), ownerDto.ownerType())
+				.orElseGet(() -> Wishlist.create(ownerDto.ownerType(), ownerDto.ownerId()));
 		
 		if (UpdateType.ADD == updateType)
 			wishlist.addDestination(destinationId, wishlistType);
