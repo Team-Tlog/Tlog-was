@@ -3,7 +3,6 @@ package com.se.Tlog.domain.Wishlist.contoller;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,8 +37,7 @@ import lombok.RequiredArgsConstructor;
 		name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
 		scopes = {"scope1", "scope2"} )
 public class ShoppingCartController {
-	@Autowired
-	private ShoppingCartService shoppingCartService;
+	private final ShoppingCartService shoppingCartService;
 	
 	@GetMapping("/user/{userId}")
 	@Operation (
