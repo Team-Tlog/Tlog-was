@@ -33,11 +33,13 @@ public class WishlistService {
 		case USER:
 			if (!userRepository.existsById(ownerDto.ownerId()))
 				throw new CustomException(ErrorType.USER_NOT_FOUND);
+			return;
 		case TEAM:
 			if (!teamRepository.existsById(ownerDto.ownerId()))
 				throw new CustomException(ErrorType.TEAM_NOT_FOUND);
 			if (WishlistType.SCRAP == listType)
 				throw new CustomException(ErrorType.SCRAP_UNSUPPORTED_TO_TEAM);
+			return;
 		default:
 			log.error("장바구니 주인 타입" + ownerDto.ownerType().toString() +"에 대한 처리가 구현되지 않았습니다!");
 			throw new CustomException(ErrorType.INTERNAL_SERVER_ERROR);
