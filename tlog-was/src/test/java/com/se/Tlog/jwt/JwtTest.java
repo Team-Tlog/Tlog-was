@@ -6,12 +6,16 @@ import com.se.Tlog.global.util.jwt.JwtUtil;
 import com.se.Tlog.global.util.jwt.RefreshTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 
+@SpringBootTest
 public class JwtTest {
 
-    private JwtUtil jwtUtil;
+    @Autowired
     private AccessTokenProvider accessTokenProvider;
+    @Autowired
     private RefreshTokenProvider refreshTokenProvider;
 
 
