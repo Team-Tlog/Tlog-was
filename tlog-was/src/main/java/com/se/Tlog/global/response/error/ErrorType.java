@@ -14,6 +14,7 @@ public enum ErrorType {
     TEAM_CANNOT_BE_ORPHAN(HttpStatus.BAD_REQUEST, "팀에 최소 1명 이상의 팀원이 필요합니다."),
     ROLE_MISMATCH(HttpStatus.BAD_REQUEST,"Role 값을 잘못 입력하였습니다."),
     INVALID_FIREBASE_TOKEN(HttpStatus.BAD_REQUEST,"클라이언트 FCM Token이 유효하지 않습니다!"),
+    SCRAP_UNSUPPORTED_TO_TEAM(HttpStatus.BAD_REQUEST, "팀에는 스크랩 기능을 지원하지 않습니다!"),
     
     // 사용자로부터 소셜 로그인 인증 실패
     SSO_LOGIN_FAIL(HttpStatus.BAD_REQUEST,"외부 소셜 로그인이 취소되거나 실패했습니다."),
@@ -45,6 +46,9 @@ public enum ErrorType {
     TEAM_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 팀입니다."),
     TEAM_USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 팀원입니다."),
     INVALID_DESTINATION(HttpStatus.NOT_FOUND, "존재하지 않는 구독경로입니다."),
+    DESTINATION_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 여행지입니다."),
+    SCRAP_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 여행지가 스크랩 목록에 없습니다."),
+    SHOPCART_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 여행지가 장바구니에 없습니다."),
     //데이터 충돌
     ALREADY_EXISTS_TAG(HttpStatus.CONFLICT, "이미 존재하는 태그입니다."),
     ALREADY_EXISTS_DESTINATION(HttpStatus.CONFLICT, "이미 존재하는 여행지입니다."),
