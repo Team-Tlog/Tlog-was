@@ -4,26 +4,33 @@ import com.se.Tlog.domain.User.domain.Role;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
 import com.se.Tlog.global.util.jwt.JwtUtil;
 import com.se.Tlog.global.util.jwt.RefreshTokenProvider;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 
 
+@SpringBootTest
 public class JwtTest {
 
-    private JwtUtil jwtUtil;
+    @Autowired
     private AccessTokenProvider accessTokenProvider;
+    @Autowired
     private RefreshTokenProvider refreshTokenProvider;
 
-
-    @BeforeEach
-    void setup() {
-        String secretKey = "GjCU1g8/AbJhSzj4McaCKa7Amu+Fz1N4w8jJfZanEIk="; // 테스트용 키
-
-        jwtUtil = new JwtUtil(
-                secretKey,
-                "issuer"
-        );
-    }
+	@TestConfiguration
+	static class JwtTestConfig {
+		private static String secretKey = "GjCU1g8/AbJhSzj4McaCKa7Amu+Fz1N4w8jJfZanEIk="; // 테스트용 키
+		
+		@Bean
+		public static JwtUtil jwtUtil() {
+			return new JwtUtil(
+	                secretKey,
+	                "issuer"
+	        );
+		}
+	}
 
     @Test
     void generateTokenTest(){
