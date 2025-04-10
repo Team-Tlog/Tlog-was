@@ -41,7 +41,7 @@ public class TagService {
     }
 
     public void createTag(TagDto tagDto) {
-    	Tag newTag = Tag.createTag(tagDto.getName(), 0, tagRepo);
+    	Tag newTag = Tag.createTag(tagDto.name(), 0, tagRepo);
         tagRepository.save(newTag);
     }
 
@@ -49,7 +49,7 @@ public class TagService {
     public void updateTagDeletedStatus(String tagId, boolean isDeleted) {
 
         Tag tag = tagRepository.findById(tagId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_TAG));
         tag.updateTagDeleted(isDeleted);
         tagRepository.save(tag);
 
