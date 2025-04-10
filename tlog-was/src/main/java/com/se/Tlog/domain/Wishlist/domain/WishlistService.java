@@ -6,14 +6,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
 import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
-import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.domain.Wishlist.domain.dto.WishlistOwnerDto;
 import com.se.Tlog.domain.Wishlist.repository.mongo.WishlistRepository;
-import com.se.Tlog.global.exception.CustomException;
-import com.se.Tlog.global.response.error.ErrorType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,27 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class WishlistService {
 	private final WishlistRepository wishlistRepository;
-	private final UserRepository userRepository;
-	private final TeamRepository teamRepository;
 	private final DestinationRepository destinationRepository;
-	
-	private void validateOwner(WishlistOwnerDto ownerDto, WishlistType listType) {
-		switch (ownerDto.ownerType()) {
-		case USER:
-			if (!userRepository.existsById(ownerDto.ownerId()))
-				throw new CustomException(ErrorType.USER_NOT_FOUND);
-			return;
-		case TEAM:
-			if (!teamRepository.existsById(ownerDto.ownerId()))
-				throw new CustomException(ErrorType.TEAM_NOT_FOUND);
-			if (WishlistType.SCRAP == listType)
-				throw new CustomException(ErrorType.SCRAP_UNSUPPORTED_TO_TEAM);
-			return;
-		default:
-			log.error("장바구니 주인 타입" + ownerDto.ownerType().toString() +"에 대한 처리가 구현되지 않았습니다!");
-			throw new CustomException(ErrorType.INTERNAL_SERVER_ERROR);
-		}
-	}
+	private final WishlistServiceValidator serviceValidator;
 	
 	/**
 	 * 위시리스트(스크랩/장바구니 등) 항목을 반환합니다.
@@ -53,11 +30,11 @@ public class WishlistService {
 	 * @return
 	 */
 	public List<Destination> getWishlistData(WishlistOwnerDto ownerDto, WishlistType wishlistType) {
-		validateOwner(ownerDto, wishlistType);
+		serviceValidator.validateOwner(ownerDto);
+		serviceValidator.validateWishlistType(ownerDto.ownerType(), wishlistType);
 		
 		Optional<Wishlist> wishlist = wishlistRepository.
 				findByOwnerIdAndOwnerType(ownerDto.ownerId(), ownerDto.ownerType());
-		
 		if (wishlist.isPresent())
 			return destinationRepository.findAllById(wishlist.get().getWishlistItems(wishlistType));
 		else
@@ -76,10 +53,10 @@ public class WishlistService {
 			WishlistOwnerDto ownerDto, 
 			WishlistType wishlistType, 
 			String destinationId) {
-		validateOwner(ownerDto, wishlistType);
-		if (UpdateType.ADD == updateType &&
-				!destinationRepository.existsById(destinationId))
-			throw new CustomException(ErrorType.DESTINATION_NOT_FOUND);
+		serviceValidator.validateOwner(ownerDto);
+		serviceValidator.validateWishlistType(ownerDto.ownerType(), wishlistType);
+		if (UpdateType.ADD == updateType)
+			serviceValidator.validateDestination(destinationId);
 
 		Wishlist wishlist = wishlistRepository.
 				findByOwnerIdAndOwnerType(ownerDto.ownerId(), ownerDto.ownerType())
