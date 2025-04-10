@@ -10,4 +10,5 @@ import com.se.Tlog.domain.Wishlist.domain.OwnerType;
 
 public interface WishlistRepository extends MongoRepository<Wishlist, String> {
 	Optional<Wishlist> findByOwnerIdAndOwnerType(UUID ownerId, OwnerType ownerType);
+	int deleteByOwnerIdAndOwnerType(UUID ownerId, OwnerType ownerType);
 }
