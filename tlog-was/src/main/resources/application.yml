@@ -94,6 +94,18 @@ spring:
       hibernate:
         format_sql: true
         show-sql: true
+  rabbitmq:
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    virtual-host: ${RABBITMQ_VIRTUAL_HOST}
+  custom:
+    rabbitmq:
+      chat:
+        queue: chat.queue
+        exchange: chat.exchange
+        routing-key: recipient.*
 
 # 🔹 로깅 레벨 추가
 logging:
