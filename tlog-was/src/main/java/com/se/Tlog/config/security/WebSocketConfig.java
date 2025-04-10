@@ -1,4 +1,4 @@
-package com.se.Tlog.config;
+package com.se.Tlog.config.security;
 
 
 import com.se.Tlog.global.security.handler.HttpHandShakeInterceptor;

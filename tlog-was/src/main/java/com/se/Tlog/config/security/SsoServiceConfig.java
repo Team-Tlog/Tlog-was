@@ -1,4 +1,4 @@
-package com.se.Tlog.config;
+package com.se.Tlog.config.security;
 
 import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.repository.api.SsoOauthManager;

@@ -1,4 +1,4 @@
-package com.se.Tlog.config;
+package com.se.Tlog.config.cors;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

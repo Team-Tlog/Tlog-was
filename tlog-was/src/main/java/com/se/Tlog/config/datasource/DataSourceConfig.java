@@ -1,4 +1,4 @@
-package com.se.Tlog.config;
+package com.se.Tlog.config.datasource;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;

@@ -1,4 +1,4 @@
-package com.se.Tlog.config;
+package com.se.Tlog.config.async;
 
 import java.util.concurrent.Executor;
 

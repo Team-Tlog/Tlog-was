@@ -1,4 +1,4 @@
-package com.se.Tlog.config;
+package com.se.Tlog.config.openapi;
 
 import org.springframework.context.annotation.Configuration;
 
