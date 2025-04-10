@@ -40,7 +40,7 @@ public class ChatRoomService {
 
         List<User> users = userRepository.findAllById(allUserIds);
         if(users.size() != allUserIds.size()){
-            throw new CustomException(ErrorType.NOT_FOUND);
+            throw new CustomException(ErrorType.INVITE_USER_NOT_FOUND);
         }
 
         List<ChatRoomUser> chatRoomUsers = users.stream()
