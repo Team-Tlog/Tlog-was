@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.Social.Chat.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.se.Tlog.domain.User.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,6 +26,8 @@ public class ChatMessage {
     private ChatRoom chatRoom;
 
     private String content;
+
+    @JsonProperty("checked")
     private boolean isChecked;  // 메시지 확인여부
 
     private LocalDateTime sendAt;

@@ -23,20 +23,22 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final ChatReadUsersRepository chatReadUsersRepository;
+    private final RabbitPublisher rabbitPublisher;
 
     @Transactional
-    public ChatMessage sendChatMessage(ChatMessageRequestDto chatMessageRequestDto) {
+    public void sendChatMessage(ChatMessageRequestDto chatMessageRequestDto) {
         User sender = userRepository.findById(chatMessageRequestDto.senderId())
                 .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
         ChatRoom chatRoom = chatRoomRepository.findById(chatMessageRequestDto.chatRoomId())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
 
         ChatMessage chatMessage = ChatMessage.create(sender, chatRoom, chatMessageRequestDto.content());
-        chatMessageRepository.save(chatMessage);
 
         chatRoom.modifyLastMessage(chatMessage.getId());
 
-        return chatMessage;
+        String routingKey = "recipient." + chatRoom.getId();
+        rabbitPublisher.publish(routingKey, chatMessage);
+
     }
 
     @Transactional

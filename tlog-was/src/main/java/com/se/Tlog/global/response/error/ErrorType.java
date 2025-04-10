@@ -41,7 +41,7 @@ public enum ErrorType {
     INVALID_TBTI_CATEGORY(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리 입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 사용자 입니다."),
     ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 관리자 입니다."),
-    ROOM_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 채팅방 입니다."),
+    CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 채팅방 입니다."),
     MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않은 메시지 입니다."),
     TEAM_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 팀입니다."),
     TEAM_USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 팀원입니다."),
