@@ -15,7 +15,7 @@ public enum ErrorType {
     ROLE_MISMATCH(HttpStatus.BAD_REQUEST,"Role 값을 잘못 입력하였습니다."),
     INVALID_FIREBASE_TOKEN(HttpStatus.BAD_REQUEST,"클라이언트 FCM Token이 유효하지 않습니다!"),
     SCRAP_UNSUPPORTED_TO_TEAM(HttpStatus.BAD_REQUEST, "팀에는 스크랩 기능을 지원하지 않습니다!"),
-    
+    INVITE_USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "초대하려는 유저 중 존재하지 않는 유저가 있습니다."),
     // 사용자로부터 소셜 로그인 인증 실패
     SSO_LOGIN_FAIL(HttpStatus.BAD_REQUEST,"외부 소셜 로그인이 취소되거나 실패했습니다."),
     
