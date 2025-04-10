@@ -1,6 +1,6 @@
 package com.se.Tlog.domain.Social.Chat.service;
 
-import com.se.Tlog.config.RabbitMqChatProperties;
+import com.se.Tlog.config.rabbitmq.RabbitMqChatProperties;
 import com.se.Tlog.domain.Social.Chat.domain.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
