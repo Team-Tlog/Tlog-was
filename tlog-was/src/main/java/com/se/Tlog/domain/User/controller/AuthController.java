@@ -1,5 +1,7 @@
 package com.se.Tlog.domain.User.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,6 +63,20 @@ public class AuthController {
 	}
 
 	@PostMapping("login/user")
+	@Operation(
+			summary = "SSO 로그인 요청",
+			description = "카카오 또는 구글 액세스 토큰을 이용하여 사용자 로그인을 처리합니다.",
+			tags = {"SSO Authentication"},
+			requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+					description = "SSO 로그인 요청 데이터",
+					required = true
+			),
+			responses = {
+					@ApiResponse(responseCode = "200", description = "로그인 성공 (액세스 토큰 및 리프레시 토큰 발급)"),
+					@ApiResponse(responseCode = "500", description = "서버 내부 오류"),
+					@ApiResponse(responseCode = "501", description = "현재 해당 소셜 로그인 방식은 아직 지원되지 않습니다.")
+			}
+	)
 	public ResponseEntity<?> login(@RequestBody LoginRequest request){
 
 		TokenDto tokenDto = ssoService.login(request);
