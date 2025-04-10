@@ -9,6 +9,8 @@ import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
 import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -51,7 +53,8 @@ public class DestinationService {
     }
 
     public DestinationRes getDestinationById(String id) {
-        Destination destination = destinationRepository.findById(id).orElseThrow(() -> new RuntimeException("Destination not found"));
+        Destination destination = destinationRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorType.DESTINATION_NOT_FOUND));
 
         return DestinationRes.from(destination);
     }
