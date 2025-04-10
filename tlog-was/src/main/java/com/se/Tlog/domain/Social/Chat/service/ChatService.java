@@ -45,7 +45,7 @@ public class ChatService {
     public void checkMessage(ChatMessageReadDto chatMessageCheckDto) {
         User user = userRepository.findById(chatMessageCheckDto.readerId())
                 .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
-        ChatMessage chatMessage = chatMessageRepository.findById(chatMessageCheckDto.lastReadMessageId())
+        ChatMessage chatMessage = chatMessageRepository.findById(chatMessageCheckDto.messageId())
                 .orElseThrow(() -> new CustomException(ErrorType.MESSAGE_NOT_FOUND));
 
         Boolean alreadyRead = chatReadUsersRepository.existsByUserAndMessage(user, chatMessage);
