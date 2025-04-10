@@ -4,6 +4,9 @@ import org.springframework.stereotype.Service;
 
 import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
 import com.se.Tlog.domain.User.domain.User;
+import com.se.Tlog.domain.Wishlist.domain.OwnerType;
+import com.se.Tlog.domain.Wishlist.domain.WishlistService;
+import com.se.Tlog.domain.Wishlist.domain.dto.WishlistOwnerDto;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 
@@ -16,9 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class TeamDomainService {
 	private final TeamRepositoryService repoService;
+	private final WishlistService wishlistService;
 	
 	public void deleteTeamData(Team team) {
 		// 팀 삭제시 각종 처리...
+		wishlistService.deleteWishlist(new WishlistOwnerDto(OwnerType.TEAM, team.getId()));
 		
 		repoService.deleteTeamUsers(team.getId());
 	}
