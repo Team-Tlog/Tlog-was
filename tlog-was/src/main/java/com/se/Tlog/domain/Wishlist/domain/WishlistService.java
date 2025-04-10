@@ -68,4 +68,12 @@ public class WishlistService {
 			wishlist.deleteDestination(destinationId, wishlistType);
 		wishlistRepository.save(wishlist);
 	}
+	
+	/**
+	 * 위시리스트를 제거합니다.
+	 * @param ownerDto
+	 */
+	public void deleteWishlist(WishlistOwnerDto ownerDto) {
+		wishlistRepository.deleteByOwnerIdAndOwnerType(ownerDto.ownerId(), ownerDto.ownerType());
+	}
 }
