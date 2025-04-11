@@ -1,6 +1,6 @@
 package com.se.Tlog;
 
-import com.se.Tlog.config.RabbitMqChatProperties;
+import com.se.Tlog.config.rabbitmq.RabbitMqChatProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

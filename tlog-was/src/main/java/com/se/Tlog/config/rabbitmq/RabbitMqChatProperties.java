@@ -1,4 +1,4 @@
-package com.se.Tlog.config;
+package com.se.Tlog.config.rabbitmq;
 
 import lombok.Getter;
 import lombok.Setter;

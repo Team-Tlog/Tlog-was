@@ -1,4 +1,4 @@
-package com.se.Tlog.config;
+package com.se.Tlog.config.security;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

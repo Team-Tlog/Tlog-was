@@ -14,6 +14,6 @@ public interface TagRepository extends MongoRepository<Tag, String> {
 
     boolean existsByName(String name);
 
-    @Query("{'tags.isDeleted': false}")
+    @Query("{'isDeleted': false}")
     Page<Tag> findAllByActiveTags(Pageable pageable);
 }
