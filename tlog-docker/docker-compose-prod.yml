@@ -1,0 +1,67 @@
+version: '3.8'
+
+secrets:
+  firebase_key:
+    file: ${FIREBASE_SERVICE_ACCOUNT_KEY_PATH}
+
+services:
+  spring:
+    container_name: tlog-spring
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - rabbitmq
+    environment:
+      # prod / dev 모드 설정
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      MYSQL_URL: ${MYSQL_URL}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MONGO_URI: ${MONGO_URI}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_ACCESS_EXPIRATION: ${JWT_ACCESS_EXPIRATION}
+      JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
+      SSO_KAKAO_CLIENT_ID: ${SSO_KAKAO_CLIENT_ID}
+      SSO_GOOGLE_CLIENT_ID: ${SSO_GOOGLE_CLIENT_ID}
+      SSO_GOOGLE_SECRET: ${SSO_GOOGLE_SECRET}
+      SSO_CALLBACK_URL: ${SSO_CALLBACK_URL}
+      FIREBASE_SERVICE_ACCOUNT_KEY_PATH: /run/secrets/firebase_key # Docker Secret으로 적용
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_VIRTUAL_HOST: ${RABBITMQ_VIRTUAL_HOST}
+    secrets:
+      - firebase_key
+    networks:
+      - tlog-network
+  redis:
+    container_name: redis-server
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - tlog-network
+  rabbitmq:
+    container_name: rabbitmq-server
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"   # AMQP 프로토콜 포트
+      - "15672:15672" # 관리 콘솔 포트
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    networks:
+      - tlog-network
+
+networks:
+  tlog-network:
+    driver: bridge
+

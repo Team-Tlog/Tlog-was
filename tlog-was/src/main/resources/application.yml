@@ -53,10 +53,10 @@ spring:
 springdoc:
   api-docs:
     # disable /v3/api-docs endpoint
-    enabled: false
+    enabled: true
   swagger-ui:
     # disable swagger-ui
-    enabled: false
+    enabled: true
 
 ---
 
