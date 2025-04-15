@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.User.controller;
 
+import com.se.Tlog.global.util.jwt.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +24,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-	private final AuthenticationService authService;
-	private final SsoAuthService ssoService;
+	private final AuthenticationService authenticationService;
+	private final SsoAuthService ssoAuthService;
+	private final JwtUtil jwtUtil;
 
 	@GetMapping("/sso/login/kakao")
 	public ResponseEntity<SuccessRes<SsoLoginRequest>> getSsoLoginByKakao() {
 		return ResponseEntity.ok(
-				SuccessRes.from(authService.getSsoLoginRequest(SsoType.KAKAO)));
+				SuccessRes.from(authenticationService.getSsoLoginRequest(SsoType.KAKAO)));
 	}
 
 	@GetMapping("/sso/login/google")
 	public ResponseEntity<SuccessRes<SsoLoginRequest>> getSsoLoginByGoogle() {
 		return ResponseEntity.ok(
-				SuccessRes.from(authService.getSsoLoginRequest(SsoType.GOOGLE)));
+				SuccessRes.from(authenticationService.getSsoLoginRequest(SsoType.GOOGLE)));
 	}
 
 	@GetMapping("/sso/callback/kakao")
@@ -55,8 +57,8 @@ public class AuthController {
 	private ResponseEntity<SuccessRes<?>> ssoCallBack(SsoType type, String code, String error) {
 		if (error != null)
 			throw new CustomException(ErrorType.SSO_LOGIN_FAIL);
-		
-		authService.checkSsoAuthCode(type, code);
+
+		authenticationService.checkSsoAuthCode(type, code);
 		return ResponseEntity
                 .status(SuccessType.LOGIN_SSO_SUCCESS.getStatus())
                 .body(SuccessRes.from(SuccessType.LOGIN_SSO_SUCCESS));
@@ -79,11 +81,22 @@ public class AuthController {
 	)
 	public ResponseEntity<?> login(@RequestBody LoginRequest request){
 
-		TokenDto tokenDto = ssoService.login(request);
+		TokenDto tokenDto = ssoAuthService.login(request);
 
 		return ResponseEntity.ok()
 				.header("Authorization",tokenDto.accessToken())
 				.header("Set-Cookie",tokenDto.refreshToken())
 				.body(SuccessRes.from(SuccessType.LOGIN_SSO_SUCCESS));
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader,
+									@CookieValue(value = "refreshToken", required = false)String refreshToken) {
+		String token = jwtUtil.resolveToken(authorizationHeader);
+		System.out.println("refreshToken = " + refreshToken);
+
+		ssoAuthService.logout(token,refreshToken);
+		return ResponseEntity.ok()
+					.body(SuccessRes.from(SuccessType.LOGOUT_SUCCESS));
 	}
 }
