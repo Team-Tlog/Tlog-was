@@ -90,6 +90,15 @@ public class AuthController {
 	}
 
 	@PostMapping("/logout")
+	@Operation(
+			summary = "SSO 로그아웃 요청",
+			description = "사용자 accessToken 과 refreshToken을 쿠키로 받아 처리합니다.",
+			tags = {"SSO Authentication"},
+			responses = {
+					@ApiResponse(responseCode = "200", description = "로그아웃 성공 (토큰 블랙리스트 처리 완료)"),
+					@ApiResponse(responseCode = "500", description = "블랙리스트 등록 실패")
+			}
+	)
 	public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader,
 									@CookieValue(value = "refreshToken", required = false)String refreshToken) {
 		String token = jwtUtil.resolveToken(authorizationHeader);
