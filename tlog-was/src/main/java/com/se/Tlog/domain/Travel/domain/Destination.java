@@ -9,23 +9,25 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = "destinations")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Destination {
 	@Id
+	@Field("_id")
 	private String id;
 	private String name;
 	private String address;
 	private String city;
 
-	@Embedded
 	private Location location;
 
 	private List<TagInfo> tags = new ArrayList<>();
