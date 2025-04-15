@@ -69,7 +69,7 @@ public class SsoAuthService {
             redisUtil.setBlacklistToken(RedisProperties.ACCESS_TOKEN_PREFIX + accessJti, remainingTime);
         } catch (Exception e) {
             log.error("블랙리스트 등록 실패: {}", accessJti, e);
-            throw new CustomException(ErrorType.LOGOUT_FAILED);
+            throw new CustomException(ErrorType.BLACKLIST_SAVE_FAILED);
         }
 
         boolean isDeleted = redisUtil.delete(refreshKey);
