@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 
 @Component
@@ -24,7 +25,8 @@ public class RefreshTokenProvider implements JwtTokenProvider{
     public String generateToken(String userId, String role) {
         Map<String, Object> claims = Map.of(
                 "role", role,
-                "tokenType", "refresh"
+                "tokenType", "refresh",
+                "jti", UUID.randomUUID().toString()
         );
         return jwtUtil.generateToken(userId, refreshTokenDuration, role, claims);
     }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -28,7 +29,8 @@ public class AccessTokenProvider implements JwtTokenProvider {
     public String generateToken(String userId, String role) {
         Map<String, Object> claims = Map.of(
                 "role", role,
-                "tokenType", "access"
+                "tokenType", "access",
+                "jti", UUID.randomUUID().toString()
         );
         return jwtUtil.generateToken(userId,accessTokenDuration,role,claims);
     }
