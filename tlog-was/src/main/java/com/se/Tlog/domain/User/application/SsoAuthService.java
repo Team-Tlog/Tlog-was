@@ -14,13 +14,16 @@ import com.se.Tlog.global.util.jwt.AccessTokenProvider;
 import com.se.Tlog.global.util.jwt.RefreshTokenProvider;
 import com.se.Tlog.global.util.redis.RedisProperties;
 import com.se.Tlog.global.util.redis.RedisUtil;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.Optional;
 
 @ApplicationService
 @RequiredArgsConstructor
+@Slf4j
 public class SsoAuthService {
     private final Map<SsoType, SsoService> ssoServiceMap;
     private final UserRepository userRepository;
@@ -42,11 +45,37 @@ public class SsoAuthService {
         String accessToken = accessTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue());
         String refreshToken = refreshTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue());
 
-        redisUtil.save(RedisProperties.REFRESH_TOKEN_PREFIX + user.getId(), refreshToken, refreshTokenProvider.getRefreshTokenDuration());
+        String jti = refreshTokenProvider.parseToken(refreshToken).get("jti").toString();
+        String refreshKey = RedisProperties.REFRESH_TOKEN_PREFIX + user.getId() + ":" + jti;
+
+        redisUtil.save(refreshKey, refreshToken, refreshTokenProvider.getRefreshTokenDuration());
 
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
     }
+    public void logout(String accessToken,String refreshToken) {
+        Claims accessClaims = accessTokenProvider.parseToken(accessToken);
+        String accessJti = accessClaims.get("jti").toString();
+
+        long remainingTime = accessTokenProvider.getExpiration(accessToken).getTime() - System.currentTimeMillis();
+
+        Claims refreshClaims = refreshTokenProvider.parseToken(refreshToken);
+        String refreshJti = refreshClaims.get("jti").toString();
+        String refreshKey = RedisProperties.REFRESH_TOKEN_PREFIX + refreshClaims.getSubject() + ":" + refreshJti;
+
+        try {
+            redisUtil.setBlacklistToken(RedisProperties.ACCESS_TOKEN_PREFIX + accessJti, remainingTime);
+        } catch (Exception e) {
+            log.error("블랙리스트 등록 실패: {}", accessJti, e);
+            throw new CustomException(ErrorType.BLACKLIST_SAVE_FAILED);
+        }
+
+        boolean isDeleted = redisUtil.delete(refreshKey);
+        if (!isDeleted) {
+            log.warn("Refresh token 삭제 실패: {}", refreshKey);
+        }
+    }
+
 }

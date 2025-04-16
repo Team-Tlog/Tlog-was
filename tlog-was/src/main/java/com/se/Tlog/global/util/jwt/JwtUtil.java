@@ -45,4 +45,8 @@ public class JwtUtil {
     private Date createExpire(Long expiration){
         return new Date(System.currentTimeMillis() + expiration);
     }
+
+    public String resolveToken(String headerToken) {
+        return headerToken.substring(7);
+    }
 }

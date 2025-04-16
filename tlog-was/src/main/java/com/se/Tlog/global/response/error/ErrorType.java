@@ -16,6 +16,7 @@ public enum ErrorType {
     INVALID_FIREBASE_TOKEN(HttpStatus.BAD_REQUEST,"클라이언트 FCM Token이 유효하지 않습니다!"),
     SCRAP_UNSUPPORTED_TO_TEAM(HttpStatus.BAD_REQUEST, "팀에는 스크랩 기능을 지원하지 않습니다!"),
     INVITE_USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "초대하려는 유저 중 존재하지 않는 유저가 있습니다."),
+    LOGOUT_FAILED(HttpStatus.BAD_REQUEST,"로그아웃에 실패하였습니다." ),
     // 사용자로부터 소셜 로그인 인증 실패
     SSO_LOGIN_FAIL(HttpStatus.BAD_REQUEST,"외부 소셜 로그인이 취소되거나 실패했습니다."),
     
@@ -61,7 +62,7 @@ public enum ErrorType {
     INTERNAL_ERROR_BY_INVITE_CODE(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. 팀 초대 코드 에러."),
     FIREBASE_INITIALIZE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. Firebase 라이브러리 초기화 에러."),
     FIREBASE_INITIALIZE_FAIL_KEY_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. Firebase Key 파일을 찾지 못했습니다."),
-    
+    BLACKLIST_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"블랙리스트 등록에 실패했습니다."),
     // 외부 소셜 로그인 처리 중 에러
     SSO_ACCESSTOKEN_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "외부 인증 서버로부터 인증을 받는데 실패했습니다."),
 
