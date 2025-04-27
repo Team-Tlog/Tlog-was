@@ -10,10 +10,14 @@ public record DestinationRes(
         String name,
         String address,
         Location location,
-        int rating,
         String city,
+        String district,
         boolean hasParking,
         boolean petFriendly,
+        int ratingSum,
+        int reviewCount,
+        float averageRating,
+        String imageUrl,
         List<TagIdDto> tags
 ) {
     public static DestinationRes from(Destination destination) {
@@ -26,10 +30,14 @@ public record DestinationRes(
                 destination.getName(),
                 destination.getAddress(),
                 destination.getLocation(),
-                destination.getRating(),
                 destination.getCity(),
+                destination.getDistrict(),
                 destination.isHasParking(),
                 destination.isPetFriendly(),
+                destination.getRatingSum(),
+                destination.getReviewCount(),
+                destination.getAverageRating(),
+                destination.getImageUrl(),
                 tagIdDtoList
         );
     }

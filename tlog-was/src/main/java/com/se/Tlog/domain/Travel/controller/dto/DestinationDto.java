@@ -16,10 +16,12 @@ public class DestinationDto {
     private String name;
     private String address;
     private Location location;
-    private int rating;
     private String city;
+    private String district;
     private boolean hasParking;
     private boolean petFriendly;
+    private String imageUrl;
+    private String description;
     private List<TagIdDto> tags;
     
 }

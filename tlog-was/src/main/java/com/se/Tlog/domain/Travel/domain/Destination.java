@@ -3,7 +3,6 @@ package com.se.Tlog.domain.Travel.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.*;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,27 +14,33 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = "destinations")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Destination {
 	@Id
-	@Field("_id")
 	private String id;
 	private String name;
 	private String address;
 	private String city;
+	private String district;
 
 	private Location location;
 
 	private List<TagInfo> tags = new ArrayList<>();
 
-	private int rating;
 	private boolean hasParking;
 	private boolean petFriendly;
-	
+
+	private String imageUrl;
+
+	private int ratingSum;
+	private int reviewCount;
+	private float averageRating;
+
+	private String description;
+
 	public static void assertValidity(String name, DestinationRepositoryService destinationRepo) {
 		if (destinationRepo.exist(name))
 			throw new CustomException(ErrorType.ALREADY_EXISTS_DESTINATION);
@@ -43,36 +48,45 @@ public class Destination {
 	
 	public static Destination create(
 			String name, 
-			Location location, 
-			int rating, 
+			Location location,
 			String address,
 			List<TagInfo> tags,
-			String city, 
+			String city,
+			String district,
 			boolean hasParking,
 			boolean petFriendly,
+			String imageUrl,
+			String description,
 			DestinationRepositoryService validator) {
 		assertValidity(name, validator);
-		return new Destination(name, location, rating, address, tags, false, city, hasParking, petFriendly);
+		return new Destination(name, location,address, tags, false, city, district, hasParking, petFriendly, imageUrl, description);
 	}
 
 	private Destination(
 			String name, 
-			Location location, 
-			int rating, 
+			Location location,
 			String address,
 			List<TagInfo> tags, 
 			boolean verified,
-			String city, 
+			String city,
+			String district,
 			boolean hasParking,
-			boolean petFriendly) {
+			boolean petFriendly,
+			String imageUrl,
+			String description) {
 		this.name = name;
 		this.location = location;
-		this.rating = rating;
 		this.address = address;
 		this.tags = tags;
 		this.city = city;
+		this.district = district;
 		this.hasParking = hasParking;
 		this.petFriendly = petFriendly;
+		this.imageUrl = imageUrl;
+		this.description = description;
+		this.ratingSum = 0;
+		this.reviewCount = 0;
+		this.averageRating = 0;
 	}
 
 	public void addTag(TagInfo tag) {

@@ -33,12 +33,14 @@ public class DestinationService {
         Destination destination = Destination.create(
         		destinationDto.getName(),
                 destinationDto.getLocation(),
-                destinationDto.getRating(),
                 destinationDto.getAddress(),
                 tagInfoList,
                 destinationDto.getCity(),
+                destinationDto.getDistrict(),
                 destinationDto.isHasParking(),
                 destinationDto.isPetFriendly(),
+                destinationDto.getDescription(),
+                destinationDto.getImageUrl(),
                 destinationRepoService);
         destinationRepository.save(destination);
     }
