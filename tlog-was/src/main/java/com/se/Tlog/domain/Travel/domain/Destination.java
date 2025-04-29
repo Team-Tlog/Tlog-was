@@ -39,6 +39,12 @@ public class Destination {
 	private int reviewCount;
 	private float averageRating;
 
+	private int ratingCount1;
+	private int ratingCount2;
+	private int ratingCount3;
+	private int ratingCount4;
+	private int ratingCount5;
+
 	private String description;
 
 	public static void assertValidity(String name, DestinationRepositoryService destinationRepo) {
@@ -87,6 +93,11 @@ public class Destination {
 		this.ratingSum = 0;
 		this.reviewCount = 0;
 		this.averageRating = 0;
+		this.ratingCount1 = 0;
+		this.ratingCount2 = 0;
+		this.ratingCount3 = 0;
+		this.ratingCount4 = 0;
+		this.ratingCount5 = 0;
 	}
 
 	public void addTag(TagInfo tag) {

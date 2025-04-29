@@ -4,6 +4,7 @@ import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.Location;
 
 import java.util.List;
+import java.util.Map;
 
 public record DestinationRes(
         String id,
@@ -18,7 +19,8 @@ public record DestinationRes(
         int reviewCount,
         float averageRating,
         String imageUrl,
-        List<TagIdDto> tags
+        List<TagIdDto> tags,
+        Map<Integer,Integer> ratingDistribution
 ) {
     public static DestinationRes from(Destination destination) {
         List<TagIdDto> tagIdDtoList = destination.getTags().stream().filter(tagInfo -> !tagInfo.isDeleted())
@@ -38,7 +40,14 @@ public record DestinationRes(
                 destination.getReviewCount(),
                 destination.getAverageRating(),
                 destination.getImageUrl(),
-                tagIdDtoList
+                tagIdDtoList,
+                Map.of(
+                        1, destination.getRatingCount1(),
+                        2, destination.getRatingCount2(),
+                        3, destination.getRatingCount3(),
+                        4, destination.getRatingCount4(),
+                        5, destination.getRatingCount5()
+                )
         );
     }
 }
