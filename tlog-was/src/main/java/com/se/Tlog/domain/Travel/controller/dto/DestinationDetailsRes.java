@@ -2,12 +2,13 @@ package com.se.Tlog.domain.Travel.controller.dto;
 
 import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.Location;
+import com.se.Tlog.domain.Travel.domain.TagCount;
 
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public record DestinationRes(
+public record DestinationDetailsRes(
         String id,
         String name,
         String address,
@@ -20,22 +21,18 @@ public record DestinationRes(
         int reviewCount,
         float averageRating,
         String imageUrl,
-        List<TagIdDto> tags,
+        List<TagCount> topTags,
         Map<Integer,Integer> ratingDistribution
+        //상위 리뷰 2개 포함
 ) {
-    public static DestinationRes from(Destination destination) {
-        List<TagIdDto> tagIdDtoList = destination.getTags().stream().filter(tagInfo -> !tagInfo.isDeleted())
-                .map(tagInfo -> TagIdDto.from(tagInfo.getId(), tagInfo.getWeight()))
-                .toList();
-        System.out.println("destinationId = " + destination.getId());
-
+    public static DestinationDetailsRes from(Destination destination,List<TagCount> topTags) {
         Map<Integer, Integer> distribution = new TreeMap<>();
         int[] ratingCount = destination.getRatingCount();
         for (int i = 0; i < 5; i++) {
             distribution.put(i+1, ratingCount[i]);
         }
 
-        return new DestinationRes(
+        return new DestinationDetailsRes(
                 destination.getId(),
                 destination.getName(),
                 destination.getAddress(),
@@ -48,7 +45,7 @@ public record DestinationRes(
                 destination.getReviewCount(),
                 destination.getAverageRating(),
                 destination.getImageUrl(),
-                tagIdDtoList,
+                topTags,
                 distribution
         );
     }

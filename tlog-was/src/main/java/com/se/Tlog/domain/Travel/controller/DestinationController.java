@@ -1,8 +1,9 @@
 package com.se.Tlog.domain.Travel.controller;
 
 import com.se.Tlog.domain.Travel.application.DestinationService;
+import com.se.Tlog.domain.Travel.controller.dto.DestinationDetailsRes;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDto;
-import com.se.Tlog.domain.Travel.controller.dto.DestinationRes;
+import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,7 +56,7 @@ public class DestinationController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<Page<DestinationRes>> getAllDestinations(@PageableDefault(size = 10) Pageable pageable) {
+    public ResponseEntity<Page<DestinationSummaryRes>> getAllDestinations(@PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(destinationService.getAllDestinations(pageable));
     }
 
@@ -74,7 +75,7 @@ public class DestinationController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<DestinationRes> getDestinationById(
+    public ResponseEntity<DestinationDetailsRes> getDestinationById(
             @Parameter(description = "특정 destination의 UUID 입니다.") @PathVariable String id) {
         return ResponseEntity.ok(destinationService.getDestinationById(id));
     }
