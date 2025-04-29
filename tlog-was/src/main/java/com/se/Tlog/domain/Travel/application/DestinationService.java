@@ -1,9 +1,11 @@
 package com.se.Tlog.domain.Travel.application;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Travel.controller.dto.DestinationDetailsRes;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDto;
-import com.se.Tlog.domain.Travel.controller.dto.DestinationRes;
+import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
 import com.se.Tlog.domain.Travel.domain.Destination;
+import com.se.Tlog.domain.Travel.domain.TagCount;
 import com.se.Tlog.domain.Travel.domain.TagInfo;
 import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
 import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
@@ -24,6 +26,7 @@ public class DestinationService {
     private final DestinationRepositoryService destinationRepoService;
     private final DestinationRepository destinationRepository;
     private final TagRepositoryService tagRepoService;
+    private final CustomTagService customTagService;
 
     public void createDestination(DestinationDto destinationDto) {
     	Destination.assertValidity(destinationDto.getName(), destinationRepoService);
@@ -45,19 +48,24 @@ public class DestinationService {
         destinationRepository.save(destination);
     }
 
-    public Page<DestinationRes> getAllDestinations(Pageable pageable) {
+    public Page<DestinationSummaryRes> getAllDestinations(Pageable pageable) {
         Page<Destination> destinationPage = destinationRepository.findAllWithActiveTags(pageable);
-        List<DestinationRes> destinationResList = destinationPage
+
+        List<DestinationSummaryRes> destinationResList = destinationPage
                 .stream()
-                .map(DestinationRes::from).toList();
+                .map(destination -> {
+                            List<TagCount> topTags = customTagService.getTopTags(destination.getId(), 3);
+                            return DestinationSummaryRes.from(destination, topTags);
+                }).toList();
 
         return new PageImpl<>(destinationResList, pageable, destinationPage.getTotalElements());
     }
 
-    public DestinationRes getDestinationById(String id) {
+    public DestinationDetailsRes getDestinationById(String id) {
         Destination destination = destinationRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorType.DESTINATION_NOT_FOUND));
 
-        return DestinationRes.from(destination);
+        List<TagCount> topTags = customTagService.getTopTags(destination.getId(), 3);
+        return DestinationDetailsRes.from(destination, topTags);
     }
 }
