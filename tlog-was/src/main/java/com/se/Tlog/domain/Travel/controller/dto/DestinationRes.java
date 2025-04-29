@@ -5,6 +5,7 @@ import com.se.Tlog.domain.Travel.domain.Location;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public record DestinationRes(
         String id,
@@ -27,6 +28,13 @@ public record DestinationRes(
                 .map(tagInfo -> TagIdDto.from(tagInfo.getId(), tagInfo.getWeight()))
                 .toList();
         System.out.println("destinationId = " + destination.getId());
+
+        Map<Integer, Integer> distribution = new TreeMap<>();
+        int[] ratingCount = destination.getRatingCount();
+        for (int i = 0; i < 5; i++) {
+            distribution.put(i+1, ratingCount[i]);
+        }
+
         return new DestinationRes(
                 destination.getId(),
                 destination.getName(),
@@ -41,13 +49,7 @@ public record DestinationRes(
                 destination.getAverageRating(),
                 destination.getImageUrl(),
                 tagIdDtoList,
-                Map.of(
-                        1, destination.getRatingCount1(),
-                        2, destination.getRatingCount2(),
-                        3, destination.getRatingCount3(),
-                        4, destination.getRatingCount4(),
-                        5, destination.getRatingCount5()
-                )
+                distribution
         );
     }
 }
