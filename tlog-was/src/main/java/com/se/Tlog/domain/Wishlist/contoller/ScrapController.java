@@ -3,6 +3,7 @@ package com.se.Tlog.domain.Wishlist.contoller;
 import java.util.List;
 import java.util.UUID;
 
+import com.se.Tlog.domain.Travel.controller.dto.SimpleDestinationRes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.se.Tlog.domain.Travel.controller.dto.DestinationRes;
 import com.se.Tlog.domain.Wishlist.application.ScrapService;
 import com.se.Tlog.global.response.error.ErrorRes;
 import com.se.Tlog.global.response.success.SuccessRes;
@@ -48,7 +48,7 @@ public class ScrapController {
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류.",
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
-	public ResponseEntity<SuccessRes<List<DestinationRes>>> getScrapList(@PathVariable(name = "userId") UUID userId) {
+	public ResponseEntity<SuccessRes<List<SimpleDestinationRes>>> getScrapList(@PathVariable(name = "userId") UUID userId) {
 		return ResponseEntity.ok(SuccessRes.from(
 				scrapService.getScrapData(userId)));
 	}
