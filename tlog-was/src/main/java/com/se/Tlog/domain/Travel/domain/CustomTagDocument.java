@@ -19,20 +19,21 @@ public class CustomTagDocument {
     private String destinationId;
     private List<TagCount> customTags = new ArrayList<>();
 
-    public void addOrIncrement(String tagName) {
-        String normalizedTagName = tagName.trim().toLowerCase();
+    public void addOrIncrement(List<String> tagNames) {
+        for (String tagName : tagNames) {
+            String normalizedTagName = tagName.trim().toLowerCase();
 
-        TagCount existing = customTags.stream()
-                .filter(t -> t.getTagName().equals(normalizedTagName))
-                .findFirst()
-                .orElse(null);
+            TagCount existing = customTags.stream()
+                    .filter(t -> t.getTagName().equals(normalizedTagName))
+                    .findFirst()
+                    .orElse(null);
 
-        if (existing != null) {
-            existing.increment();
-            return;
+            if (existing != null) {
+                existing.increment();
+            }else{
+                customTags.add(TagCount.create(normalizedTagName));
+            }
         }
-
-        customTags.add(TagCount.create(normalizedTagName));
     }
 
     public static CustomTagDocument create(String destinationId) {

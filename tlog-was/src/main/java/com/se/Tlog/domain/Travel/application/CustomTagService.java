@@ -14,11 +14,11 @@ import java.util.List;
 public class CustomTagService {
     private final CustomTagDocumentRepository customTagDocumentRepository;
 
-    public void addCustomTag(String destinationId, String tagName) {
+    public void addCustomTag(String destinationId, List<String> tagNameList) {
         CustomTagDocument customTag = customTagDocumentRepository.findByDestinationId(destinationId)
                 .orElseGet(() -> CustomTagDocument.create(destinationId));
 
-        customTag.addOrIncrement(tagName);
+        customTag.addOrIncrement(tagNameList);
         customTagDocumentRepository.save(customTag);
     }
 

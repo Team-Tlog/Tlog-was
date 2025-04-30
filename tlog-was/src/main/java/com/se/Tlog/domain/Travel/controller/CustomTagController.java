@@ -36,7 +36,7 @@ public class CustomTagController {
     )
     public ResponseEntity<?> addCustomTag(@RequestBody AddCustomTagsReq addCustomTagsReq,
             @Parameter(description = "특정 destination의 UUID 입니다.") @PathVariable String destinationId) {
-        customTagService.addCustomTag(destinationId,addCustomTagsReq.tagName());
+        customTagService.addCustomTag(destinationId,addCustomTagsReq.tagNameList());
         return ResponseEntity
                 .status(SuccessType.CUSTOM_TAG_CREATED.getStatus())
                 .body(SuccessRes.from(SuccessType.CUSTOM_TAG_CREATED));
