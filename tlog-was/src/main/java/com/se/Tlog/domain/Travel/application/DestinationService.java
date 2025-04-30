@@ -1,6 +1,8 @@
 package com.se.Tlog.domain.Travel.application;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Review.controller.dto.DestinationReviewDto;
+import com.se.Tlog.domain.Review.domain.service.ReviewDomainService;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDetailsRes;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDto;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
@@ -27,6 +29,7 @@ public class DestinationService {
     private final DestinationRepository destinationRepository;
     private final TagRepositoryService tagRepoService;
     private final CustomTagService customTagService;
+    private final ReviewDomainService reviewDomainService;
 
     public void createDestination(DestinationDto destinationDto) {
     	Destination.assertValidity(destinationDto.getName(), destinationRepoService);
@@ -66,6 +69,8 @@ public class DestinationService {
                 .orElseThrow(() -> new CustomException(ErrorType.DESTINATION_NOT_FOUND));
 
         List<TagCount> topTags = customTagService.getTopTags(destination.getId(), 3);
-        return DestinationDetailsRes.from(destination, topTags);
+        List<DestinationReviewDto> top2Reviews = reviewDomainService.getTop2Reviews(destination.getId());
+
+        return DestinationDetailsRes.from(destination, topTags, top2Reviews);
     }
 }
