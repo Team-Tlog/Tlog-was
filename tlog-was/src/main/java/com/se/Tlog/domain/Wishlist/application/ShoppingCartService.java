@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.UUID;
 
 import com.se.Tlog.domain.ApplicationService;
-import com.se.Tlog.domain.Travel.controller.dto.DestinationRes;
+import com.se.Tlog.domain.Travel.application.CustomTagService;
+import com.se.Tlog.domain.Travel.controller.dto.SimpleDestinationRes;
+import com.se.Tlog.domain.Travel.domain.TagCount;
 import com.se.Tlog.domain.Wishlist.domain.OwnerType;
 import com.se.Tlog.domain.Wishlist.domain.WishlistService;
 import com.se.Tlog.domain.Wishlist.domain.WishlistType;
@@ -18,14 +20,18 @@ import com.se.Tlog.domain.Wishlist.domain.UpdateType;
 @RequiredArgsConstructor
 public class ShoppingCartService {
 	private final WishlistService wishlistService;
+	private final CustomTagService customTagService;
 
-	public List<DestinationRes> getCartData(UUID ownerId, OwnerType ownerType) {
+	public List<SimpleDestinationRes> getCartData(UUID ownerId, OwnerType ownerType) {
 		return wishlistService.getWishlistData(
 				new WishlistOwnerDto(
 						ownerType,
 						ownerId),
 				WishlistType.SHOPPING_CART)
-				.stream().map(DestinationRes::from).toList();
+				.stream().map(destination -> {
+					List<TagCount> topTags = customTagService.getTopTags(destination.getId(), 3);
+					return SimpleDestinationRes.from(destination, topTags);
+				}).toList();
 	}
 	
 	private void updateCart(UpdateType updateType, UUID ownerId, OwnerType ownerType, String destinationId) {

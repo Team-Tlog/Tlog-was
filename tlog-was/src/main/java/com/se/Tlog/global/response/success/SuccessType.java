@@ -23,8 +23,8 @@ public enum SuccessType {
     TAG_CREATED(HttpStatus.CREATED, "새로운 태그 등록을 성공하였습니다."),
     DESTINATION_CREATED(HttpStatus.CREATED,"새로운 여행지 등록을 성공하였습니다."),
     USER_CREATED(HttpStatus.CREATED, "사용자 회원가입을 성공하였습니다."),
-    FOLLOW_SUCCESS(HttpStatus.CREATED, "팔로우를 성공하였습니다.");
-
+    FOLLOW_SUCCESS(HttpStatus.CREATED, "팔로우를 성공하였습니다."),
+    CUSTOM_TAG_CREATED(HttpStatus.CREATED, "새로운 커스텀 태그 등록을 성공하였습니다.");
     private final HttpStatus status;
     private final String message;
 
