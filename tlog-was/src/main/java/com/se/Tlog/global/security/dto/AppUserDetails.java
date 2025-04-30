@@ -8,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class AppUserDetails implements CustomUserDetails{
@@ -40,6 +39,6 @@ public class AppUserDetails implements CustomUserDetails{
 
     @Override
     public String getUsername() {
-        return "";
+        return user.getId().toString();
     }
 }
