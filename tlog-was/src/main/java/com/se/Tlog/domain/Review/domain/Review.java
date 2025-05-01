@@ -1,12 +1,17 @@
 package com.se.Tlog.domain.Review.domain;
 
 
+import com.se.Tlog.domain.Review.controller.dto.ReviewCreateDto;
+import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Document(collection = "reviews")
 @Getter
@@ -19,14 +24,40 @@ public class Review {
 	private String userId;
 	private String destinationId;
 
+	private String username;
+
 	private int rating;
 	private String content;
+	private List<String> imageUrlList;
 
-	@Builder
-	public Review(String userId, String destinationId, int rating, String content) {
+	@CreatedDate
+	@Column(updatable = false)
+	private LocalDateTime createdAt; // 생성시간
+
+	public static Review create(ReviewCreateDto dto) {
+		return new Review(
+				dto.userId(),
+				dto.destinationId(),
+				dto.username(),
+				dto.rating(),
+				dto.content(),
+				dto.imageUrlList()
+		);
+	}
+
+	private Review(
+			String userId,
+			String destinationId,
+			String username,
+			int rating,
+			String content,
+			List<String> imageUrlList
+	){
 		this.userId = userId;
 		this.destinationId = destinationId;
+		this.username = username;
 		this.rating = rating;
 		this.content = content;
+		this.imageUrlList = imageUrlList;
 	}
 }
