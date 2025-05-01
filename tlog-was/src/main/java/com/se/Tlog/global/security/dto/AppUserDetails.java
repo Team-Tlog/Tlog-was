@@ -39,6 +39,6 @@ public class AppUserDetails implements CustomUserDetails{
 
     @Override
     public String getUsername() {
-        return user.getId().toString();
+        return "";
     }
 }

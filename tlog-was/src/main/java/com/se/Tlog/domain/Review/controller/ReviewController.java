@@ -7,7 +7,7 @@ import com.se.Tlog.domain.Review.controller.dto.ReviewCreateDto;
 import com.se.Tlog.domain.Review.domain.SortType;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
-import com.se.Tlog.global.util.security.SecurityUtil;
+import com.se.Tlog.global.security.dto.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -84,8 +85,10 @@ public class ReviewController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<?> deleteReview(@PathVariable String reviewId) {
-        String userId = SecurityUtil.getCurrentUserId();
+    public ResponseEntity<?> deleteReview(
+            @PathVariable String reviewId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        String userId = userDetails.getId();
         reviewService.deleteReview(userId, reviewId);
 
         return ResponseEntity.ok().body(SuccessRes.from(SuccessType.OK));
