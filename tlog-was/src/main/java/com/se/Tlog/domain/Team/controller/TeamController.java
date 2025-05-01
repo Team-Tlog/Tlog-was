@@ -70,7 +70,30 @@ public class TeamController {
 		return ResponseEntity.ok(SuccessRes.from(
 				teamService.getTeamOfUser(userId)));
 	}
-	
+
+	@GetMapping("/{teamId}/details")
+	@Operation(
+			summary = "특정 팀 상세 정보 조회",
+			description = "특정 팀의 상세 정보와 장바구니 여행지 목록을 함께 반환합니다.",
+			tags = {"팀 관리"},
+			security = @SecurityRequirement(
+					name = "JwtAuthScheme",
+					scopes = {"scope1", "scope2"}
+			),
+			parameters = {
+					@Parameter(name = "teamId", description = "조회할 팀의 UUID", required = true)
+			},
+			responses = {
+					@ApiResponse(responseCode = "200", description = "팀 상세 정보 반환 성공"),
+					@ApiResponse(responseCode = "404", description = "존재하지 않는 팀입니다."),
+					@ApiResponse(responseCode = "500", description = "서버 내부 오류")
+			}
+	)
+	public ResponseEntity<?> getTeamDetails(@PathVariable UUID teamId) {
+		return ResponseEntity.
+				ok(SuccessRes.from(teamService.getTeamDetails(teamId)));
+	}
+
 	@DeleteMapping("/{teamId}")
 	@Operation (
 			summary = "팀 삭제",
@@ -91,8 +114,8 @@ public class TeamController {
 		teamService.deleteTeam(teamId);
 		return ResponseEntity.ok(SuccessRes.from(SuccessType.OK));
 	}
-	
-	@PostMapping("/member/invite")
+
+	/*@PostMapping("/member/invite")
 	@Operation (
 			summary = "팀원 초대",
     		description = "새로운 팀원을 초대합니다.",
@@ -108,9 +131,9 @@ public class TeamController {
 	public ResponseEntity<SuccessRes<?>> inviteUser(@RequestBody TeamUserRequestDto request) {
 		teamService.inviteUser(request);
 		return ResponseEntity.ok(SuccessRes.from(SuccessType.OK));
-	}
-	
-	@PostMapping("/member")
+	}*/
+
+	@PostMapping("/join")
 	@Operation (
 			summary = "팀원 가입",
     		description = "특정 유저를 팀에 추가합니다.",
@@ -124,10 +147,10 @@ public class TeamController {
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
 	public ResponseEntity<SuccessRes<?>> addUser(@RequestBody TeamUserRequestDto request) {
-		teamService.joinTeam(request);
+		teamService.joinTeamByInviteCode(request);
 		return ResponseEntity.ok(SuccessRes.from(SuccessType.OK));
 	}
-	
+
 	@DeleteMapping("/member/{teamId}/{userId}")
 	@Operation (
 			summary = "팀원 삭제",

@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.Team.domain;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
@@ -7,20 +8,20 @@ import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Slf4j
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class Team {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -31,6 +32,10 @@ public class Team {
 	private String name;
 	
 	// private Tbti tbti;
+
+	@CreatedDate
+	@Column(updatable = false)
+	private LocalDateTime createdAt;
 	
 	private Team(String name, Long inviteCode) {
 		this.name = name;

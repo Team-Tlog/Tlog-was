@@ -4,16 +4,17 @@ import java.util.List;
 import java.util.UUID;
 
 import com.se.Tlog.domain.ApplicationService;
-import com.se.Tlog.domain.Team.controller.dto.CreateTeamRequestDto;
-import com.se.Tlog.domain.Team.controller.dto.TeamResponseDto;
-import com.se.Tlog.domain.Team.controller.dto.TeamUserRequestDto;
+import com.se.Tlog.domain.Team.controller.dto.*;
 import com.se.Tlog.domain.Team.domain.Team;
 import com.se.Tlog.domain.Team.domain.TeamDomainService;
 import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
 import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
 import com.se.Tlog.domain.Team.repository.jpa.TeamUserRepository;
+import com.se.Tlog.domain.Travel.controller.dto.SimpleDestinationRes;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
+import com.se.Tlog.domain.Wishlist.application.ShoppingCartService;
+import com.se.Tlog.domain.Wishlist.domain.OwnerType;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 
@@ -28,6 +29,8 @@ public class TeamService {
 	
 	private final TeamDomainService teamDomainService;
 	private final TeamRepositoryService repoService;
+
+	private final ShoppingCartService shoppingCartService;
 	
 	public UUID createTeam(CreateTeamRequestDto request) {
 		if (request.name() == null)
@@ -49,13 +52,10 @@ public class TeamService {
 
 		return teamUserRepository.findByUser_Id(userId)
 				.stream().map(teamUser -> {
-					List<UUID> members = teamUserRepository.findByTeam_Id(teamUser.getTeam().getId())
+					List<UUID> members = teamUserRepository.findWithUserByTeamId(teamUser.getTeam().getId())
 							.stream().map(teamUserByTeam -> teamUserByTeam.getUser().getId()).toList();
-					return new TeamResponseDto(
-							teamUser.getTeam().getId(),
-							teamUser.getTeam().getName(),
-							members);
-					})
+					return TeamResponseDto.from(teamUser.getTeam(), members);
+				})
 				.toList();
 	}
 	
@@ -67,7 +67,8 @@ public class TeamService {
 		teamRepository.deleteById(teamId);
 	}
 	
-	public void inviteUser(TeamUserRequestDto request) {
+	/*public void inviteUser(TeamUserRequestDto request) {
+
 		if (!teamRepository.existsById(request.teamId()))
 			throw new CustomException(ErrorType.TEAM_NOT_FOUND);
 		if (!userRepository.existsById(request.userId()))
@@ -76,27 +77,36 @@ public class TeamService {
 		Team team = teamRepository.findById(request.teamId()).get();
 		User user = userRepository.findById(request.userId()).get();
 		teamDomainService.inviteUser(team, user);
-	}
+	}*/
 	
-	public void joinTeam(TeamUserRequestDto request) {
-		if (!teamRepository.existsById(request.teamId()))
-			throw new CustomException(ErrorType.TEAM_NOT_FOUND);
-		if (!userRepository.existsById(request.userId()))
-			throw new CustomException(ErrorType.USER_NOT_FOUND);
-		
-		Team team = teamRepository.findById(request.teamId()).get();
-		User user = userRepository.findById(request.userId()).get();
+	public void joinTeamByInviteCode(TeamUserRequestDto request) {
+		Team team = teamRepository.findByInviteCode(request.inviteCode())
+				.orElseThrow(() -> new CustomException(ErrorType.TEAM_NOT_FOUND));
+		User user = userRepository.findById(request.userId())
+				.orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
+
 		team.addUser(user, repoService);
 	}
 	
 	public void leaveTeam(UUID teamId, UUID userId) {
-		if (!teamRepository.existsById(teamId))
-			throw new CustomException(ErrorType.TEAM_NOT_FOUND);
-		if (!userRepository.existsById(userId))
-			throw new CustomException(ErrorType.USER_NOT_FOUND);
-		
-		Team team = teamRepository.findById(teamId).get();
-		User user = userRepository.findById(userId).get();
+		Team team = teamRepository.findById(teamId)
+				.orElseThrow(() -> new CustomException(ErrorType.TEAM_NOT_FOUND));
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
+
 		team.deleteUser(user, repoService);
+	}
+
+	public TeamDetailDto getTeamDetails(UUID teamId) {
+		Team team = teamRepository.findById(teamId)
+				.orElseThrow(() -> new CustomException(ErrorType.TEAM_NOT_FOUND));
+		List<TeamMemberDto> memberDtoList = teamUserRepository.findWithUserByTeamId(team.getId())
+				.stream().map(teamUser -> {
+					return TeamMemberDto.from(teamUser.getUser());
+				}).toList();
+
+		List<SimpleDestinationRes> wishList = shoppingCartService.getCartData(team.getId(), OwnerType.TEAM);
+
+		return TeamDetailDto.from(team, memberDtoList, wishList);
 	}
 }
