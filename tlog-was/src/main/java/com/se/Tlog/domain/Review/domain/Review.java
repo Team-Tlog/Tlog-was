@@ -3,11 +3,13 @@ package com.se.Tlog.domain.Review.domain;
 
 import com.se.Tlog.domain.Review.controller.dto.ReviewCreateDto;
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -16,6 +18,7 @@ import java.util.List;
 @Document(collection = "reviews")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Review {
 
 	@Id
