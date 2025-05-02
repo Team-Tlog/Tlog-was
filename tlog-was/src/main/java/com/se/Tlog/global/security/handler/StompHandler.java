@@ -1,6 +1,6 @@
 package com.se.Tlog.global.security.handler;
 
-import com.se.Tlog.domain.Social.Chat.service.ChatSessionEventService;
+import com.se.Tlog.domain.Social.Chat.session.ChatSessionEventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
