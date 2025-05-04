@@ -21,19 +21,16 @@ public class HttpHandShakeInterceptor implements HandshakeInterceptor {
     private final AccessTokenProvider accessTokenProvider;
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        //String authorization = request.getHeaders().get("Authorization").get(0);  현재 브라우저로 테스트를 하고있어서 헤더를 체울수가 없음 그래서 주석처리! 앱과 통신할땐 해당 코드 사용할 것!
+        String authorization = request.getHeaders().get("Authorization").get(0);  //현재 브라우저로 테스트를 하고있어서 헤더를 체울수가 없음 그래서 주석처리! 앱과 통신할땐 해당 코드 사용할 것!
 
-        /*if (authorization == null || !authorization.startsWith("Bearer ")) {
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
             log.warn("TOKEN NOT FOUND or TOKEN HEADER IS WRONG : " + authorization);
             return false;
-        }*/
-        String token = ((ServletServerHttpRequest) request)
-                .getServletRequest()
-                .getParameter("token");
+        }
         try {
-            //String token = authorization.split(" ")[1];
+            String token = authorization.split(" ")[1];
 
-            token = token.split(" ")[1];
+            //token = token.split(" ")[1];
             System.out.println("token = " + token);
             Claims claims = accessTokenProvider.parseAndValidate(token);
             System.out.println("claims = " + claims);
