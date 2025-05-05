@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.Team.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import com.se.Tlog.domain.Team.domain.TeamDomainService;
 import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
 import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
 import com.se.Tlog.domain.Team.repository.jpa.TeamUserRepository;
+import com.se.Tlog.domain.Team.repository.jpa.entity.TeamUserJpaEntity;
 import com.se.Tlog.domain.Travel.controller.dto.SimpleDestinationRes;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
@@ -56,9 +58,14 @@ public class TeamService {
 
 		return teamUserRepository.findByUser_Id(userId)
 				.stream().map(teamUser -> {
-					List<UUID> members = teamUserRepository.findWithUserByTeamId(teamUser.getTeam().getId())
-							.stream().map(teamUserByTeam -> teamUserByTeam.getUser().getId()).toList();
-					return TeamResponseDto.from(teamUser.getTeam(), members);
+				    UUID teamLeader = null;
+				    List<UUID> members = new ArrayList<UUID>();
+				    for (TeamUserJpaEntity teamUserInTeam : teamUserRepository.findWithUserByTeamId(teamUser.getTeam().getId())) {
+				        if (teamUserInTeam.isLeader())
+                            teamLeader = teamUserInTeam.getUser().getId();
+                        members.add(teamUserInTeam.getUser().getId());
+				    }
+					return TeamResponseDto.from(teamUser.getTeam(), teamLeader, members);
 				})
 				.toList();
 	}
@@ -105,9 +112,9 @@ public class TeamService {
 		Team team = teamRepository.findById(teamId)
 				.orElseThrow(() -> new CustomException(ErrorType.TEAM_NOT_FOUND));
 		List<TeamMemberDto> memberDtoList = teamUserRepository.findWithUserByTeamId(team.getId())
-				.stream().map(teamUser -> {
-					return TeamMemberDto.from(teamUser.getUser());
-				}).toList();
+				.stream().map(teamUser -> 
+				        TeamMemberDto.from(teamUser.getUser(), teamUser.isLeader())
+		        ).toList();
 
 		List<SimpleDestinationRes> wishList = shoppingCartService.getCartData(team.getId(), OwnerType.TEAM);
 
