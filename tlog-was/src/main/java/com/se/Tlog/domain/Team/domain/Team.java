@@ -58,10 +58,17 @@ public class Team {
 		if (repoService.isExistInTeam(this.getId(), user.getId()))
 			throw new CustomException(ErrorType.ALREADY_EXIST_IN_TEAM);
 		
-		repoService.addUserToTeam(id, user.getId());
+		repoService.addUserToTeam(this.id, user.getId());
 		// 기타 팀원 추가시 처리내용
 		
 		log.info("팀원을 팀 " + this.name + "에 추가합니다. : " + user.getName());
+	}
+	
+	public void setLeader(User user, TeamRepositoryService repoService) {
+	    if (!repoService.isExistInTeam(this.id, user.getId()))
+            throw new CustomException(ErrorType.TEAM_USER_NOT_FOUND);
+	    
+	    repoService.setLeader(this.id, user.getId());
 	}
 	
 	public void deleteUser(User user, TeamRepositoryService repoService) {
