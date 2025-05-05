@@ -56,7 +56,7 @@ public class TeamService {
 		if (!userRepository.existsById(userId))
 			throw new CustomException(ErrorType.USER_NOT_FOUND);
 
-		return teamUserRepository.findByUser_Id(userId)
+		return teamUserRepository.findWithTeamByUserId(userId)
 				.stream().map(teamUser -> {
 				    UUID teamLeader = null;
 				    List<UUID> members = new ArrayList<UUID>();

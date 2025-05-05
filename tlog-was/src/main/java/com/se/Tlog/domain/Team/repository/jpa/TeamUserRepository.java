@@ -20,10 +20,12 @@ public interface TeamUserRepository extends JpaRepository<TeamUserJpaEntity, Lon
 	public void deleteByTeam_IdAndUser_Id(UUID teamId, UUID userId);
 	@Transactional
 	public void deleteByTeam_Id(UUID teamId);
-	public List<TeamUserJpaEntity> findByUser_Id(UUID userId);
 	public long countByTeam_Id(UUID teamId);
 	Optional<TeamUserJpaEntity> findByTeam_IdAndUser_Id(UUID teamId, UUID userId);
 	Optional<TeamUserJpaEntity> findByTeam_IdAndIsLeaderTrue(UUID teamId);
+	
+	@Query("select tu from TeamUserJpaEntity tu join fetch tu.team where tu.user.id = :userId")
+    List<TeamUserJpaEntity> findWithTeamByUserId(@Param("userId") UUID userId);
 
 	@Query("select tu from TeamUserJpaEntity tu join fetch tu.user where tu.team.id = :teamId")
 	List<TeamUserJpaEntity> findWithUserByTeamId(@Param("teamId") UUID teamId);
