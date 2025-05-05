@@ -76,6 +76,8 @@ public class Team {
 			throw new CustomException(ErrorType.TEAM_USER_NOT_FOUND);
 		if (repoService.countMemberInTeam(id) == 1)
 			throw new CustomException(ErrorType.TEAM_CANNOT_BE_ORPHAN);
+		if (repoService.isLeader(id, user.getId()))
+		    throw new CustomException(ErrorType.CANNOT_REMOVE_TEAM_LEADER);
 		
 		repoService.deleteUserInTeam(this.id, user.getId());
 		// 기타 팀원 삭제 후 처리내용
