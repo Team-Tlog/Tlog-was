@@ -23,6 +23,7 @@ public class TeamDomainService {
 	
 	public void initializeTeam(Team rawTeam, User teamLeader) {
 	    rawTeam.addUser(teamLeader, repoService);
+	    rawTeam.setLeader(teamLeader, repoService);
 	}
 	
 	public void deleteTeamData(Team team) {
