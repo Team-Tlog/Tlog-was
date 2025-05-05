@@ -36,9 +36,16 @@ public class TeamUserJpaEntity {
 	@NonNull
 	private User user;
 	
+	private boolean isLeader;
+	
+	public void setLeader(boolean isLeader) {
+	    this.isLeader = isLeader;
+	}
+	
 	@Builder
-	public TeamUserJpaEntity(Team team, User user) {
+	public TeamUserJpaEntity(Team team, User user, boolean isLeader) {
 		this.team = team;
 		this.user = user;
+		this.isLeader = isLeader;
 	}
 }
