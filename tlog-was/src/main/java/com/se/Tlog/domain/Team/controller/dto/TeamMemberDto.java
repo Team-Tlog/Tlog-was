@@ -6,13 +6,15 @@ import java.util.UUID;
 
 public record TeamMemberDto(
         UUID userId,
-        String name
+        String name,
+        boolean isLeader
         // profile, tbti
 ) {
-    public static TeamMemberDto from(User user) {
+    public static TeamMemberDto from(User user, boolean isLeader) {
         return new TeamMemberDto(
                 user.getId(),
-                user.getName()
+                user.getName(),
+                isLeader
         );
     }
 }
