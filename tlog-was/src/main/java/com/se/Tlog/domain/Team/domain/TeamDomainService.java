@@ -21,6 +21,10 @@ public class TeamDomainService {
 	private final TeamRepositoryService repoService;
 	private final WishlistService wishlistService;
 	
+	public void initializeTeam(Team rawTeam, User teamLeader) {
+	    rawTeam.addUser(teamLeader, repoService);
+	}
+	
 	public void deleteTeamData(Team team) {
 		// 팀 삭제시 각종 처리...
 		wishlistService.deleteWishlist(new WishlistOwnerDto(OwnerType.TEAM, team.getId()));
