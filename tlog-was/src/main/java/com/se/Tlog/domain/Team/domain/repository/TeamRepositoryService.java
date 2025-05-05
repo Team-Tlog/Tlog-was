@@ -7,6 +7,7 @@ public interface TeamRepositoryService {
 	public long countMemberInTeam(UUID teamId);
 	public void addUserToTeam(UUID teamId, UUID userId);
     public void setLeader(UUID teamId, UUID userId);
+    public boolean isLeader(UUID teamId, UUID userId);
 	public void deleteUserInTeam(UUID teamId, UUID userId);
 	public void deleteTeamUsers(UUID teamId);
 	public long makeInviteCode();

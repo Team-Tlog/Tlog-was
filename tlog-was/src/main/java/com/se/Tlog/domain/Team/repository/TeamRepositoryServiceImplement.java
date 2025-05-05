@@ -59,6 +59,13 @@ public class TeamRepositoryServiceImplement implements TeamRepositoryService {
         teamUserRepository.save(newLeader);
 	}
 
+    @Override
+    public boolean isLeader(UUID teamId, UUID userId) {
+        TeamUserJpaEntity teamUser = teamUserRepository.findByTeam_IdAndUser_Id(teamId, userId)
+                .orElseThrow(() -> new CustomException(ErrorType.TEAM_USER_NOT_FOUND));
+        return teamUser.isLeader();
+    }
+
 	@Override
 	public void deleteUserInTeam(UUID teamId, UUID userId) {
 		teamUserRepository.deleteByTeam_IdAndUser_Id(teamId, userId);
