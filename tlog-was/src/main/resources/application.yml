@@ -93,7 +93,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        show-sql: true
+        show_sql: true
   rabbitmq:
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
