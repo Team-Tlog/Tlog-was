@@ -1,7 +1,9 @@
 package com.se.Tlog.domain.Team.application;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.se.Tlog.domain.ApplicationService;
@@ -56,18 +58,30 @@ public class TeamService {
 		if (!userRepository.existsById(userId))
 			throw new CustomException(ErrorType.USER_NOT_FOUND);
 
-		return teamUserRepository.findWithTeamByUserId(userId)
-				.stream().map(teamUser -> {
-				    String teamLeaderName = null;
-				    List<UUID> members = new ArrayList<UUID>();
-				    for (TeamUserJpaEntity teamUserInTeam : teamUserRepository.findWithUserByTeamId(teamUser.getTeam().getId())) {
-				        if (teamUserInTeam.isLeader())
-				            teamLeaderName = teamUserInTeam.getUser().getName();
-                        members.add(teamUserInTeam.getUser().getId());
-				    }
-					return TeamResponseDto.from(teamUser.getTeam(), teamLeaderName, members);
-				})
-				.toList();
+		// DB 일괄 조회
+		Map<UUID, List<TeamUserJpaEntity>> membersOfTeam = new HashMap<UUID, List<TeamUserJpaEntity>>();
+		for (TeamUserJpaEntity teamUser : teamUserRepository.findAllMembersByUserIds(userId)) {
+		    List<TeamUserJpaEntity> members = membersOfTeam.getOrDefault(
+		            teamUser.getTeam().getId(),
+		            new ArrayList<TeamUserJpaEntity>());
+            members.add(teamUser);
+	        membersOfTeam.putIfAbsent(
+	                teamUser.getTeam().getId(), 
+	                members);
+		}
+		
+		// DTO 변환
+		return membersOfTeam.values().stream().map(teamMembers -> {
+		    String teamLeaderName = null;
+		    List<UUID> members = new ArrayList<UUID>();
+		    for (TeamUserJpaEntity teamUserInTeam : teamMembers) {
+		        if (teamUserInTeam.isLeader())
+		            teamLeaderName = teamUserInTeam.getUser().getName();
+                members.add(teamUserInTeam.getUser().getId());
+		    }
+			return TeamResponseDto.from(teamMembers.get(0).getTeam(), teamLeaderName, members);
+		})
+		.toList();
 	}
 	
 	public void deleteTeam(UUID teamId) {
