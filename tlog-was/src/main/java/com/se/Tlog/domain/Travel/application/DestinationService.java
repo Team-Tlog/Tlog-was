@@ -14,6 +14,7 @@ import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
+import com.se.Tlog.global.util.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,6 +30,7 @@ public class DestinationService {
     private final DestinationRepository destinationRepository;
     private final CustomTagService customTagService;
     private final ReviewDomainService reviewDomainService;
+    private final RedisUtil redisUtil;
 
     public void createDestination(DestinationDto destinationDto) {
     	Destination.assertValidity(destinationDto.getName(), destinationRepoService);
@@ -49,6 +51,7 @@ public class DestinationService {
                 destinationRepoService);
         String destinationId = destinationRepository.save(destination).getId();
         customTagService.addCustomTag(destinationId, customTags);
+        redisUtil.pushDestinationIdToTaggingQueue(destinationId);
     }
 
     public Page<DestinationSummaryRes> getAllDestinations(Pageable pageable) {
