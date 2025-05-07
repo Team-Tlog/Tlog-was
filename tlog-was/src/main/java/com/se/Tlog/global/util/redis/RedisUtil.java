@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
+import static com.se.Tlog.global.util.redis.RedisProperties.PENDING_TAGGING_DESTINATION;
 
 @Component
 @RequiredArgsConstructor
@@ -34,5 +35,11 @@ public class RedisUtil {
         }else{
             return false;
         }
+    }
+    public void pushDestinationIdToTaggingQueue(String destinationId) {
+        redisTemplate.opsForList().rightPush(PENDING_TAGGING_DESTINATION, destinationId);
+    }
+    public String popDestinationIdFromTaggingQueue() {
+        return (String) redisTemplate.opsForList().leftPop(PENDING_TAGGING_DESTINATION);
     }
 }

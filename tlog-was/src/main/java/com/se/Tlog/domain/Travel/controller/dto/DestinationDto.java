@@ -33,7 +33,7 @@ public class DestinationDto {
     private String imageUrl;
     @Schema(description = "여행지 부가적인 설명입니다.")
     private String description;
-    @Schema(description = "여행지 고정 태그입니다.")
-    private List<TagIdDto> tags;
+    @Schema(description = "여행지 커스텀 태그입니다.")
+    private List<String> customTags;
     
 }

@@ -98,4 +98,8 @@ public class Destination {
 	public void verify() {
 		// verified logic
 	}
+
+	public void addFixedTags(List<TagInfo> fixedTags) {
+		this.tags.addAll(fixedTags);
+	}
 }

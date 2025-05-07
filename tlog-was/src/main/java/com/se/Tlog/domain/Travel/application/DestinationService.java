@@ -10,16 +10,17 @@ import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.TagCount;
 import com.se.Tlog.domain.Travel.domain.TagInfo;
 import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
-import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
+import com.se.Tlog.global.util.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationService
@@ -27,20 +28,20 @@ import java.util.List;
 public class DestinationService {
     private final DestinationRepositoryService destinationRepoService;
     private final DestinationRepository destinationRepository;
-    private final TagRepositoryService tagRepoService;
     private final CustomTagService customTagService;
     private final ReviewDomainService reviewDomainService;
+    private final RedisUtil redisUtil;
 
     public void createDestination(DestinationDto destinationDto) {
     	Destination.assertValidity(destinationDto.getName(), destinationRepoService);
-        List<TagInfo> tagInfoList = destinationDto.getTags().stream()
-                .map(tagIdDto -> TagInfo.create(tagIdDto.tagId(), tagIdDto.weight(),tagRepoService))
-                .toList();
+
+        List<String> customTags = destinationDto.getCustomTags();
+
         Destination destination = Destination.create(
         		destinationDto.getName(),
                 destinationDto.getLocation(),
                 destinationDto.getAddress(),
-                tagInfoList,
+                new ArrayList<>(),
                 destinationDto.getCity(),
                 destinationDto.getDistrict(),
                 destinationDto.isHasParking(),
@@ -48,7 +49,9 @@ public class DestinationService {
                 destinationDto.getDescription(),
                 destinationDto.getImageUrl(),
                 destinationRepoService);
-        destinationRepository.save(destination);
+        String destinationId = destinationRepository.save(destination).getId();
+        customTagService.addCustomTag(destinationId, customTags);
+        redisUtil.pushDestinationIdToTaggingQueue(destinationId);
     }
 
     public Page<DestinationSummaryRes> getAllDestinations(Pageable pageable) {
@@ -72,5 +75,9 @@ public class DestinationService {
         List<DestinationReviewDto> top2Reviews = reviewDomainService.getTop2Reviews(destination.getId());
 
         return DestinationDetailsRes.from(destination, topTags, top2Reviews);
+    }
+
+    public void addFixedTagsToDestination(String destinationId,List<TagInfo> fixedTags) {
+        destinationRepoService.addFixedTags(destinationId, fixedTags);
     }
 }
