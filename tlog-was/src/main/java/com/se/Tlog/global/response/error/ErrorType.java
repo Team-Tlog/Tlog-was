@@ -12,6 +12,7 @@ public enum ErrorType {
     CONTENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "Content 내용이 비어있습니다."),
     TEAM_NAME_NOT_FOUND(HttpStatus.BAD_REQUEST, "팀 이름이 비어있습니다."),
     TEAM_CANNOT_BE_ORPHAN(HttpStatus.BAD_REQUEST, "팀에 최소 1명 이상의 팀원이 필요합니다."),
+    CANNOT_REMOVE_TEAM_LEADER(HttpStatus.BAD_REQUEST, "팀장을 퇴출시킬 수 없습니다."),
     ROLE_MISMATCH(HttpStatus.BAD_REQUEST,"Role 값을 잘못 입력하였습니다."),
     INVALID_FIREBASE_TOKEN(HttpStatus.BAD_REQUEST,"클라이언트 FCM Token이 유효하지 않습니다!"),
     SCRAP_UNSUPPORTED_TO_TEAM(HttpStatus.BAD_REQUEST, "팀에는 스크랩 기능을 지원하지 않습니다!"),

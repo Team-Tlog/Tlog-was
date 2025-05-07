@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.Team.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import com.se.Tlog.domain.Team.domain.TeamDomainService;
 import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
 import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
 import com.se.Tlog.domain.Team.repository.jpa.TeamUserRepository;
+import com.se.Tlog.domain.Team.repository.jpa.entity.TeamUserJpaEntity;
 import com.se.Tlog.domain.Travel.controller.dto.SimpleDestinationRes;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
@@ -38,11 +40,15 @@ public class TeamService {
 		if (!userRepository.existsById(request.creator()))
 			throw new CustomException(ErrorType.USER_NOT_FOUND);
 
-		Team newTeam = teamRepository.save(
-				Team.create(
-						request.name(),
-						repoService.makeInviteCode()));
-		newTeam.addUser(userRepository.findById(request.creator()).get(), repoService);
+		Team newTeam = Team.create(request.name(), repoService.makeInviteCode());
+		teamRepository.save(newTeam);
+		
+		// Team의 id가 생성된 후에야 초기화 작업이 가능함.
+		// 그러나 Team.create 후에 별도로 다시 initialize를 해야 하는 구조는 적절하지 않음!
+		// (초기화를 까먹는 휴먼 에러에 취약한 점 등)
+		teamDomainService.initializeTeam(
+		        newTeam, 
+		        userRepository.findById(request.creator()).get());
 		return newTeam.getId();
 	}
 	
@@ -50,11 +56,16 @@ public class TeamService {
 		if (!userRepository.existsById(userId))
 			throw new CustomException(ErrorType.USER_NOT_FOUND);
 
-		return teamUserRepository.findByUser_Id(userId)
+		return teamUserRepository.findWithTeamByUserId(userId)
 				.stream().map(teamUser -> {
-					List<UUID> members = teamUserRepository.findWithUserByTeamId(teamUser.getTeam().getId())
-							.stream().map(teamUserByTeam -> teamUserByTeam.getUser().getId()).toList();
-					return TeamResponseDto.from(teamUser.getTeam(), members);
+				    String teamLeaderName = null;
+				    List<UUID> members = new ArrayList<UUID>();
+				    for (TeamUserJpaEntity teamUserInTeam : teamUserRepository.findWithUserByTeamId(teamUser.getTeam().getId())) {
+				        if (teamUserInTeam.isLeader())
+				            teamLeaderName = teamUserInTeam.getUser().getName();
+                        members.add(teamUserInTeam.getUser().getId());
+				    }
+					return TeamResponseDto.from(teamUser.getTeam(), teamLeaderName, members);
 				})
 				.toList();
 	}
@@ -101,9 +112,9 @@ public class TeamService {
 		Team team = teamRepository.findById(teamId)
 				.orElseThrow(() -> new CustomException(ErrorType.TEAM_NOT_FOUND));
 		List<TeamMemberDto> memberDtoList = teamUserRepository.findWithUserByTeamId(team.getId())
-				.stream().map(teamUser -> {
-					return TeamMemberDto.from(teamUser.getUser());
-				}).toList();
+				.stream().map(teamUser -> 
+				        TeamMemberDto.from(teamUser.getUser(), teamUser.isLeader())
+		        ).toList();
 
 		List<SimpleDestinationRes> wishList = shoppingCartService.getCartData(team.getId(), OwnerType.TEAM);
 
