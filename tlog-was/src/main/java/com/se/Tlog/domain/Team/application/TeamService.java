@@ -58,14 +58,14 @@ public class TeamService {
 
 		return teamUserRepository.findWithTeamByUserId(userId)
 				.stream().map(teamUser -> {
-				    UUID teamLeader = null;
+				    String teamLeaderName = null;
 				    List<UUID> members = new ArrayList<UUID>();
 				    for (TeamUserJpaEntity teamUserInTeam : teamUserRepository.findWithUserByTeamId(teamUser.getTeam().getId())) {
 				        if (teamUserInTeam.isLeader())
-                            teamLeader = teamUserInTeam.getUser().getId();
+				            teamLeaderName = teamUserInTeam.getUser().getName();
                         members.add(teamUserInTeam.getUser().getId());
 				    }
-					return TeamResponseDto.from(teamUser.getTeam(), teamLeader, members);
+					return TeamResponseDto.from(teamUser.getTeam(), teamLeaderName, members);
 				})
 				.toList();
 	}

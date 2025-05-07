@@ -10,14 +10,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record TeamResponseDto(
 		UUID teamId,
 		String teamName,
-		UUID teamLeaderId,
+		String teamLeaderName,
 		List<UUID> memberIdList //유저들 id + profile 예정
 		) {
-	public static TeamResponseDto from(Team team, UUID teamLeader, List<UUID> memberIdList) {
+	public static TeamResponseDto from(Team team, String teamLeaderName, List<UUID> memberIdList) {
 		return new TeamResponseDto(
 				team.getId(),
 				team.getName(),
-				teamLeader,
+				teamLeaderName,
 				memberIdList
 		);
 	}
