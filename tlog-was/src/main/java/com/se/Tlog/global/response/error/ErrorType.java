@@ -25,6 +25,11 @@ public enum ErrorType {
     // 보상 조건
     INVALID_REWARD_CRITERIA(HttpStatus.BAD_REQUEST,"제시된 보상 조건이 올바르지 않은 형식입니다."),
     NOT_FIT_ON_CRITERIA(HttpStatus.BAD_REQUEST, "사용자가 해당 보상 조건을 충족하지 않았습니다."),
+    
+    // 코스 관련 검증
+    INVALID_COURSE_OWNER(HttpStatus.BAD_REQUEST,"여행 코스 소유자가 잘못 기입되었습니다."),
+    INVALID_COURSE_DURATION(HttpStatus.BAD_REQUEST,"여행 코스의 기간이 잘못 기입되었습니다."),
+    INVALID_COURSE_DATE(HttpStatus.BAD_REQUEST,"여행지를 등록하려는 날짜가 여행 코스의 기간을 벗어납니다."),
 
     // 인증
     // 401
