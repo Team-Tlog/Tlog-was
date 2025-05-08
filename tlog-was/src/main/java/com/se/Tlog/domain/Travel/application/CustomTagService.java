@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,5 +31,20 @@ public class CustomTagService {
                         .limit(limit)
                         .toList()
                 ).orElse(List.of());
+    }
+    
+    public Map<String, List<TagCount>> getAllTopTags(List<String> destinationIds, int limit) {
+        Map<String, List<TagCount>> tagCountMap = 
+                customTagDocumentRepository.findAllByDestinationIdIn(destinationIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        CustomTagDocument::getDestinationId,
+                        doc -> doc.getCustomTags().stream()
+                            .sorted(Comparator.comparing(TagCount::getCount).reversed())
+                            .limit(limit)
+                            .toList()));
+        for (String desId : destinationIds)
+            tagCountMap.putIfAbsent(desId, List.of());
+        return tagCountMap;
     }
 }
