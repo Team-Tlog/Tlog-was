@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationService
 @RequiredArgsConstructor
@@ -56,13 +57,16 @@ public class DestinationService {
 
     public Page<DestinationSummaryRes> getAllDestinations(Pageable pageable) {
         Page<Destination> destinationPage = destinationRepository.findAllWithActiveTags(pageable);
+        Map<String, List<TagCount>> tagCountMap = customTagService.getAllTopTags(
+                destinationPage.map(Destination::getId).toList(),
+                3);
 
         List<DestinationSummaryRes> destinationResList = destinationPage
                 .stream()
-                .map(destination -> {
-                            List<TagCount> topTags = customTagService.getTopTags(destination.getId(), 3);
-                            return DestinationSummaryRes.from(destination, topTags);
-                }).toList();
+                .map(destination -> DestinationSummaryRes.from(
+                        destination,
+                        tagCountMap.get(destination.getId())))
+                .toList();
 
         return new PageImpl<>(destinationResList, pageable, destinationPage.getTotalElements());
     }

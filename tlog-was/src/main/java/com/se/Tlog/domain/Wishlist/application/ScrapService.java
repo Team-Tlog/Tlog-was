@@ -1,11 +1,13 @@
 package com.se.Tlog.domain.Wishlist.application;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Travel.application.CustomTagService;
 import com.se.Tlog.domain.Travel.controller.dto.SimpleDestinationRes;
+import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.TagCount;
 import com.se.Tlog.domain.Wishlist.domain.OwnerType;
 import com.se.Tlog.domain.Wishlist.domain.WishlistService;
@@ -23,15 +25,21 @@ public class ScrapService {
 	private final CustomTagService customTagService;
 	
 	public List<SimpleDestinationRes> getScrapData(UUID userId) {
-		return wishlistService.getWishlistData(
-				new WishlistOwnerDto(
-						OwnerType.USER,
-						userId),
-				WishlistType.SCRAP)
-				.stream().map(destination -> {
-					List<TagCount> topTags = customTagService.getTopTags(destination.getId(), 3);
-					return SimpleDestinationRes.from(destination, topTags);
-				}).toList();
+	    List<Destination> destinations = 
+	            wishlistService.getWishlistData(
+	                    new WishlistOwnerDto(
+                                OwnerType.USER,
+                                userId),
+                        WishlistType.SCRAP);
+        Map<String, List<TagCount>> tagCountMap = customTagService.getAllTopTags(
+                destinations.stream().map(Destination::getId).toList(),
+                3);
+        
+		return destinations.stream()
+		        .map(destination ->  SimpleDestinationRes.from(
+		                destination, 
+		                tagCountMap.get(destination.getId())))
+		        .toList();
 	}
 	
 	private void updateScrap(UpdateType updateType, UUID userId, String destinationId) {

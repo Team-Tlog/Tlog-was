@@ -29,4 +29,14 @@ public interface TeamUserRepository extends JpaRepository<TeamUserJpaEntity, Lon
 
 	@Query("select tu from TeamUserJpaEntity tu join fetch tu.user where tu.team.id = :teamId")
 	List<TeamUserJpaEntity> findWithUserByTeamId(@Param("teamId") UUID teamId);
+	
+	@Query("select tu "
+	+ "from TeamUserJpaEntity tu "
+	+ "join fetch tu.user "
+	+ "join fetch tu.team "
+	+ "where tu.team.id in "
+	    + "(select tu.team.id "
+	    + "from TeamUserJpaEntity tu "
+	    + "where tu.user.id = :userId)")
+    List<TeamUserJpaEntity> findAllMembersByUserIds(@Param("userId") UUID userId);
 }

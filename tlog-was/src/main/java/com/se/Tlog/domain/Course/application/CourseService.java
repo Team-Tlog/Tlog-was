@@ -17,6 +17,7 @@ import com.se.Tlog.domain.Course.repository.mongo.CourseRepository;
 import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
 import com.se.Tlog.domain.Travel.application.CustomTagService;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
+import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.TagCount;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
@@ -49,20 +50,24 @@ public class CourseService {
      * @return
      */
     private Map<String, DestinationSummaryRes> getAllDestinationByCourse(List<Course> courses) {
-        return destinationRepository.findAllById(
+        // DTO 변환을 위한 DB 로딩
+        List<Destination> destinations = destinationRepository.findAllById(
                 // course에서 요구하는 모든 여행지 id 수집
                 courses.stream()
                 .flatMap(course -> course.getDates().stream())
                 .flatMap(date -> date.getDestinations().stream())
                 .distinct()
-                .collect(Collectors.toList())
-        ).stream()
-        .map(destination -> {
-            // 여행지 -> dto 변환
-            // 쿼리를 일일이 요청하게 되어, 성능 상 문제가 될 수 있음. (이 구조를 사용하는 모든 부분을 포함해 점검할 것!)
-            List<TagCount> topTags = customTagService.getTopTags(destination.getId(), 3);
-            return DestinationSummaryRes.from(destination, topTags);
-        }).collect(Collectors.toMap(DestinationSummaryRes::id, d -> d));
+                .collect(Collectors.toList()));
+        Map<String, List<TagCount>> tagCountMap = customTagService.getAllTopTags(
+                destinations.stream().map(Destination::getId).toList(),
+                3);
+        
+        // 여행지 -> DTO 변환
+        return destinations.stream()
+                .map(destination -> DestinationSummaryRes.from(
+                        destination, 
+                        tagCountMap.get(destination.getId())))
+                .collect(Collectors.toMap(DestinationSummaryRes::id, d -> d));
     }
     
     /**
