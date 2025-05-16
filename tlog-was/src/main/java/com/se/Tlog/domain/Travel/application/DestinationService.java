@@ -59,6 +59,10 @@ public class DestinationService {
         return convertToDto(destinationRepository.findAllWithActiveTags(pageable));
     }
     
+    public Page<DestinationSummaryRes> getDestinationByIds(List<String> ids, Pageable pageable) {
+        return convertToDto(destinationRepository.findAllByIdIn(ids, pageable));
+    }
+    
     private Page<DestinationSummaryRes> convertToDto(Page<Destination> destinationPage) {
         Map<String, List<TagCount>> tagCountMap = customTagService.getAllTopTags(
                 destinationPage.map(Destination::getId).toList(),
