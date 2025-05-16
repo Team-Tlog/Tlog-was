@@ -6,11 +6,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.se.Tlog.domain.Admin.application.AdminService;
+import com.se.Tlog.domain.Admin.controller.dto.DestinationApproveReq;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
 import com.se.Tlog.global.response.error.ErrorRes;
 import com.se.Tlog.global.response.success.SuccessRes;
@@ -49,7 +50,7 @@ public class AdminController {
                 adminService.getUnApprovedDestinations(pageable)));
     }
     
-    @PostMapping("/destinations/{destinationId}")
+    @PostMapping("/destinations")
     @Operation (
             summary = "여행지 검수하기",
             description = "특정 여행지를 검수합니다.",
@@ -59,8 +60,8 @@ public class AdminController {
                             content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
     )
     public ResponseEntity<SuccessRes<?>> approvedDestination(
-            @PathVariable(name = "destinationId") String destinationId) {
-        adminService.approveDestination(destinationId);
+            @RequestBody DestinationApproveReq approveReqest) {
+        adminService.approveDestination(approveReqest);
         return ResponseEntity.ok(SuccessRes.from(SuccessType.OK));
     }
 }
