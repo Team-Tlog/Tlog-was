@@ -1,5 +1,7 @@
 package com.se.Tlog.domain.Travel.repository.mongo;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -17,4 +19,5 @@ public interface DestinationRepository extends MongoRepository<Destination, Stri
     @Query("{'tags.isDeleted' :  false}")
     Page<Destination> findAllWithActiveTags(Pageable pageable);
 
+    Page<Destination> findAllByIdIn(List<String> ids, Pageable pageable);
 }
