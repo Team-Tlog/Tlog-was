@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Admin.controller.dto.DestinationApproveReq;
 import com.se.Tlog.domain.Travel.application.DestinationService;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
 import com.se.Tlog.global.exception.CustomException;
@@ -28,11 +29,13 @@ public class AdminService {
                 pageable);
     }
     
-    public void approveDestination(String destinationId) {
-        redisUtil.removeDestinationIdFromTaggingQueue(destinationId)
+    public void approveDestination(DestinationApproveReq approveReqest) {
+        redisUtil.removeDestinationIdFromTaggingQueue(approveReqest.destinationId())
             .orElseThrow(() -> new CustomException(ErrorType.ALREADY_APPROVED_DESTINATION));
         
-        // destination 관련 검수 처리
-        log.warn("Destination 검수 처리 로직이 아직 없습니다. : id {" + destinationId + "}");
+        // 기타 destination 관련 검수 처리
+        destinationService.addFixedTagsToDestination(
+                approveReqest.destinationId(), 
+                approveReqest.fixedTags());
     }
 }
