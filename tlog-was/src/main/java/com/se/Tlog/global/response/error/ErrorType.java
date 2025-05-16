@@ -30,6 +30,9 @@ public enum ErrorType {
     INVALID_COURSE_OWNER(HttpStatus.BAD_REQUEST,"여행 코스 소유자가 잘못 기입되었습니다."),
     INVALID_COURSE_DURATION(HttpStatus.BAD_REQUEST,"여행 코스의 기간이 잘못 기입되었습니다."),
     INVALID_COURSE_DATE(HttpStatus.BAD_REQUEST,"여행지를 등록하려는 날짜가 여행 코스의 기간을 벗어납니다."),
+    
+    // 어드민 관련 검증
+    ALREADY_APPROVED_DESTINATION(HttpStatus.BAD_REQUEST, "해당 여행지는 이미 관리자의 검수가 완료되었습니다."),
 
     // 인증
     // 401
