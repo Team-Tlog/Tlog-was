@@ -56,7 +56,10 @@ public class DestinationService {
     }
 
     public Page<DestinationSummaryRes> getAllDestinations(Pageable pageable) {
-        Page<Destination> destinationPage = destinationRepository.findAllWithActiveTags(pageable);
+        return convertToDto(destinationRepository.findAllWithActiveTags(pageable));
+    }
+    
+    private Page<DestinationSummaryRes> convertToDto(Page<Destination> destinationPage) {
         Map<String, List<TagCount>> tagCountMap = customTagService.getAllTopTags(
                 destinationPage.map(Destination::getId).toList(),
                 3);
@@ -68,7 +71,7 @@ public class DestinationService {
                         tagCountMap.get(destination.getId())))
                 .toList();
 
-        return new PageImpl<>(destinationResList, pageable, destinationPage.getTotalElements());
+        return new PageImpl<>(destinationResList, destinationPage.getPageable(), destinationPage.getTotalElements());
     }
 
     public DestinationDetailsRes getDestinationById(String id) {
