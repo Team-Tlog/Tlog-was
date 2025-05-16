@@ -3,6 +3,7 @@ package com.se.Tlog.domain.Travel.application;
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Review.controller.dto.DestinationReviewDto;
 import com.se.Tlog.domain.Review.domain.service.ReviewDomainService;
+import com.se.Tlog.domain.Travel.controller.dto.AddFixedTagDto;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDetailsRes;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDto;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
@@ -10,6 +11,7 @@ import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.TagCount;
 import com.se.Tlog.domain.Travel.domain.TagInfo;
 import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
+import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 
 import com.se.Tlog.global.exception.CustomException;
@@ -28,6 +30,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DestinationService {
     private final DestinationRepositoryService destinationRepoService;
+    private final TagRepositoryService tagRepositoryService;
     private final DestinationRepository destinationRepository;
     private final CustomTagService customTagService;
     private final ReviewDomainService reviewDomainService;
@@ -88,7 +91,9 @@ public class DestinationService {
         return DestinationDetailsRes.from(destination, topTags, top2Reviews);
     }
 
-    public void addFixedTagsToDestination(String destinationId,List<TagInfo> fixedTags) {
-        destinationRepoService.addFixedTags(destinationId, fixedTags);
+    public void addFixedTagsToDestination(String destinationId, List<AddFixedTagDto> fixedTags) {
+        destinationRepoService.addFixedTags(
+                destinationId, 
+                TagInfo.createAll(fixedTags, tagRepositoryService));
     }
 }
