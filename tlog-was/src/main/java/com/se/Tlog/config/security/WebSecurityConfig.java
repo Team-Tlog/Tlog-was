@@ -9,6 +9,8 @@ import com.se.Tlog.global.security.filter.JwtExceptionFilter;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
 import com.se.Tlog.global.util.redis.RedisUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +24,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+@Slf4j
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -54,7 +58,9 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeHttpRequest ->{
                     authorizeHttpRequest
+                            //.requestMatchers("/api/admin/**").hasRole(Role.ADMIN.toString()) // Admin 전용 역할 제한 필요!!
                             .requestMatchers("/test/**").permitAll();
+                    log.error("서비스 API접근시 JWT 관련 Role 구분이 이루어지지 않았습니다!");
 
 
 
