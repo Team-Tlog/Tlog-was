@@ -94,10 +94,6 @@ public class Destination {
 	public void addTag(TagInfo tag) {
 		this.tags.add(tag);
 	}
-	
-	public void verify() {
-		// verified logic
-	}
 
 	public void addFixedTags(List<TagInfo> fixedTags) {
 		this.tags.addAll(fixedTags);
