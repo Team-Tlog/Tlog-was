@@ -39,7 +39,7 @@ public class DestinationController {
             }
     )
     public ResponseEntity<?> createDestination(@RequestBody DestinationDto destinationDto) {
-        destinationService.createDestination(destinationDto);
+        destinationService.generateNewDestination(destinationDto);
         return ResponseEntity
                 .status(SuccessType.DESTINATION_CREATED.getStatus())
                 .body(SuccessRes.from(SuccessType.DESTINATION_CREATED));

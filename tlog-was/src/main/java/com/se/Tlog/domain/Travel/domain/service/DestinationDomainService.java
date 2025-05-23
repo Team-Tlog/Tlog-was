@@ -3,6 +3,7 @@ package com.se.Tlog.domain.Travel.domain.service;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +17,9 @@ public class DestinationDomainService {
         if (!destinationRepository.existsById(destinationId)) {
             throw new CustomException(ErrorType.DESTINATION_NOT_FOUND);
         }
+    }
+
+    public boolean isApproved(String destinationId) {
+        return destinationRepository.existsById(destinationId);
     }
 }
