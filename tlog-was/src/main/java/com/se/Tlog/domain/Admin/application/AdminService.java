@@ -5,11 +5,11 @@ import org.springframework.data.domain.Pageable;
 
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Admin.controller.dto.DestinationApproveReq;
+import com.se.Tlog.domain.Admin.controller.dto.UnapprovedDestinationDto;
 import com.se.Tlog.domain.Travel.application.DestinationService;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
-import com.se.Tlog.global.exception.CustomException;
-import com.se.Tlog.global.response.error.ErrorType;
-import com.se.Tlog.global.util.redis.RedisUtil;
+import com.se.Tlog.domain.Travel.domain.TagCount;
+import com.se.Tlog.domain.Travel.repository.mongo.UnapprovedDestinationRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,23 +19,28 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationService
 @RequiredArgsConstructor
 public class AdminService {
-    private final RedisUtil redisUtil;
+    private final UnapprovedDestinationRepository unapprovedDestinationRepository;
     private final DestinationService destinationService;
     
-    public Page<DestinationSummaryRes> getUnApprovedDestinations(Pageable pageable) {
-        return destinationService.getDestinationByIds(
-                // 현재 여행지의 TaggingQueue는 아직 관리자가 검수하지 않은 여행지 리스트로도 활용중에 있습니다.
-                redisUtil.getAllDestinationIdFromTaggingQueue(), 
-                pageable);
+    public Page<UnapprovedDestinationDto> getUnApprovedDestinations(Pageable pageable) {
+        return unapprovedDestinationRepository.findAll(pageable)
+                .map(dest -> 
+                        new UnapprovedDestinationDto(
+                                dest.getId(),
+                                dest.getSubmitter(),
+                                DestinationSummaryRes.from(
+                                        dest.getDestination(), 
+                                        dest.getCustomTags().stream().map(TagCount::create).toList())
+                        )
+                );
     }
     
     public void approveDestination(DestinationApproveReq approveReqest) {
-        redisUtil.removeDestinationIdFromTaggingQueue(approveReqest.destinationId())
-            .orElseThrow(() -> new CustomException(ErrorType.ALREADY_APPROVED_DESTINATION));
-        
-        // 기타 destination 관련 검수 처리
-        destinationService.addFixedTagsToDestination(
-                approveReqest.destinationId(), 
+        // DDD 구조 개선점 : 
+        //   도메인 간의 결합을 낮추기 위해, Spring Event를 도입하여 해결할 수 있습니다.
+        //   오류 발생시 중단/피드백이 필요하다면 동기 방식의 이벤트로 설정할 수 있습니다.
+        destinationService.assignDestination(
+                approveReqest.id(), 
                 approveReqest.fixedTags());
     }
 }
