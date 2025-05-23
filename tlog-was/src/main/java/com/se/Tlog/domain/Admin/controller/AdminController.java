@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.se.Tlog.domain.Admin.application.AdminService;
 import com.se.Tlog.domain.Admin.controller.dto.DestinationApproveReq;
-import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
+import com.se.Tlog.domain.Admin.controller.dto.UnapprovedDestinationDto;
 import com.se.Tlog.global.response.error.ErrorRes;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
@@ -44,7 +44,7 @@ public class AdminController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류.",
                             content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
     )
-    public ResponseEntity<SuccessRes<Page<DestinationSummaryRes>>> getUnApprovedDestinations(
+    public ResponseEntity<SuccessRes<Page<UnapprovedDestinationDto>>> getUnApprovedDestinations(
             @PageableDefault Pageable pageable) {
         return ResponseEntity.ok(SuccessRes.from(
                 adminService.getUnApprovedDestinations(pageable)));
