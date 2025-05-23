@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.se.Tlog.domain.Travel.domain.Location;
 
@@ -15,6 +16,8 @@ import com.se.Tlog.domain.Travel.domain.Location;
 @Schema(description = "여행지 생성 요청 DTO")
 public class DestinationDto {
 
+    @Schema(description = "여행지 생성을 요청한 사용자 id입니다.")
+    private UUID creater;
     @Schema(description = "여행지 이름입니다.")
     private String name;
     @Schema(description = "여행지 주소입니다.")
