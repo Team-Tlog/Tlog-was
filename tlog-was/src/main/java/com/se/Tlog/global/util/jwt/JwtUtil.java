@@ -24,7 +24,7 @@ public class JwtUtil {
         this.issuer = issuer;
     }
 
-    public String generateToken(String subject,Duration duration, String role, Map<String, Object> claims){
+    public String generateToken(String subject,Duration duration, Map<String, Object> claims){
         return Jwts.builder()
                 .subject(subject)
                 .issuedAt(new Date())

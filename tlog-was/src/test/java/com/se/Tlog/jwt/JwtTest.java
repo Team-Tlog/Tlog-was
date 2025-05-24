@@ -34,8 +34,7 @@ public class JwtTest {
 
     @Test
     void generateTokenTest(){
-
-        String accessToken = accessTokenProvider.generateToken("hello", Role.USER.toString());
+        String accessToken = accessTokenProvider.generateToken("hello", Role.USER.toString(),"");
         String refreshToken = refreshTokenProvider.generateToken("hello", Role.USER.toString());
         System.out.println("token = " + accessToken);
         System.out.println("refreshToken = " + refreshToken);

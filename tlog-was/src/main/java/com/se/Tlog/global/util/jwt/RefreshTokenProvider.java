@@ -21,14 +21,13 @@ public class RefreshTokenProvider implements JwtTokenProvider{
     @Value("${JWT_REFRESH_EXPIRATION}")
     private Duration refreshTokenDuration;
 
-    @Override
     public String generateToken(String userId, String role) {
         Map<String, Object> claims = Map.of(
                 "role", role,
                 "tokenType", "refresh",
                 "jti", UUID.randomUUID().toString()
         );
-        return jwtUtil.generateToken(userId, refreshTokenDuration, role, claims);
+        return jwtUtil.generateToken(userId, refreshTokenDuration, claims);
     }
 
     @Override

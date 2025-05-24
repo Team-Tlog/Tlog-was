@@ -7,7 +7,6 @@ import java.util.Date;
 
 @Component
 public interface JwtTokenProvider {
-    String generateToken(String userId, String role);
 
     boolean isTokenExpired(String token);
 
