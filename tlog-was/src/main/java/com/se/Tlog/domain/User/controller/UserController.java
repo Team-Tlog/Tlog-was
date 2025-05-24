@@ -1,6 +1,7 @@
 package com.se.Tlog.domain.User.controller;
 
 import com.se.Tlog.domain.User.application.UserService;
+import com.se.Tlog.domain.User.controller.dto.ProfileImageRequest;
 import com.se.Tlog.domain.User.controller.dto.SnsIdUpdateRequest;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -106,12 +106,12 @@ public class UserController {
     @PostMapping("/profile-image")
     public ResponseEntity<?> uploadProfileImage(
             @AuthenticationPrincipal CustomUserDetails user,
-            @RequestPart("file") MultipartFile imageFile
+            @RequestBody ProfileImageRequest request
     ) {
-        String imageUrl = userService.uploadProfileImage(user.getId(), imageFile);
+        userService.uploadProfileImage(user.getId(), request.imageUrl());
 
         return ResponseEntity
                 .status(SuccessType.OK.getStatus())
-                .body(SuccessRes.from(imageUrl));
+                .body(SuccessRes.from(SuccessType.OK));
     }
 }
