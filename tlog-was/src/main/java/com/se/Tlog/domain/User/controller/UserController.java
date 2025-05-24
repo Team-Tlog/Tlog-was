@@ -2,6 +2,7 @@ package com.se.Tlog.domain.User.controller;
 
 import com.se.Tlog.domain.User.application.UserService;
 
+import com.se.Tlog.domain.User.controller.dto.ProfileImageRequest;
 import com.se.Tlog.domain.User.controller.dto.SnsIdUpdateRequest;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
