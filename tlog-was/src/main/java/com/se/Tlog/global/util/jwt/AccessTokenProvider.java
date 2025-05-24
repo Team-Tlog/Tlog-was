@@ -25,14 +25,14 @@ public class AccessTokenProvider implements JwtTokenProvider {
     @Value("${JWT_ACCESS_EXPIRATION}")
     private Duration accessTokenDuration;
 
-    @Override
-    public String generateToken(String userId, String role) {
+    public String generateToken(String userId, String role, String snsId) {
         Map<String, Object> claims = Map.of(
                 "role", role,
                 "tokenType", "access",
-                "jti", UUID.randomUUID().toString()
+                "jti", UUID.randomUUID().toString(),
+                "snsId", snsId == null ? "" : snsId
         );
-        return jwtUtil.generateToken(userId,accessTokenDuration,role,claims);
+        return jwtUtil.generateToken(userId,accessTokenDuration,claims);
     }
 
     @Override
