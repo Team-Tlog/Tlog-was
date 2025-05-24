@@ -3,6 +3,10 @@ package com.se.Tlog.domain.Social.Chat.room;
 import com.se.Tlog.domain.Social.Chat.room.dto.RequestInviteList;
 import com.se.Tlog.domain.Social.Chat.room.dto.ChatRoomResponseDto;
 import com.se.Tlog.domain.User.domain.Role;
+import com.se.Tlog.domain.User.domain.User;
+import com.se.Tlog.domain.User.repository.jpa.UserRepository;
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
@@ -23,7 +27,7 @@ public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
     private final AccessTokenProvider accessTokenProvider;
-
+    private final UserRepository userRepository;    // 테스트 때문에 넣어둠 나중에 지우겠습니다!
     @PostMapping("/room/{hostId}")
     @Operation(
             summary = "채팅방을 생성합니다.",
@@ -66,6 +70,13 @@ public class ChatRoomController {
     // test 편의성 때문에 토큰 생성 api 작성
     @PostMapping("/{userId}")
     public ResponseEntity<?> createToken(@PathVariable(name = "userId") UUID userId) {
-        return ResponseEntity.ok().body(accessTokenProvider.generateToken(userId.toString(), Role.USER.getValue()));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
+        String snsId = user.getSnsId();
+        return ResponseEntity.ok()
+                .body(accessTokenProvider.generateToken(
+                        userId.toString(),
+                        Role.USER.getValue(),
+                        snsId == null ? "" : snsId
+                ));
     }
 }
