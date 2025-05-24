@@ -27,6 +27,8 @@ public class User {
     private String snsId;
     //private String telephoneNumber; 사용자가 동의하지 않은 경우 못받을 수 있음 nullable 하게 관리
 
+    private String profileImage;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -49,4 +51,5 @@ public class User {
 
     public void updateEmail(String email) {this.email = email;}
     public void updateSnsId(String snsId) {this.snsId = snsId;}
+    public void updateProfileImage(String profileImage) {this.profileImage = profileImage;}
 }

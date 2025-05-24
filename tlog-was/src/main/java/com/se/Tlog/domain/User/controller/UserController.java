@@ -1,20 +1,20 @@
 package com.se.Tlog.domain.User.controller;
 
 import com.se.Tlog.domain.User.application.UserService;
-import com.se.Tlog.domain.User.controller.dto.EmailUpdateRequest;
 import com.se.Tlog.domain.User.controller.dto.SnsIdUpdateRequest;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
 import com.se.Tlog.global.security.dto.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -83,5 +83,35 @@ public class UserController {
                 .status(SuccessType.OK.getStatus())
                 .header("Authorization", newAccessToken)
                 .body(SuccessRes.from(SuccessType.OK));
+    }
+
+    @Operation(
+            summary = "프로필 이미지 업로드",
+            description = "사용자의 프로필 이미지를 업로드하고 Firebase Storage에 저장된 CDN URL을 반환합니다.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(
+                            mediaType = "multipart/form-data",
+                            schema = @Schema(type = "object", requiredProperties = { "file" }),
+                            encoding = @Encoding(name = "file", contentType = "image/*")
+                    )
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "이미지 업로드 성공 (imageUrl 반환)"),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 데이터 입니다."),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+            },
+            tags = { "User Profile" }
+    )
+    @PostMapping("/profile-image")
+    public ResponseEntity<?> uploadProfileImage(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestPart("file") MultipartFile imageFile
+    ) {
+        String imageUrl = userService.uploadProfileImage(user.getId(), imageFile);
+
+        return ResponseEntity
+                .status(SuccessType.OK.getStatus())
+                .body(SuccessRes.from(imageUrl));
     }
 }

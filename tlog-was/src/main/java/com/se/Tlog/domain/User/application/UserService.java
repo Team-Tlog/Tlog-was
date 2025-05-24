@@ -5,12 +5,15 @@ import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
+import com.se.Tlog.global.util.Image.ImageUploadUtil;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -42,5 +45,22 @@ public class UserService {
                 user.getRole().getValue(),
                 user.getSnsId()
         );
+    }
+
+    @Transactional
+    public String uploadProfileImage(String userId, MultipartFile imageFile) {
+
+        try {
+            User user = userRepository.findById(UUID.fromString(userId))
+                    .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
+
+            String path = "profile-images/" + userId + ".webp";
+            String imageUrl = ImageUploadUtil.uploadWebToFirebase(imageFile, path);
+            user.updateProfileImage(imageUrl);
+            return imageUrl;
+
+        } catch (IOException e) {
+            throw new CustomException(ErrorType.FILE_UPLOAD_FAILED);
+        }
     }
 }
