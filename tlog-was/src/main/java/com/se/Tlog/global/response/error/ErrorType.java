@@ -19,6 +19,7 @@ public enum ErrorType {
     INVITE_USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "초대하려는 유저 중 존재하지 않는 유저가 있습니다."),
     LOGOUT_FAILED(HttpStatus.BAD_REQUEST,"로그아웃에 실패하였습니다." ),
     INVALID_REVIEW_RATING(HttpStatus.BAD_REQUEST, "리뷰 평점은 1점 이상 5점 이하여야 합니다."),
+    INVALID_IMAGE_URL(HttpStatus.BAD_REQUEST, "잘못된 이미지 URL 입니다." ),
     // 사용자로부터 소셜 로그인 인증 실패
     SSO_LOGIN_FAIL(HttpStatus.BAD_REQUEST,"외부 소셜 로그인이 취소되거나 실패했습니다."),
     
@@ -80,7 +81,7 @@ public enum ErrorType {
     FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
     // 501 구현되지 않은 기능
     UNSUPPORTED_SSO_LOGIN(HttpStatus.NOT_IMPLEMENTED, "현재 해당 소셜 로그인 방식은 아직 지원되지 않습니다."),
-	UNSUPPORTED_REWARD_CRITERIA(HttpStatus.NOT_IMPLEMENTED, "현재 해당 보상 기준은 아직 지원되지 않습니다."), ;
+  	UNSUPPORTED_REWARD_CRITERIA(HttpStatus.NOT_IMPLEMENTED, "현재 해당 보상 기준은 아직 지원되지 않습니다."),;
 
 
     private final HttpStatus status;
