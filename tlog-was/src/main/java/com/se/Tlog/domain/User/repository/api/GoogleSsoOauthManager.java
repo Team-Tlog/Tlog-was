@@ -35,7 +35,7 @@ public class GoogleSsoOauthManager implements SsoOauthManager{
 		return GOOGLE_REQUEST_API +
 				"?client_id=" + GOOGLE_CLIENT_ID
 				+ "&redirect_uri=" + GOOGLE_CALLBACK
-				+ "&scope=" + "email"
+				+ "&scope=" + "email%20profile"
 				+ "&response_type=code";
 	}
 

@@ -40,7 +40,12 @@ public class AuthenticationService {
 	public void checkSsoAuthCode(SsoType type, String code) {
 		SsoOauthManager ssoOauthManager = Optional.ofNullable(ssoOauthManagers.get(type))
 				.orElseThrow(() -> new CustomException(ErrorType.UNSUPPORTED_SSO_LOGIN));
-		String token = ssoOauthManager.getAccessToken(code);
-		// 토큰 확인시 로그인, 회원가입 등등 처리
+		String rawResponse = ssoOauthManager.getAccessToken(code);
+		
+		System.out.println("소셜 로그인에 성공했습니다. : ");
+		System.out.println("\t type : " + type.toString());
+		System.out.println("\t response : " + rawResponse);
+		
+		// 토큰 확인 후 로그인, 회원가입 등등 처리
 	}
 }
