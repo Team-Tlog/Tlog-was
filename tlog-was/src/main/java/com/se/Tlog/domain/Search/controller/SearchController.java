@@ -68,7 +68,7 @@ public class SearchController {
 	@GetMapping("/destination/by-city")
     @Operation (
             summary = "여행지 도시 필터링 검색",
-            description = "도시 필터링한 여행지 검색 결과를 반환합니다.",
+            description = "도시 필터링한 여행지의 전체 결과를 반환합니다.",
             parameters = { 
                     @Parameter(name = "pageable", description = "페이징 정보"),
                     @Parameter(name = "city", description = "도시 이름")},
@@ -77,8 +77,31 @@ public class SearchController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류. 조회에 실패했습니다.",
                             content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
     )
-    public ResponseEntity<SuccessRes<Page<DestinationSummaryRes>>> searchDestinationByAddress(@PageableDefault Pageable pageable, @RequestParam String city) {
+    public ResponseEntity<SuccessRes<Page<DestinationSummaryRes>>> searchDestinationInCity(
+            @PageableDefault Pageable pageable, 
+            @RequestParam String city) {
         return ResponseEntity.ok(SuccessRes.from(
                 searchService.searchDestinationByCity(pageable, city)));
+    }
+    
+    @GetMapping("/destination/by-city-and-city")
+    @Operation (
+            summary = "여행지 도시 필터링 검색",
+            description = "도시 필터링한 여행지 이름 검색 결과를 반환합니다.",
+            parameters = { 
+                    @Parameter(name = "pageable", description = "페이징 정보"),
+                    @Parameter(name = "city", description = "도시 이름"),
+                    @Parameter(name = "name", description = "여행지 이름")},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "처리 성공, 검색된 결과를 리스트로 반환합니다."),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류. 조회에 실패했습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
+    )
+    public ResponseEntity<SuccessRes<Page<DestinationSummaryRes>>> searchDestinationByNameInCity(
+            @PageableDefault Pageable pageable,
+            @RequestParam String city,
+            @RequestParam String name) {
+        return ResponseEntity.ok(SuccessRes.from(
+                searchService.searchDestinationByCityAndName(pageable, city, name)));
     }
 }
