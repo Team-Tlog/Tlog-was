@@ -76,4 +76,40 @@ interface RawDestinationSearchRepository extends MongoRepository<Destination, St
             }
             """})
     RawPagedResultDto searchByCity(String city, long skip, int limit);
+    
+    @Aggregation(pipeline = {
+            """
+            { 
+                $search: {
+                    'index': 'destination_index',
+                    'compound': {
+                        'must': [
+                            { 'autocomplete': { 'path': 'name', 'query': ?0 } },
+                            { 'text': { 'path': 'city', 'query': ?1 } }
+                        ]
+                    }
+                }
+            }
+            """,
+            """
+            {
+                $facet: {
+                    'totalCountArr': [ { $count: 'totalCount' } ],
+                    'results': [
+                        { $skip: ?2 },
+                        { $limit: ?3 }                    
+                    ]
+                }
+            }
+            """,
+            // 최종 결과 다듬기 (null 처리, 배열로 감싸진 형태에서 꺼내기 등)
+            """ 
+            { 
+                $project: {
+                    'totalSize': { $ifNull: [ { $arrayElemAt: [ '$totalCountArr.totalCount', 0 ] }, 0 ] },
+                    'pagedDestinations': { $ifNull: [ '$results', [] ] }
+                }
+            }
+            """})
+    RawPagedResultDto searchByNameAndCity(String name, String city, long skip, int limit);
 }

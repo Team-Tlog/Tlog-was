@@ -31,4 +31,12 @@ public class DestinationSearchRepository {
                 pageable, 
                 result.totalSize());
     }
+    
+    public Page<Destination> searchByNameAndCity(String name, String city, Pageable pageable) {
+        RawPagedResultDto result = rawRepository.searchByNameAndCity(name, city, pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<Destination>(
+                result.pagedDestinations(), 
+                pageable, 
+                result.totalSize());
+    }
 }
