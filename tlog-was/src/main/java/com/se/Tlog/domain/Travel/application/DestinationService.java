@@ -76,19 +76,24 @@ public class DestinationService {
         return convertToDto(destinationRepository.findAllByIdIn(ids, pageable));
     }
     
-    private Page<DestinationSummaryRes> convertToDto(Page<Destination> destinationPage) {
+    public List<DestinationSummaryRes> convertToDto(List<Destination> destinationList) {
         Map<String, List<TagCount>> tagCountMap = customTagService.getAllTopTags(
-                destinationPage.map(Destination::getId).toList(),
+                destinationList.stream().map(Destination::getId).toList(),
                 3);
 
-        List<DestinationSummaryRes> destinationResList = destinationPage
+        return destinationList
                 .stream()
                 .map(destination -> DestinationSummaryRes.from(
                         destination,
                         tagCountMap.get(destination.getId())))
                 .toList();
-
-        return new PageImpl<>(destinationResList, destinationPage.getPageable(), destinationPage.getTotalElements());
+    }
+    
+    public Page<DestinationSummaryRes> convertToDto(Page<Destination> destinationPage) {
+        return new PageImpl<>(
+                convertToDto(destinationPage.getContent()),
+                destinationPage.getPageable(),
+                destinationPage.getTotalElements());
     }
 
     public DestinationDetailsRes getDestinationById(String id) {
