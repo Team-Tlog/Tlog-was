@@ -32,4 +32,9 @@ public class SearchService {
 	    return destinationService.convertToDto(
 	            searchRepository.searchByCity(city, pageable));
     }
+    
+    public Page<DestinationSummaryRes> searchDestinationByCityAndName(Pageable pageable, String city, String name) {
+        return destinationService.convertToDto(
+                searchRepository.searchByNameAndCity(name, city, pageable));
+    }
 }
