@@ -25,7 +25,8 @@ public enum SuccessType {
     USER_CREATED(HttpStatus.CREATED, "사용자 회원가입을 성공하였습니다."),
     FOLLOW_SUCCESS(HttpStatus.CREATED, "팔로우를 성공하였습니다."),
     CUSTOM_TAG_CREATED(HttpStatus.CREATED, "새로운 커스텀 태그 등록을 성공하였습니다."),
-    REVIEW_CREATED(HttpStatus.CREATED, "새로운 리뷰 등록을 성공하였습니다.");
+    REVIEW_CREATED(HttpStatus.CREATED, "새로운 리뷰 등록을 성공하였습니다."),
+    TEAM_CREATE_SUCCESS(HttpStatus.CREATED, "채팅방이 자동으로 생성되었습니다. 팀원들과 소통을 시작해보세요!");
     private final HttpStatus status;
     private final String message;
 

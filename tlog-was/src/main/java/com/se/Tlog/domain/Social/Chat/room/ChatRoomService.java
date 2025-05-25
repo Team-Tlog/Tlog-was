@@ -1,10 +1,8 @@
 package com.se.Tlog.domain.Social.Chat.room;
 
 import com.se.Tlog.domain.Social.Chat.room.dto.ChatRoomListResponseDto;
-import com.se.Tlog.domain.Social.Chat.room.dto.RequestInviteList;
 import com.se.Tlog.domain.Social.Chat.message.ChatMessage;
 import com.se.Tlog.domain.Social.Chat.message.repository.jpa.ChatMessageRepository;
-import com.se.Tlog.domain.Social.Chat.room.dto.ChatRoomResponseDto;
 import com.se.Tlog.domain.Social.Chat.room.repository.jpa.ChatRoomRepository;
 import com.se.Tlog.domain.Social.Chat.room.repository.jpa.ChatRoomUserRepository;
 import com.se.Tlog.domain.Social.Chat.read.ChatReadStatusService;
@@ -29,25 +27,22 @@ public class ChatRoomService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatReadStatusService chatReadStatusService;
 
-
-    public ChatRoomResponseDto create(UUID hostId, RequestInviteList requestInviteList) {
-        ChatRoom chatRoom = ChatRoom.create(hostId);
+    public Long create(UUID hostId,UUID teamId) {
+        ChatRoom chatRoom = ChatRoom.create(hostId, teamId);
         chatRoomRepository.save(chatRoom);
 
-        Set<UUID> allUserIds = new HashSet<>(requestInviteList.inviteList());
-        allUserIds.add(hostId);
+        User user = userRepository.findById(hostId).get();
+        ChatRoomUser chatRoomUser = ChatRoomUser.join(chatRoom, user);
 
-        List<User> users = userRepository.findAllById(allUserIds);
-        if(users.size() != allUserIds.size()){
-            throw new CustomException(ErrorType.INVITE_USER_NOT_FOUND);
-        }
+        chatRoomUserRepository.save(chatRoomUser);
+        return chatRoom.getId();
+    }
 
-        List<ChatRoomUser> chatRoomUsers = users.stream()
-                .map(user -> ChatRoomUser.join(chatRoom, user))
-                .toList();
-        chatRoomUserRepository.saveAll(chatRoomUsers);
-
-        return ChatRoomResponseDto.from(chatRoom.getId(),chatRoom.getHostId(),users);
+    public void joinChatRoom(User user, UUID teamId) {
+        ChatRoom chatRoom = chatRoomRepository.findByTeamId(teamId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
+        ChatRoomUser chatRoomUser = ChatRoomUser.join(chatRoom, user);
+        chatRoomUserRepository.save(chatRoomUser);
     }
 
     public List<ChatRoomListResponseDto> getRoomList(UUID userId) {

@@ -3,6 +3,7 @@ package com.se.Tlog.domain.Team.controller;
 import java.util.List;
 import java.util.UUID;
 
+import com.se.Tlog.domain.Team.controller.dto.TeamCreateRes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,18 +39,18 @@ public class TeamController {
 	@PostMapping
 	@Operation (
 			summary = "팀 생성",
-    		description = "새로운 여행 팀을 생성합니다.",
+    		description = "새로운 여행 팀을 생성하고 팀 채팅방이 자동으로 생성됩니다.",
 			tags = {"팀 관리"},
 			security = @SecurityRequirement(
 					name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
 					scopes = {"scope1", "scope2"}),
 			responses = {
-					@ApiResponse(responseCode = "200", description = "처리 성공. 생성된 팀의 id를 반환합니다."),
+					@ApiResponse(responseCode = "200", description = "채팅방이 자동으로 생성되었습니다. 팀원들과 소통을 시작해보세요!"),
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류. 팀 생성에 실패했습니다.",
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
-	public ResponseEntity<SuccessRes<UUID>> createTeam(@RequestBody CreateTeamRequestDto request) {
-		return ResponseEntity.ok(SuccessRes.from(
+	public ResponseEntity<SuccessRes<TeamCreateRes>> createTeam(@RequestBody CreateTeamRequestDto request) {
+		return ResponseEntity.ok(SuccessRes.of(SuccessType.TEAM_CREATE_SUCCESS,
 				teamService.createTeam(request)));
 	}
 	

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Social.Chat.room.ChatRoomService;
 import com.se.Tlog.domain.Team.controller.dto.*;
 import com.se.Tlog.domain.Team.domain.Team;
 import com.se.Tlog.domain.Team.domain.TeamDomainService;
@@ -23,6 +24,7 @@ import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @ApplicationService
 @RequiredArgsConstructor
@@ -35,8 +37,10 @@ public class TeamService {
 	private final TeamRepositoryService repoService;
 
 	private final ShoppingCartService shoppingCartService;
-	
-	public UUID createTeam(CreateTeamRequestDto request) {
+	private final ChatRoomService chatRoomService;
+
+	@Transactional
+	public TeamCreateRes createTeam(CreateTeamRequestDto request) {
 		if (request.name() == null)
 			throw new CustomException(ErrorType.TEAM_NAME_NOT_FOUND);
 		if (!userRepository.existsById(request.creator()))
@@ -51,7 +55,8 @@ public class TeamService {
 		teamDomainService.initializeTeam(
 		        newTeam, 
 		        userRepository.findById(request.creator()).get());
-		return newTeam.getId();
+		Long chatRoomId = chatRoomService.create(request.creator(), newTeam.getId());
+		return TeamCreateRes.of(newTeam.getId(),chatRoomId);
 	}
 	
 	public List<TeamResponseDto> getTeamOfUser(UUID userId) {
@@ -103,7 +108,7 @@ public class TeamService {
 		User user = userRepository.findById(request.userId()).get();
 		teamDomainService.inviteUser(team, user);
 	}*/
-	
+	@Transactional
 	public void joinTeamByInviteCode(TeamUserRequestDto request) {
 		Team team = teamRepository.findByInviteCode(request.inviteCode())
 				.orElseThrow(() -> new CustomException(ErrorType.TEAM_NOT_FOUND));
@@ -111,6 +116,7 @@ public class TeamService {
 				.orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
 
 		team.addUser(user, repoService);
+		chatRoomService.joinChatRoom(user, team.getId());
 	}
 	
 	public void leaveTeam(UUID teamId, UUID userId) {

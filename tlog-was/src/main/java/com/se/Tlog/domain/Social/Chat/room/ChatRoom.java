@@ -20,6 +20,7 @@ public class ChatRoom {
     private Long id;
 
     private UUID hostId; //채팅방 생성한 유저
+    private UUID teamId;
 
     private Long lastChatId;
 
@@ -27,12 +28,13 @@ public class ChatRoom {
     private LocalDateTime deleteAt;
 
 
-    private ChatRoom(UUID hostId){
+    private ChatRoom(UUID hostId,UUID teamId){
+        this.teamId = teamId;
         this.hostId = hostId;
     }
 
-    public static ChatRoom create(UUID hostId) {
-        return new ChatRoom(hostId);
+    public static ChatRoom create(UUID hostId,UUID teamId) {
+        return new ChatRoom(hostId,teamId);
     }
 
     public void modifyLastMessage(Long lastChatId) {
