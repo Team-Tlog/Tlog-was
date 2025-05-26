@@ -1,6 +1,5 @@
 package com.se.Tlog.domain.Notification.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -67,23 +66,18 @@ public class NotificationUtil {
 	 */
 	public int sendNotifications(List<FcmRequestDto> requests) {
 		// DB 접근의 최소화를 위해, user -> token 일괄 변환
-		List<UUID> users = new ArrayList<UUID>();
-		for (FcmRequestDto m : requests)
-			users.add(m.userId());
-		if (users.size() == 0)
-			return 0;
-		
+	    List<UUID> users = requests.stream().map(FcmRequestDto::userId).toList();
 		Map<UUID, String> tokenMap = fcmTokenRepository.findAllByUserIdIn(users)
 				.stream().collect(Collectors.toMap(e -> e.getUser().getId(), e -> e.getFcmToken()));
 		if (tokenMap.size() == 0)
 			return 0;
 
-		List<FcmMessageDto> messages = new ArrayList<FcmMessageDto>();
-		for (FcmRequestDto m : requests)
-			if (tokenMap.containsKey(m.userId()))
-				messages.add(new FcmMessageDto(tokenMap.get(m.userId()), m.payload()));
-		fcmWrapper.sendFcmMessages(messages);
+		List<FcmMessageDto> messages = requests.stream()
+		        .filter(request -> tokenMap.containsKey(request.userId()))
+		        .map(request -> new FcmMessageDto(tokenMap.get(request.userId()), request.payload()))
+		        .toList();
 		
+		fcmWrapper.sendFcmMessages(messages);
 		return tokenMap.size();
 	}
 }
