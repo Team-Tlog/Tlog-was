@@ -2,39 +2,41 @@ package com.se.Tlog.domain.Search.repository.mongo;
 
 import java.util.List;
 
-import org.springframework.data.mongodb.repository.Aggregation;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 
-import com.se.Tlog.domain.Search.repository.DestinationRawData;
+import com.se.Tlog.domain.Travel.domain.Destination;
 
-@Repository
-public interface DestinationSearchRepository extends MongoRepository<DestinationRawData, String> {
-	// Atlas Search를 위한 Json 쿼리
-	@Aggregation(pipeline = {
-    		"""
-    		{ 
-	    		$search: {
-	    			'index' : 'destination_index', 
-	    			'compound': {
-    		 			'should': [
-    		 		 		{
-		 		 		 		'autocomplete': {
-    				 		 		'query': ?0,
-    				 		 		'path': 'name'
-				 		 		}
-			 		 		},
-			 		 		{
-			 		 			'autocomplete': {
-			 		 				'query': ?0,
-    				 				'path': 'address'
-				 				}
-			 				}
-		 				]
-					}
-				}
-			}
-    		"""
-    })
-    List<DestinationRawData> autoCompleteBy(String searchText);
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
+public class DestinationSearchRepository {
+    private final RawDestinationSearchRepository rawRepository;
+    
+    public List<Destination> autoCompleteByAddress(String address) {
+        return rawRepository.autoCompleteByAddress(address);
+	}
+	
+    public List<Destination> autoCompleteByName(String name) {
+	    return rawRepository.autoCompleteByName(name);
+	}
+
+    public Page<Destination> searchByCity(String city, Pageable pageable) {
+        RawPagedResultDto result = rawRepository.searchByCity(city, pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<Destination>(
+                result.pagedDestinations(), 
+                pageable, 
+                result.totalSize());
+    }
+    
+    public Page<Destination> searchByNameAndCity(String name, String city, Pageable pageable) {
+        RawPagedResultDto result = rawRepository.searchByNameAndCity(name, city, pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<Destination>(
+                result.pagedDestinations(), 
+                pageable, 
+                result.totalSize());
+    }
 }
