@@ -76,6 +76,7 @@ public enum ErrorType {
     FIREBASE_INITIALIZE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. Firebase 라이브러리 초기화 에러."),
     FIREBASE_INITIALIZE_FAIL_KEY_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. Firebase Key 파일을 찾지 못했습니다."),
     BLACKLIST_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"블랙리스트 등록에 실패했습니다."),
+    FIREBASE_CUSTOM_TOKEN_ISSUE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "Firebase 커스텀 토큰 발급 실패"),
     // 외부 소셜 로그인 처리 중 에러
     SSO_ACCESSTOKEN_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "외부 인증 서버로부터 인증을 받는데 실패했습니다."),
     FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
