@@ -2,8 +2,6 @@ package com.se.Tlog.domain.Notification.application;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Notification.controller.dto.AssignTokenRequestDto;
 import com.se.Tlog.domain.Notification.repository.NotificationUtil;
@@ -14,14 +12,14 @@ import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 
+import lombok.RequiredArgsConstructor;
+
 @ApplicationService
+@RequiredArgsConstructor
 public class NotificationService {
-	@Autowired
-	private NotificationUtil notificationUtil;
-	@Autowired
-	private FcmTokenRepository fcmTokenRepository;
-	@Autowired
-	private UserRepository userRepository;
+	private final NotificationUtil notificationUtil;
+	private final FcmTokenRepository fcmTokenRepository;
+	private final UserRepository userRepository;
 	
 	public void assignFirebaseToken(AssignTokenRequestDto request) {
 		Optional<User> user = userRepository.findById(request.userId());
