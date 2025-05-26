@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "springdoc.swagger-ui.enabled", havingValue = "true")
 // @Profile("dev") // 현재 활성화 기준이 Swagger 임을 감안.
-@RequestMapping("api/test/notify")
+@RequestMapping("/api/test/notify")
 @Tag(name = "알림")
 @SecurityRequirement(
         name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
@@ -45,10 +45,10 @@ public class TestNotificationController {
 	private final FcmWrapper fcmWrapper;
 	private final FcmTokenRepository repository;
 	
-	@PostMapping("/byUserId")
+	@PostMapping("/by-user-id")
 	@Operation (
-			summary = "FCM 테스트 - UserId (dev 환경에서만 지원됨)",
-    		description = "FCM 기능을 테스트하는 API입니다. (Swagger UI를 사용하는 dev환경에서만 지원됩니다.)"
+			summary = "[개발환경 전용] FCM 테스트 - UserId",
+    		description = "[개발환경 전용] FCM 기능을 테스트하는 API입니다."
     				+ "<br/>"
     				+ "<br/> User 및 FcmToken은 DB에 별도 등록 필요."
     				+ "<br/> 요청 처리 결과를 반환합니다. (실패 사유 : 유저 또는 FCM 토큰이 DB에 등록되지 않음)"
@@ -96,10 +96,10 @@ public class TestNotificationController {
 		}
 	}
 	
-	@PostMapping("/byToken")
+	@PostMapping("/by-token")
 	@Operation (
-			summary = "FCM 테스트 - FcmToken (dev 환경에서만 지원됨)",
-    		description = "FCM 기능을 테스트하는 API입니다. (Swagger UI를 사용하는 dev환경에서만 지원됩니다.)"
+			summary = "[개발환경 전용] FCM 테스트 - FcmToken",
+    		description = "[개발환경 전용] FCM 기능을 테스트하는 API입니다."
     				+ "<br/>"
     				+ "<br/> 요청 처리 결과를 반환합니다. (실패 사유 : 토큰이 유효하지 않음)"
     				+ "<br/>"
