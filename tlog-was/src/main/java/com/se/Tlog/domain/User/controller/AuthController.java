@@ -19,6 +19,8 @@ import com.se.Tlog.global.response.success.SuccessType;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -89,7 +91,9 @@ public class AuthController {
 		return ResponseEntity.ok()
 				.header("Authorization",tokenDto.accessToken())
 				.header("Set-Cookie",tokenDto.refreshToken())
-				.body(SuccessRes.from(SuccessType.LOGIN_SSO_SUCCESS));
+				.body(SuccessRes.of(SuccessType.LOGIN_SSO_SUCCESS, Map.of(
+						"firebaseCustomToken", tokenDto.firebaseCustomToken()
+				)));
 	}
 
 	@PostMapping("/logout")

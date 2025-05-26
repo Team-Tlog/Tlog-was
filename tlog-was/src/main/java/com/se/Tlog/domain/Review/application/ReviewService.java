@@ -9,14 +9,15 @@ import com.se.Tlog.domain.Review.repository.mongo.ReviewRepository;
 
 import com.se.Tlog.domain.Travel.application.CustomTagService;
 import com.se.Tlog.domain.Travel.domain.service.DestinationDomainService;
+import com.se.Tlog.domain.User.controller.dto.UserProfileInfo;
+import com.se.Tlog.domain.User.domain.service.UserDomainService;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @ApplicationService
@@ -25,6 +26,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final CustomTagService customTagService;
     private final DestinationDomainService destinationDomainService;
+    private final UserDomainService userDomainService;
+
     public Slice<DestinationReviewDto> getReviewsByDestinationId(String destinationId, SortType sortType, Pageable pageable) {
         destinationDomainService.validateExists(destinationId);
 
@@ -33,8 +36,21 @@ public class ReviewService {
                 pageable.getPageSize(),
                 getSort(sortType)
         );
-        return reviewRepository.findByDestinationId(destinationId, sortedPageable)
-                .map(DestinationReviewDto::from);
+        Slice<Review> reviews = reviewRepository.findByDestinationId(destinationId, sortedPageable);
+        Set<UUID> uniqueUserIds = reviews.stream()
+                .map(Review::getUserId)
+                .map(UUID::fromString)
+                .collect(Collectors.toSet());
+
+        Map<UUID,UserProfileInfo> userProfiles = userDomainService.getUserProfile(uniqueUserIds);
+
+        List<DestinationReviewDto> dtoList = reviews.getContent().stream().map(review -> {
+            UUID userId = UUID.fromString(review.getUserId());
+            UserProfileInfo userProfileInfo = userProfiles.get(userId);
+            return DestinationReviewDto.from(review, userProfileInfo);
+        }).toList();
+
+        return new SliceImpl<>(dtoList, sortedPageable, reviews.hasNext());
     }
 
     public void createReview(ReviewCreateDto reviewCreateDto) {

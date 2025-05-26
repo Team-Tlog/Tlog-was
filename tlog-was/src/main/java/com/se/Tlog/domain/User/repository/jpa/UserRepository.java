@@ -5,11 +5,14 @@ import org.springframework.stereotype.Repository;
 
 import com.se.Tlog.domain.User.domain.User;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByProviderUserInfo(String providerUserInfo);
     boolean existsBySnsId(String snsId); // 또는 snsId
+    List<User> findByIdIn(Set<UUID> userIds);
 }
