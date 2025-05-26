@@ -1,5 +1,7 @@
 package com.se.Tlog.domain.User.application;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.se.Tlog.domain.User.repository.api.SsoService;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.domain.ApplicationService;
@@ -50,9 +52,19 @@ public class SsoAuthService {
 
         redisUtil.save(refreshKey, refreshToken, refreshTokenProvider.getRefreshTokenDuration());
 
+        String customToken = null;
+        if(!ssoUserInfo.provider().equals("google")){
+            try{
+                customToken = FirebaseAuth.getInstance().createCustomToken(user.getId().toString());
+            }catch (FirebaseAuthException e) {
+                throw new CustomException(ErrorType.FIREBASE_CUSTOM_TOKEN_ISSUE_FAIL);
+            }
+        }
+
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .firebaseCustomToken(customToken)
                 .build();
     }
     public void logout(String accessToken,String refreshToken) {
