@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -21,19 +20,21 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.MessagingErrorCode;
 import com.google.firebase.messaging.MulticastMessage;
-import com.se.Tlog.domain.Notification.repository.dto.FcmKeyValuePairDto;
 import com.se.Tlog.domain.Notification.repository.dto.FcmMessageDto;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 
 @Component
+@RequiredArgsConstructor
 public class FcmWrapper implements InitializingBean {
-	@Autowired
-	private InvalidTokenHandler invalidTokenHandler;
+	private final InvalidTokenHandler invalidTokenHandler;
+	
+	private static final int MAX_MESSAGE_COUNT = 500;
 	
 	@Value("${firebase-env.key-path}")
 	private String SERVICE_ACCOUNT_KEY_PATH;
@@ -43,26 +44,23 @@ public class FcmWrapper implements InitializingBean {
 		initializeFirebaseApp();
 		log.info("FCM Initialize Done");
 	}
-
-	private static final int MAX_MESSAGE_COUNT = 500;
 	
 	private void initializeFirebaseApp() {
 		if (!FirebaseApp.getApps().isEmpty())
 			return;
 		
 		try {
-			FileInputStream serviceAccount = new FileInputStream(SERVICE_ACCOUNT_KEY_PATH);
 			FirebaseOptions options = FirebaseOptions.builder()
-					.setCredentials(GoogleCredentials.fromStream(serviceAccount))
+					.setCredentials(GoogleCredentials.fromStream(
+					        new FileInputStream(SERVICE_ACCOUNT_KEY_PATH)))
 					.build();
-
 			FirebaseApp.initializeApp(options);
 		} catch (Exception e) {
 			if (e.getClass() == FileNotFoundException.class)
 				throw new CustomException(ErrorType.FIREBASE_INITIALIZE_FAIL_KEY_NOT_FOUND);
 			else
 				throw new CustomException(ErrorType.FIREBASE_INITIALIZE_FAIL);
-		}		
+		}
 	}
 	
 	public boolean isValidToken(String firebaseToken) {
@@ -97,12 +95,10 @@ public class FcmWrapper implements InitializingBean {
 	}
 
 	private Message toMessage(FcmMessageDto dto) {
-		Message.Builder messageBuilder = Message.builder();
-		messageBuilder.setToken(dto.fcmToken());
-		for (FcmKeyValuePairDto payload : dto.payload())
-			messageBuilder.putData(payload.key(), payload.value());
-		
-		return messageBuilder.build();
+		return Message.builder()
+		        .setToken(dto.getFcmToken())
+		        .putAllData(dto.getPayload())
+		        .build();
 	}
 	
 	/**
@@ -112,13 +108,12 @@ public class FcmWrapper implements InitializingBean {
 	private List<List<Message>> separatedMessages(List<FcmMessageDto> messagesDto) {
 		List<List<Message>> separatedMessages = new ArrayList<List<Message>>();
 		
-		int messageCount = 0;
-		for (int partition = 0; partition <= (messagesDto.size()-1)/MAX_MESSAGE_COUNT; partition++) {
-			List<Message> messages = new ArrayList<Message>();
-			while (messageCount < messagesDto.size() && messages.size() < MAX_MESSAGE_COUNT)
-				messages.add(toMessage(messagesDto.get(messageCount++)));
-			
-			separatedMessages.add(messages);
+		int offset = 0;
+		while (offset < messagesDto.size()) {
+		    separatedMessages.add(
+		            messagesDto.subList(offset, Math.min(offset + MAX_MESSAGE_COUNT, messagesDto.size()))
+		            .stream().map(this::toMessage).toList());
+		    offset += MAX_MESSAGE_COUNT;
 		}
 		
 		return separatedMessages;
@@ -131,17 +126,14 @@ public class FcmWrapper implements InitializingBean {
 	private List<MulticastMessage> separatedMessages(List<String> tokens, FcmMessageDto messageDto) {
 		List<MulticastMessage> separatedMessages = new ArrayList<MulticastMessage>();
 		
-		for (int partition = 0; partition <= (tokens.size()-1)/MAX_MESSAGE_COUNT; partition++) {
-			MulticastMessage.Builder messageBuilder = MulticastMessage.builder();
-			messageBuilder.addAllTokens(
-					tokens.subList(
-							partition * MAX_MESSAGE_COUNT, 
-							Math.min((partition + 1) * MAX_MESSAGE_COUNT, tokens.size())));
-			for (FcmKeyValuePairDto payload : messageDto.payload())
-				messageBuilder.putData(payload.key(), payload.value());
-			
-			separatedMessages.add(messageBuilder.build());
-		}
+		int offset = 0;
+        while (offset < tokens.size()) {
+            separatedMessages.add(
+                    MulticastMessage.builder()
+                    .addAllTokens(tokens.subList(offset, Math.min(offset + MAX_MESSAGE_COUNT, tokens.size())))
+                    .putAllData(messageDto.getPayload()).build());
+            offset += MAX_MESSAGE_COUNT;
+        }
 		
 		return separatedMessages;
 	}

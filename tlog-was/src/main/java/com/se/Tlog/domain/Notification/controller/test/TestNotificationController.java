@@ -4,23 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.se.Tlog.domain.Notification.domain.MessageGenerator;
 import com.se.Tlog.domain.Notification.repository.FcmWrapper;
 import com.se.Tlog.domain.Notification.repository.NotificationUtil;
 import com.se.Tlog.domain.Notification.repository.dto.FcmMessageDto;
 import com.se.Tlog.domain.Notification.repository.dto.FcmRequestDto;
 import com.se.Tlog.domain.Notification.repository.jpa.FcmTokenRepository;
 import com.se.Tlog.domain.Notification.repository.jpa.entity.UserFcmTokenJpaEntity;
-import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorRes;
-import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.response.success.SuccessRes;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,27 +26,31 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 
 @Controller
-@RequestMapping("/test/notify")
+@RequiredArgsConstructor
+@ConditionalOnProperty(name = "springdoc.swagger-ui.enabled", havingValue = "true")
+// @Profile("dev") // 현재 활성화 기준이 Swagger 임을 감안.
+@RequestMapping("/api/test/notify")
+@Tag(name = "알림")
+@SecurityRequirement(
+        name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
+        scopes = {"scope1", "scope2"})
 public class TestNotificationController {
-	@Autowired
-	private NotificationUtil notificationUtil;
-	@Autowired
-	private FcmWrapper fcmWrapper;
-	@Autowired
-	private FcmTokenRepository repository;
+	private final NotificationUtil notificationUtil;
+	private final FcmWrapper fcmWrapper;
+	private final FcmTokenRepository repository;
+	private final MessageGenerator messageGenerator;
 	
-	@Value("${springdoc.swagger-ui.enabled}")
-	private boolean swaggerTestEnabled;
-	
-	@PostMapping("/byUserId")
+	@PostMapping("/by-user-id")
 	@Operation (
-			summary = "FCM 테스트 - UserId (dev 환경에서만 지원됨)",
-    		description = "FCM 기능을 테스트하는 API입니다. (Swagger UI를 사용하는 dev환경에서만 지원됩니다.)"
+			summary = "[개발환경 전용] FCM 테스트 - UserId",
+    		description = "[개발환경 전용] FCM 기능을 테스트하는 API입니다."
     				+ "<br/>"
     				+ "<br/> User 및 FcmToken은 DB에 별도 등록 필요."
     				+ "<br/> 요청 처리 결과를 반환합니다. (실패 사유 : 유저 또는 FCM 토큰이 DB에 등록되지 않음)"
@@ -57,18 +59,12 @@ public class TestNotificationController {
     				+ "<br/> - 한 유저에게 단일 메세지 전송 : 1 userId, 1 message일 때"
     				+ "<br/> - 여러 유저에게 단일 메세지 전송 : N userId, 1 message일 때"
     				+ "<br/> - 여러 유저에게 여러 메세지 전송(메세지 수 만큼 전송합니다.) : N userId, M message일 때",
-			tags = {"알림"},
-			security = @SecurityRequirement(
-					name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
-					scopes = {"scope1", "scope2"}),
 			responses = {
 					@ApiResponse(responseCode = "200", description = "처리 성공."),
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류.",
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
 	public ResponseEntity<SuccessRes<String>> testFcmNotificationByUserId(@RequestBody TestFcmMessageByUserIdDto request) {
-		if (!swaggerTestEnabled)
-			throw new CustomException(ErrorType.INTERNAL_SERVER_ERROR);
 		if (request.users().size() == 0)
 			return ResponseEntity.ok(SuccessRes.from("전송할 유저가 등록되지 않았습니다."));
 
@@ -85,7 +81,7 @@ public class TestNotificationController {
 		
 		if (request.users().size() == 1 && messages.size() == 1) {
 			boolean requested = notificationUtil.sendNotification(messages.get(0));
-			UserFcmTokenJpaEntity entity = repository.findByUserId(messages.get(0).userId());
+			UserFcmTokenJpaEntity entity = repository.findByUserId(messages.get(0).getUserId());
 			log.info("Send single message : " + (entity != null ? entity.getFcmToken() : "user not found"));
 			
 			return ResponseEntity.ok(SuccessRes.from("처리 결과 : " + (requested?"1":"0") + "/1"));
@@ -102,10 +98,10 @@ public class TestNotificationController {
 		}
 	}
 	
-	@PostMapping("/byToken")
+	@PostMapping("/by-token")
 	@Operation (
-			summary = "FCM 테스트 - FcmToken (dev 환경에서만 지원됨)",
-    		description = "FCM 기능을 테스트하는 API입니다. (Swagger UI를 사용하는 dev환경에서만 지원됩니다.)"
+			summary = "[개발환경 전용] FCM 테스트 - FcmToken",
+    		description = "[개발환경 전용] FCM 기능을 테스트하는 API입니다."
     				+ "<br/>"
     				+ "<br/> 요청 처리 결과를 반환합니다. (실패 사유 : 토큰이 유효하지 않음)"
     				+ "<br/>"
@@ -113,18 +109,12 @@ public class TestNotificationController {
     				+ "<br/> - 한 클라이언트에게 단일 메세지 전송 : 1 token, 1 message일 때"
     				+ "<br/> - 여러 클라이언트에게 단일 메세지 전송 : N token, 1 message일 때"
     				+ "<br/> - 여러 클라이언트에게 여러 메세지 전송(메세지 수 만큼 전송합니다.) : N token, M message일 때",
-			tags = {"알림"},
-			security = @SecurityRequirement(
-					name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
-					scopes = {"scope1", "scope2"}),
 			responses = {
 					@ApiResponse(responseCode = "200", description = "처리 성공."),
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류.",
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
 	public ResponseEntity<SuccessRes<String>> testFcmNotificationByToken(@RequestBody TestFcmMessageByTokenDto request) {
-		if (!swaggerTestEnabled)
-			throw new CustomException(ErrorType.INTERNAL_SERVER_ERROR);
 		if (request.tokens().size() == 0)
 			return ResponseEntity.ok(SuccessRes.from("전송할 토큰이 등록되지 않았습니다."));
 		
@@ -142,7 +132,7 @@ public class TestNotificationController {
 		if (request.tokens().size() == 1 && messages.size() == 1) {
 			try {
 				boolean successed = fcmWrapper.sendFcmMessage(messages.get(0)).get();	
-				log.info("Send single message : " + messages.get(0).fcmToken());
+				log.info("Send single message : " + messages.get(0).getFcmToken());
 				return ResponseEntity.ok(SuccessRes.from("처리 결과 : " + (successed?1:0) + "/1"));
 			} catch (Exception e) {
 				log.info("Send single message : fail");
@@ -168,4 +158,36 @@ public class TestNotificationController {
 			}
 		}
 	}
+	
+    @PostMapping("/send-push-message")
+    @Operation (
+            summary = "[개발환경 전용] 알림 테스트 (Tlog 메시지 규격에 맞춰 동작)",
+            description = "[개발환경 전용] FCM 기능을 테스트하는 API입니다."
+                        + "<br> 한 알림을 여러 클라이언트에게 전송합니다."
+                        + "<br>"
+                        + "<br> - 페이로드는 메시지 규격에 맞아야 합니다."
+                        + "<br> - 토큰이 유효해 전송에 성공한 수를 반환합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "처리 성공."),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류.",
+                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
+    )
+    public ResponseEntity<SuccessRes<String>> testDefaultNotification(@RequestBody TestNotificationDto request) {
+        if (request.tokens().size() == 0)
+            return ResponseEntity.ok(SuccessRes.from("전송할 토큰이 등록되지 않았습니다."));
+        
+        FcmRequestDto parsedMessage = messageGenerator.getMessage(UUID.randomUUID(), request.data());
+        List<FcmMessageDto> validMessages = request.tokens().stream()
+                .filter(token -> (null != token))
+                .map(token -> new FcmMessageDto(token, parsedMessage.getPayload()))
+                .toList();
+        
+        int successCnt = 0;
+        try {
+            successCnt = fcmWrapper.sendFcmMessages(validMessages).get();
+        } catch (Exception e) {
+            
+        }
+        return ResponseEntity.ok(SuccessRes.from("처리 결과 : " + request.tokens().size() + "/" + successCnt));
+    }
 }

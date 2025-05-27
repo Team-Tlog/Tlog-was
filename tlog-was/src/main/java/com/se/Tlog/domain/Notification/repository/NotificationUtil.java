@@ -1,6 +1,5 @@
 package com.se.Tlog.domain.Notification.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,11 +35,11 @@ public class NotificationUtil {
 	 * @param request
 	 */
 	public boolean sendNotification(FcmRequestDto request) {
-		UserFcmTokenJpaEntity dbEntity = fcmTokenRepository.findByUserId(request.userId());
+		UserFcmTokenJpaEntity dbEntity = fcmTokenRepository.findByUserId(request.getUserId());
 		if (dbEntity == null)
 			return false;
 		
-		fcmWrapper.sendFcmMessage(new FcmMessageDto(dbEntity.getFcmToken(), request.payload()));
+		fcmWrapper.sendFcmMessage(new FcmMessageDto(dbEntity.getFcmToken(), request.getPayload()));
 		return true;
 	}
 	
@@ -56,7 +55,7 @@ public class NotificationUtil {
 		int validTokens = tokens.size();
 		
 		if (validTokens > 0)
-			fcmWrapper.sendFcmMessages(tokens, new FcmMessageDto(null, request.payload()));
+			fcmWrapper.sendFcmMessages(tokens, new FcmMessageDto(null, request.getPayload()));
 		return validTokens;
 	}
 	
@@ -67,23 +66,18 @@ public class NotificationUtil {
 	 */
 	public int sendNotifications(List<FcmRequestDto> requests) {
 		// DB 접근의 최소화를 위해, user -> token 일괄 변환
-		List<UUID> users = new ArrayList<UUID>();
-		for (FcmRequestDto m : requests)
-			users.add(m.userId());
-		if (users.size() == 0)
-			return 0;
-		
+	    List<UUID> users = requests.stream().map(FcmRequestDto::getUserId).toList();
 		Map<UUID, String> tokenMap = fcmTokenRepository.findAllByUserIdIn(users)
 				.stream().collect(Collectors.toMap(e -> e.getUser().getId(), e -> e.getFcmToken()));
 		if (tokenMap.size() == 0)
 			return 0;
 
-		List<FcmMessageDto> messages = new ArrayList<FcmMessageDto>();
-		for (FcmRequestDto m : requests)
-			if (tokenMap.containsKey(m.userId()))
-				messages.add(new FcmMessageDto(tokenMap.get(m.userId()), m.payload()));
-		fcmWrapper.sendFcmMessages(messages);
+		List<FcmMessageDto> messages = requests.stream()
+		        .filter(request -> tokenMap.containsKey(request.getUserId()))
+		        .map(request -> new FcmMessageDto(tokenMap.get(request.getUserId()), request.getPayload()))
+		        .toList();
 		
+		fcmWrapper.sendFcmMessages(messages);
 		return tokenMap.size();
 	}
 }

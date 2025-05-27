@@ -1,11 +1,13 @@
 package com.se.Tlog.domain.Notification.controller.test;
 
 import java.util.List;
+import java.util.Map;
 
-import com.se.Tlog.domain.Notification.repository.dto.FcmKeyValuePairDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 record TestFcmMessageDto(
-		List<FcmKeyValuePairDto> payloads) {
+        @Schema(example = "{\"key1\": \"value1\", \"key2\": \"value2\"}")
+		Map<String, String> payloads) {
 	
 }
 

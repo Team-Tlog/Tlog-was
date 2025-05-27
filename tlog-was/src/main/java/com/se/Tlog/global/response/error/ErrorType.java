@@ -35,6 +35,12 @@ public enum ErrorType {
     // 어드민 관련 검증
     ALREADY_APPROVED_DESTINATION(HttpStatus.BAD_REQUEST, "해당 여행지는 이미 관리자의 검수가 완료되었습니다."),
 
+    // FCM 메시지 형식 오류
+    NULL_IN_FCM_MESSAGE(HttpStatus.BAD_REQUEST, "FCM 수신자 또는 데이터에 null은 허용되지 않습니다."),
+    INVALID_TLOG_MESSAGE(HttpStatus.BAD_REQUEST, "Tlog 메시지 규격에 맞지 않습니다."),
+    INVALID_TLOG_MESSAGE_TYPE(HttpStatus.BAD_REQUEST, "Tlog 알림 타입이 없거나 잘못된 값입니다."),
+    INVALID_LINK_MESSAGE_TYPE(HttpStatus.BAD_REQUEST, "링크 알림 타입이 없거나 잘못된 값입니다."),
+
     // 인증
     // 401
     UN_AUTHENTICATION(HttpStatus.UNAUTHORIZED, "인증이 실패되었습니다."),
@@ -82,7 +88,7 @@ public enum ErrorType {
     FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
     // 501 구현되지 않은 기능
     UNSUPPORTED_SSO_LOGIN(HttpStatus.NOT_IMPLEMENTED, "현재 해당 소셜 로그인 방식은 아직 지원되지 않습니다."),
-  	UNSUPPORTED_REWARD_CRITERIA(HttpStatus.NOT_IMPLEMENTED, "현재 해당 보상 기준은 아직 지원되지 않습니다."),;
+  	UNSUPPORTED_REWARD_CRITERIA(HttpStatus.NOT_IMPLEMENTED, "현재 해당 보상 기준은 아직 지원되지 않습니다.");
 
 
     private final HttpStatus status;
