@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.se.Tlog.domain.Notification.domain.MessageGenerator;
 import com.se.Tlog.domain.Notification.repository.FcmWrapper;
 import com.se.Tlog.domain.Notification.repository.NotificationUtil;
 import com.se.Tlog.domain.Notification.repository.dto.FcmMessageDto;
@@ -44,6 +45,7 @@ public class TestNotificationController {
 	private final NotificationUtil notificationUtil;
 	private final FcmWrapper fcmWrapper;
 	private final FcmTokenRepository repository;
+	private final MessageGenerator messageGenerator;
 	
 	@PostMapping("/by-user-id")
 	@Operation (
@@ -156,4 +158,36 @@ public class TestNotificationController {
 			}
 		}
 	}
+	
+    @PostMapping("/send-push-message")
+    @Operation (
+            summary = "[개발환경 전용] 알림 테스트 (Tlog 메시지 규격에 맞춰 동작)",
+            description = "[개발환경 전용] FCM 기능을 테스트하는 API입니다."
+                        + "<br> 한 알림을 여러 클라이언트에게 전송합니다."
+                        + "<br>"
+                        + "<br> - 페이로드는 메시지 규격에 맞아야 합니다."
+                        + "<br> - 토큰이 유효해 전송에 성공한 수를 반환합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "처리 성공."),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류.",
+                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
+    )
+    public ResponseEntity<SuccessRes<String>> testDefaultNotification(@RequestBody TestNotificationDto request) {
+        if (request.tokens().size() == 0)
+            return ResponseEntity.ok(SuccessRes.from("전송할 토큰이 등록되지 않았습니다."));
+        
+        FcmRequestDto parsedMessage = messageGenerator.getMessage(UUID.randomUUID(), request.data());
+        List<FcmMessageDto> validMessages = request.tokens().stream()
+                .filter(token -> (null != token))
+                .map(token -> new FcmMessageDto(token, parsedMessage.getPayload()))
+                .toList();
+        
+        int successCnt = 0;
+        try {
+            successCnt = fcmWrapper.sendFcmMessages(validMessages).get();
+        } catch (Exception e) {
+            
+        }
+        return ResponseEntity.ok(SuccessRes.from("처리 결과 : " + request.tokens().size() + "/" + successCnt));
+    }
 }
