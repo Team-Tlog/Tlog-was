@@ -79,7 +79,7 @@ public class TestNotificationController {
 		
 		if (request.users().size() == 1 && messages.size() == 1) {
 			boolean requested = notificationUtil.sendNotification(messages.get(0));
-			UserFcmTokenJpaEntity entity = repository.findByUserId(messages.get(0).userId());
+			UserFcmTokenJpaEntity entity = repository.findByUserId(messages.get(0).getUserId());
 			log.info("Send single message : " + (entity != null ? entity.getFcmToken() : "user not found"));
 			
 			return ResponseEntity.ok(SuccessRes.from("처리 결과 : " + (requested?"1":"0") + "/1"));
@@ -130,7 +130,7 @@ public class TestNotificationController {
 		if (request.tokens().size() == 1 && messages.size() == 1) {
 			try {
 				boolean successed = fcmWrapper.sendFcmMessage(messages.get(0)).get();	
-				log.info("Send single message : " + messages.get(0).fcmToken());
+				log.info("Send single message : " + messages.get(0).getFcmToken());
 				return ResponseEntity.ok(SuccessRes.from("처리 결과 : " + (successed?1:0) + "/1"));
 			} catch (Exception e) {
 				log.info("Send single message : fail");

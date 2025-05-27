@@ -96,8 +96,8 @@ public class FcmWrapper implements InitializingBean {
 
 	private Message toMessage(FcmMessageDto dto) {
 		return Message.builder()
-		        .setToken(dto.fcmToken())
-		        .putAllData(dto.payload())
+		        .setToken(dto.getFcmToken())
+		        .putAllData(dto.getPayload())
 		        .build();
 	}
 	
@@ -131,7 +131,7 @@ public class FcmWrapper implements InitializingBean {
             separatedMessages.add(
                     MulticastMessage.builder()
                     .addAllTokens(tokens.subList(offset, Math.min(offset + MAX_MESSAGE_COUNT, tokens.size())))
-                    .putAllData(messageDto.payload()).build());
+                    .putAllData(messageDto.getPayload()).build());
             offset += MAX_MESSAGE_COUNT;
         }
 		

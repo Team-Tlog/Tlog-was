@@ -35,11 +35,11 @@ public class NotificationUtil {
 	 * @param request
 	 */
 	public boolean sendNotification(FcmRequestDto request) {
-		UserFcmTokenJpaEntity dbEntity = fcmTokenRepository.findByUserId(request.userId());
+		UserFcmTokenJpaEntity dbEntity = fcmTokenRepository.findByUserId(request.getUserId());
 		if (dbEntity == null)
 			return false;
 		
-		fcmWrapper.sendFcmMessage(new FcmMessageDto(dbEntity.getFcmToken(), request.payload()));
+		fcmWrapper.sendFcmMessage(new FcmMessageDto(dbEntity.getFcmToken(), request.getPayload()));
 		return true;
 	}
 	
@@ -55,7 +55,7 @@ public class NotificationUtil {
 		int validTokens = tokens.size();
 		
 		if (validTokens > 0)
-			fcmWrapper.sendFcmMessages(tokens, new FcmMessageDto(null, request.payload()));
+			fcmWrapper.sendFcmMessages(tokens, new FcmMessageDto(null, request.getPayload()));
 		return validTokens;
 	}
 	
@@ -66,15 +66,15 @@ public class NotificationUtil {
 	 */
 	public int sendNotifications(List<FcmRequestDto> requests) {
 		// DB 접근의 최소화를 위해, user -> token 일괄 변환
-	    List<UUID> users = requests.stream().map(FcmRequestDto::userId).toList();
+	    List<UUID> users = requests.stream().map(FcmRequestDto::getUserId).toList();
 		Map<UUID, String> tokenMap = fcmTokenRepository.findAllByUserIdIn(users)
 				.stream().collect(Collectors.toMap(e -> e.getUser().getId(), e -> e.getFcmToken()));
 		if (tokenMap.size() == 0)
 			return 0;
 
 		List<FcmMessageDto> messages = requests.stream()
-		        .filter(request -> tokenMap.containsKey(request.userId()))
-		        .map(request -> new FcmMessageDto(tokenMap.get(request.userId()), request.payload()))
+		        .filter(request -> tokenMap.containsKey(request.getUserId()))
+		        .map(request -> new FcmMessageDto(tokenMap.get(request.getUserId()), request.getPayload()))
 		        .toList();
 		
 		fcmWrapper.sendFcmMessages(messages);
