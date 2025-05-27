@@ -1,9 +1,9 @@
 package com.se.Tlog.domain.Notification.repository.dto;
 
-import java.util.List;
+import java.util.Map;
 
 public record FcmMessageDto(
 		String fcmToken,
-		List<FcmKeyValuePairDto> payload) {
+		Map<String, String> payload) {
 
 }
