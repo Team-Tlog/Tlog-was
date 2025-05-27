@@ -52,7 +52,7 @@ public class SsoAuthService {
 
         redisUtil.save(refreshKey, refreshToken, refreshTokenProvider.getRefreshTokenDuration());
 
-        String customToken = null;
+        String customToken = "";
         if(!ssoUserInfo.provider().equals("google")){
             try{
                 customToken = FirebaseAuth.getInstance().createCustomToken(user.getId().toString());
