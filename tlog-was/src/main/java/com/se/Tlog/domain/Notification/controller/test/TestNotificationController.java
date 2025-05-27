@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,9 +17,7 @@ import com.se.Tlog.domain.Notification.repository.dto.FcmMessageDto;
 import com.se.Tlog.domain.Notification.repository.dto.FcmRequestDto;
 import com.se.Tlog.domain.Notification.repository.jpa.FcmTokenRepository;
 import com.se.Tlog.domain.Notification.repository.jpa.entity.UserFcmTokenJpaEntity;
-import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorRes;
-import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.response.success.SuccessRes;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,22 +25,25 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 
 @Controller
-@RequestMapping("/test/notify")
+@RequiredArgsConstructor
+@ConditionalOnProperty(name = "springdoc.swagger-ui.enabled", havingValue = "true")
+// @Profile("dev") // 현재 활성화 기준이 Swagger 임을 감안.
+@RequestMapping("api/test/notify")
+@Tag(name = "알림")
+@SecurityRequirement(
+        name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
+        scopes = {"scope1", "scope2"})
 public class TestNotificationController {
-	@Autowired
-	private NotificationUtil notificationUtil;
-	@Autowired
-	private FcmWrapper fcmWrapper;
-	@Autowired
-	private FcmTokenRepository repository;
-	
-	@Value("${springdoc.swagger-ui.enabled}")
-	private boolean swaggerTestEnabled;
+	private final NotificationUtil notificationUtil;
+	private final FcmWrapper fcmWrapper;
+	private final FcmTokenRepository repository;
 	
 	@PostMapping("/byUserId")
 	@Operation (
@@ -57,18 +57,12 @@ public class TestNotificationController {
     				+ "<br/> - 한 유저에게 단일 메세지 전송 : 1 userId, 1 message일 때"
     				+ "<br/> - 여러 유저에게 단일 메세지 전송 : N userId, 1 message일 때"
     				+ "<br/> - 여러 유저에게 여러 메세지 전송(메세지 수 만큼 전송합니다.) : N userId, M message일 때",
-			tags = {"알림"},
-			security = @SecurityRequirement(
-					name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
-					scopes = {"scope1", "scope2"}),
 			responses = {
 					@ApiResponse(responseCode = "200", description = "처리 성공."),
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류.",
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
 	public ResponseEntity<SuccessRes<String>> testFcmNotificationByUserId(@RequestBody TestFcmMessageByUserIdDto request) {
-		if (!swaggerTestEnabled)
-			throw new CustomException(ErrorType.INTERNAL_SERVER_ERROR);
 		if (request.users().size() == 0)
 			return ResponseEntity.ok(SuccessRes.from("전송할 유저가 등록되지 않았습니다."));
 
@@ -113,18 +107,12 @@ public class TestNotificationController {
     				+ "<br/> - 한 클라이언트에게 단일 메세지 전송 : 1 token, 1 message일 때"
     				+ "<br/> - 여러 클라이언트에게 단일 메세지 전송 : N token, 1 message일 때"
     				+ "<br/> - 여러 클라이언트에게 여러 메세지 전송(메세지 수 만큼 전송합니다.) : N token, M message일 때",
-			tags = {"알림"},
-			security = @SecurityRequirement(
-					name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
-					scopes = {"scope1", "scope2"}),
 			responses = {
 					@ApiResponse(responseCode = "200", description = "처리 성공."),
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류.",
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
 	public ResponseEntity<SuccessRes<String>> testFcmNotificationByToken(@RequestBody TestFcmMessageByTokenDto request) {
-		if (!swaggerTestEnabled)
-			throw new CustomException(ErrorType.INTERNAL_SERVER_ERROR);
 		if (request.tokens().size() == 0)
 			return ResponseEntity.ok(SuccessRes.from("전송할 토큰이 등록되지 않았습니다."));
 		
