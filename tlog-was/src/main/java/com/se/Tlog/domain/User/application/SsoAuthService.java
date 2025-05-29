@@ -53,12 +53,10 @@ public class SsoAuthService {
         redisUtil.save(refreshKey, refreshToken, refreshTokenProvider.getRefreshTokenDuration());
 
         String customToken = "";
-        if(!ssoUserInfo.provider().equals("google")){
-            try{
-                customToken = FirebaseAuth.getInstance().createCustomToken(user.getId().toString());
-            }catch (FirebaseAuthException e) {
-                throw new CustomException(ErrorType.FIREBASE_CUSTOM_TOKEN_ISSUE_FAIL);
-            }
+        try{
+            customToken = FirebaseAuth.getInstance().createCustomToken(user.getId().toString());
+        }catch (FirebaseAuthException e) {
+            throw new CustomException(ErrorType.FIREBASE_CUSTOM_TOKEN_ISSUE_FAIL);
         }
 
         return TokenDto.builder()
