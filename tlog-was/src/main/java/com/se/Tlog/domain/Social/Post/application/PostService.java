@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.Social.Post.application;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import com.se.Tlog.domain.Course.repository.mongo.CourseRepository;
 import com.se.Tlog.domain.Social.Post.controller.dto.CreatePostReq;
 import com.se.Tlog.domain.Social.Post.controller.dto.PostDetailRes;
 import com.se.Tlog.domain.Social.Post.controller.dto.PostPreviewRes;
+import com.se.Tlog.domain.Social.Post.controller.dto.ReplyRes;
 import com.se.Tlog.domain.Social.Post.domain.Post;
 import com.se.Tlog.domain.Social.Post.repository.mongo.PostRepository;
 import com.se.Tlog.domain.User.domain.User;
@@ -30,6 +32,10 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
+    private final ReplyService replyService;
+    
+    // 게시물 첫 조회시 기본으로 전송할 댓글 수 입니다.
+    private static final int DEFAULT_REPLY_COUNT = 10;
     
     public String createPost(CreatePostReq request) {
         if (!userRepository.existsById(request.author()))
@@ -71,6 +77,7 @@ public class PostService {
                     return new CustomException(ErrorType.POST_NOT_FOUND);
                 });
         CourseDistrictsDto courseDestinations = courseRepository.findAllDestinationNameInCourse(course.getId());
+        List<ReplyRes> replies = replyService.getReplyResOfPost(DEFAULT_REPLY_COUNT, null, postId);
         
         return new PostDetailRes(
                 post.getId(), 
@@ -82,6 +89,7 @@ public class PostService {
                 author.getName(),
                 author.getProfileImage(),
                 post.getImageUrls(),
-                post.getContent());
+                post.getContent(),
+                replies);
     }
 }
