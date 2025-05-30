@@ -9,6 +9,7 @@ import java.util.UUID;
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Social.Chat.room.ChatRoomService;
 import com.se.Tlog.domain.Team.controller.dto.*;
+import com.se.Tlog.domain.Team.domain.InviteCodeUtil;
 import com.se.Tlog.domain.Team.domain.Team;
 import com.se.Tlog.domain.Team.domain.TeamDomainService;
 import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
@@ -110,7 +111,7 @@ public class TeamService {
 	}*/
 	@Transactional
 	public void joinTeamByInviteCode(TeamUserRequestDto request) {
-		Team team = teamRepository.findByInviteCode(request.inviteCode())
+		Team team = teamRepository.findByInviteCode(InviteCodeUtil.strToLong(request.inviteCode()))
 				.orElseThrow(() -> new CustomException(ErrorType.TEAM_NOT_FOUND));
 		User user = userRepository.findById(request.userId())
 				.orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
