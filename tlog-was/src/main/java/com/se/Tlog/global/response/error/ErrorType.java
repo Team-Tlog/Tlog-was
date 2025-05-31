@@ -43,6 +43,7 @@ public enum ErrorType {
     INVALID_LINK_MESSAGE_TYPE(HttpStatus.BAD_REQUEST, "링크 알림 타입이 없거나 잘못된 값입니다."),
     
     // TBTI 관련
+    INVALID_TBTI_CODE(HttpStatus.BAD_REQUEST, "TBTI 코드는 0~99999999사이여야 합니다."),
     INVALID_ANSWER_PERCENTAGE(HttpStatus.BAD_REQUEST, "TBTI 응답의 값은 0~99사이여야 합니다."),
     QUESTION_HAS_NO_ANSWER(HttpStatus.BAD_REQUEST, "TBTI 질문에는 응답이 1개 이상 존재해야 합니다."),
     INVALID_QUESTION_WEIGHT(HttpStatus.BAD_REQUEST, "TBTI 질문의 가중치는 1~5사이여야 합니다."),
