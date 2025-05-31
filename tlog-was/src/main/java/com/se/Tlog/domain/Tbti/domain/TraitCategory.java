@@ -16,6 +16,12 @@ public enum TraitCategory {
     public String getCategoryInitial() {
         return categoryInitial;
     }
+    public char getMinCategoryInitial() {
+        return categoryInitial.charAt(0);
+    }
+    public char getMaxCategoryInitial() {
+        return categoryInitial.charAt(2);
+    }
     
     public static TraitCategory fromString(String traitCategory) {
         try {
