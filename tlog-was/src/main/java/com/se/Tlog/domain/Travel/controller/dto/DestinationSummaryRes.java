@@ -24,7 +24,7 @@ public record DestinationSummaryRes(
                 destination.getCity(),
                 destination.getLocation(),
                 destination.getReviewCount(),
-                destination.getAverageRating(),
+                Math.round(destination.getAverageRating() * 10) / 10.0f,
                 destination.getImageUrl(),
                 topTags
         );
