@@ -7,10 +7,7 @@ import com.se.Tlog.domain.Travel.controller.dto.AddFixedTagDto;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDetailsRes;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDto;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
-import com.se.Tlog.domain.Travel.domain.Destination;
-import com.se.Tlog.domain.Travel.domain.TagCount;
-import com.se.Tlog.domain.Travel.domain.TagInfo;
-import com.se.Tlog.domain.Travel.domain.UnapprovedDestination;
+import com.se.Tlog.domain.Travel.domain.*;
 import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
 import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
@@ -18,9 +15,10 @@ import com.se.Tlog.domain.Travel.repository.mongo.UnapprovedDestinationRepositor
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +33,7 @@ public class DestinationService {
     private final UnapprovedDestinationRepository unapprovedDestinationRepository;
     private final CustomTagService customTagService;
     private final ReviewDomainService reviewDomainService;
+    private final MongoTemplate mongoTemplate;
 
     public void generateNewDestination(DestinationDto destinationDto) {
         Destination destinationData = Destination.create(
@@ -68,8 +67,41 @@ public class DestinationService {
                 TagInfo.createAll(fixedTags, tagRepositoryService));
     }
 
-    public Page<DestinationSummaryRes> getAllDestinations(Pageable pageable) {
-        return convertToDto(destinationRepository.findAllWithActiveTags(pageable));
+    public Slice<DestinationSummaryRes> getAllDestinations(Pageable pageable, String city,
+                                                          DestinationSortType sortType, String tbti) {
+        MatchOperation matchStage = Aggregation.match(Criteria.where("city").is(city));
+
+        SortOperation sortStage = null;
+        switch (sortType){
+            case REVIEW -> { //평점 높은 순
+                sortStage = Aggregation.sort(Sort.by(Sort.Order.desc("averageRating")));
+            }
+            case POPULAR -> { // 리뷰 갯수
+                sortStage = Aggregation.sort(Sort.by(Sort.Order.desc("reviewCount")));
+            }
+        }
+
+        SkipOperation skipStage = Aggregation.skip((long) pageable.getPageNumber() * pageable.getPageSize());
+        LimitOperation limitStage = Aggregation.limit(pageable.getPageSize() + 1);  // 다음 페이지 존재 여부 확인 위해 +1
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                matchStage,
+                sortStage,
+                skipStage,
+                limitStage
+        );
+
+        List<Destination> destinations = new ArrayList<>(mongoTemplate.aggregate(aggregation, "destinations", Destination.class)
+                .getMappedResults());
+
+        boolean hasNext = destinations.size() > pageable.getPageSize();
+
+        if (hasNext) {
+            destinations.remove(destinations.size() - 1);
+        }
+
+        List<DestinationSummaryRes> destinationSummaryRes = convertToDto(destinations);
+        return new SliceImpl<>(new ArrayList<>(destinationSummaryRes), pageable, hasNext);
     }
     
     public Page<DestinationSummaryRes> getDestinationByIds(List<String> ids, Pageable pageable) {
