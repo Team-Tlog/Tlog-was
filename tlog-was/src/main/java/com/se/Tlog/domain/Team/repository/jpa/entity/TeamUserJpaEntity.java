@@ -17,7 +17,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Table(
         name = "teamUsers",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"team", "user"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"team_id", "user_id"})
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter

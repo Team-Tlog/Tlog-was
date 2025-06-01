@@ -57,6 +57,8 @@ public class ReviewService {
         Review review = Review.create(reviewCreateDto);
         reviewRepository.save(review);
 
+        destinationDomainService.increaseReviewCountAndRating(reviewCreateDto.destinationId(), reviewCreateDto.rating());
+
         customTagService.addCustomTag(reviewCreateDto.destinationId(), reviewCreateDto.customTagNames());
     }
 
@@ -67,6 +69,7 @@ public class ReviewService {
         if (!review.getUserId().equals(userId)) {
             throw new CustomException(ErrorType.UN_AUTHORIZATION);
         }
+        destinationDomainService.decreaseReviewCountAndRating(review.getDestinationId(), review);
         reviewRepository.delete(review);
     }
 

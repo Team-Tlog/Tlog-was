@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Document(collection = "customtags")
 @Getter
@@ -17,24 +17,7 @@ public class CustomTagDocument {
     private String id;
 
     private String destinationId;
-    private List<TagCount> customTags = new ArrayList<>();
-
-    public void addOrIncrement(List<String> tagNames) {
-        for (String tagName : tagNames) {
-            String normalizedTagName = tagName.trim().toLowerCase();
-
-            TagCount existing = customTags.stream()
-                    .filter(t -> t.getTagName().equals(normalizedTagName))
-                    .findFirst()
-                    .orElse(null);
-
-            if (existing != null) {
-                existing.increment();
-            }else{
-                customTags.add(TagCount.create(normalizedTagName));
-            }
-        }
-    }
+    private Map<String, Integer> customTags = new HashMap<>();
 
     public static CustomTagDocument create(String destinationId) {
         return new CustomTagDocument(destinationId);
