@@ -4,6 +4,7 @@ import com.se.Tlog.domain.Travel.application.DestinationService;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDetailsRes;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDto;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
+import com.se.Tlog.domain.Travel.domain.DestinationSortType;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,8 +12,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,8 +57,12 @@ public class DestinationController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<Page<DestinationSummaryRes>> getAllDestinations(@PageableDefault(size = 10) Pageable pageable) {
-        return ResponseEntity.ok(destinationService.getAllDestinations(pageable));
+    public ResponseEntity<Slice<DestinationSummaryRes>> getAllDestinations(
+            @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam String city,
+            @RequestParam(defaultValue = "RECOMMAND") DestinationSortType sortType,
+            @RequestParam(required = false) String tbti) {
+        return ResponseEntity.ok(destinationService.getAllDestinations(pageable,city,sortType,tbti));
     }
 
     @GetMapping("/{id}")
