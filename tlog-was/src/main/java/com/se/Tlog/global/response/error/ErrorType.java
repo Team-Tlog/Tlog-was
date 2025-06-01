@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorType {
 
     // 400 잘못된 요청
+    ILLEGAL_ARGUMENT(HttpStatus.BAD_REQUEST, "null값 또는 잘못된 값이 입력되었습니다."),
     CONTENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "Content 내용이 비어있습니다."),
     TEAM_NAME_NOT_FOUND(HttpStatus.BAD_REQUEST, "팀 이름이 비어있습니다."),
     TEAM_CANNOT_BE_ORPHAN(HttpStatus.BAD_REQUEST, "팀에 최소 1명 이상의 팀원이 필요합니다."),
@@ -68,6 +69,9 @@ public enum ErrorType {
     SCRAP_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 여행지가 스크랩 목록에 없습니다."),
     SHOPCART_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 여행지가 장바구니에 없습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 리뷰를 찾을 수 없습니다."),
+    COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 여행 코스입니다."),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 코스 리뷰(게시글)입니다."),
+    REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
     //데이터 충돌
     ALREADY_EXISTS_SNSId(HttpStatus.CONFLICT, "이미 존재하는 Id 입니다."),
     ALREADY_EXISTS_TAG(HttpStatus.CONFLICT, "이미 존재하는 태그입니다."),
