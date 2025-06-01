@@ -37,6 +37,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<?> handleException(Exception e) {
         ErrorRes error = ErrorRes.of(INTERNAL_SERVER_ERROR.getStatusCode(), INTERNAL_SERVER_ERROR.getMessage());
         log.error("Error occurred : [errorCode={}, message={}]",e.getClass(), e.getMessage());
+        log.error("Exception occurred", e);  // stacktrace 출력!
         return ResponseEntity.status(error.status()).body(error);
     }
 }
