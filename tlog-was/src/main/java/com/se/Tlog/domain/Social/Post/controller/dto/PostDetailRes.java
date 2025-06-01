@@ -24,6 +24,9 @@ public record PostDetailRes(
         
         // 내용 정보
         List<String> contentImageUrls,
-        String content) {
+        String content,
+        
+        // 댓글 정보
+        List<ReplyRes> replies) {
 
 }
