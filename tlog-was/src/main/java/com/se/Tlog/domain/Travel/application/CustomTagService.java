@@ -1,15 +1,11 @@
 package com.se.Tlog.domain.Travel.application;
 
-import com.mongodb.DuplicateKeyException;
 import com.se.Tlog.domain.Travel.domain.CustomTagDocument;
 import com.se.Tlog.domain.Travel.domain.TagCount;
+import com.se.Tlog.domain.Travel.domain.repository.CustomTagRepositoryService;
 import com.se.Tlog.domain.Travel.repository.mongo.CustomTagDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -22,30 +18,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CustomTagService {
     private final CustomTagDocumentRepository customTagDocumentRepository;
-    private final MongoTemplate mongoTemplate;
+    private final CustomTagRepositoryService customTagRepositoryService;
 
     public void addCustomTag(String destinationId, List<String> tagNameList) {
-
-        try {
-            mongoTemplate.upsert(
-                    Query.query(Criteria.where("destinationId").is(destinationId)),
-                    new Update().setOnInsert("destinationId", destinationId),
-                    CustomTagDocument.class
-            );
-        } catch (DuplicateKeyException e) {
-            log.info(" CustomTagDocument가 이미 존재합니다 destinationId : {}", destinationId);
-        }
-
-        for (String tagName : tagNameList) {
-            String normalizedTagName = tagName.trim().toLowerCase();
-
-            mongoTemplate.updateFirst(
-                    Query.query(Criteria.where("destinationId").is(destinationId)),
-                    new Update().inc("customTags." + normalizedTagName, 1),
-                    CustomTagDocument.class
-            );
-        }
-
+        customTagRepositoryService.addCustomTag(destinationId, tagNameList);
     }
 
     public List<TagCount> getTopTags(String destinationId, int limit) {

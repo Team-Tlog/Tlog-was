@@ -69,7 +69,7 @@ public class ReviewService {
         if (!review.getUserId().equals(userId)) {
             throw new CustomException(ErrorType.UN_AUTHORIZATION);
         }
-        destinationDomainService.decreaseReviewCount(review.getDestinationId());
+        destinationDomainService.decreaseReviewCountAndRating(review.getDestinationId(), review);
         reviewRepository.delete(review);
     }
 

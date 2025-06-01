@@ -17,8 +17,6 @@ import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
-import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,31 +67,7 @@ public class DestinationService {
 
     public Slice<DestinationSummaryRes> getAllDestinations(Pageable pageable, String city,
                                                           DestinationSortType sortType, String tbti) {
-        MatchOperation matchStage = Aggregation.match(Criteria.where("city").is(city));
-
-        SortOperation sortStage = null;
-        switch (sortType){
-            case REVIEW -> { //평점 높은 순
-                sortStage = Aggregation.sort(Sort.by(Sort.Order.desc("averageRating")));
-            }
-            case POPULAR -> { // 리뷰 갯수
-                sortStage = Aggregation.sort(Sort.by(Sort.Order.desc("reviewCount")));
-            }
-        }
-
-        SkipOperation skipStage = Aggregation.skip((long) pageable.getPageNumber() * pageable.getPageSize());
-        LimitOperation limitStage = Aggregation.limit(pageable.getPageSize() + 1);  // 다음 페이지 존재 여부 확인 위해 +1
-
-        Aggregation aggregation = Aggregation.newAggregation(
-                matchStage,
-                sortStage,
-                skipStage,
-                limitStage
-        );
-
-        List<Destination> destinations = new ArrayList<>(mongoTemplate.aggregate(aggregation, "destinations", Destination.class)
-                .getMappedResults());
-
+        List<Destination> destinations = destinationRepoService.getDestinations(pageable, city, sortType);
         boolean hasNext = destinations.size() > pageable.getPageSize();
 
         if (hasNext) {

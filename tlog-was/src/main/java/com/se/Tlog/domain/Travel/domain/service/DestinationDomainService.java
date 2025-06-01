@@ -1,16 +1,14 @@
 package com.se.Tlog.domain.Travel.domain.service;
 
-import com.mongodb.client.result.UpdateResult;
+import com.se.Tlog.domain.Review.domain.Review;
 import com.se.Tlog.domain.Travel.domain.Destination;
+import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class DestinationDomainService {
     private final DestinationRepository destinationRepository;
     private final MongoTemplate mongoTemplate;
+    private final DestinationRepositoryService destinationRepositoryService;
 
     public void validateExists(String destinationId) {
         if (!destinationRepository.existsById(destinationId)) {
@@ -33,30 +32,11 @@ public class DestinationDomainService {
         }
         float approximateAverage = (float) (destination.getRatingSum() + rating) / (destination.getReviewCount());
 
-        Update update = new Update()
-                .inc("reviewCount", 1)
-                .inc("ratingSum", rating)
-                .inc("ratingCount." + (rating - 1), 1)
-                .set("averageRating", approximateAverage);
-
-        UpdateResult updateResult = mongoTemplate.updateFirst(
-                Query.query(Criteria.where("_id").is(destinationId)),
-                update,
-                Destination.class
-        );
-
-        if (updateResult.getMatchedCount() == 0) {
-            throw new CustomException(ErrorType.DESTINATION_NOT_FOUND);
-        }
-
+        destinationRepositoryService.increaseReviewCountAndRating(destinationId, rating, approximateAverage);
     }
 
-    public void decreaseReviewCount(String destinationId) {
-        mongoTemplate.updateFirst(
-                Query.query(Criteria.where("_id").is(destinationId)),
-                new Update().inc("reviewCount", -1),
-                Destination.class
-        );
+    public void decreaseReviewCountAndRating(String destinationId, Review review) {
+        destinationRepositoryService.decreaseReviewCountAndRating(destinationId, review);
     }
     public boolean isApproved(String destinationId) {
         return destinationRepository.existsById(destinationId);
