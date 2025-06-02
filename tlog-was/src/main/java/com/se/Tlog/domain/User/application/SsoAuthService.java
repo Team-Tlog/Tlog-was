@@ -32,17 +32,17 @@ public class SsoAuthService {
     private final AccessTokenProvider accessTokenProvider;
     private final RefreshTokenProvider refreshTokenProvider;
     private final RedisUtil redisUtil;
-
-    public TokenDto login(LoginRequest loginRequest){
-        SsoService ssoService = Optional.ofNullable(ssoServiceMap.get(loginRequest.type()))
+    
+    private SsoUserInfo getSsoUserInfo(SsoType type, String accessToken) {
+        SsoService ssoService = Optional.ofNullable(ssoServiceMap.get(type))
                 .orElseThrow(() -> new CustomException(ErrorType.UNSUPPORTED_SSO_LOGIN));
 
-        SsoUserInfo ssoUserInfo = ssoService.getUserInfo(loginRequest.accessToken());
+        SsoUserInfo ssoUserInfo = ssoService.getUserInfo(accessToken);
         System.out.println("ssoUserInfo = " + ssoUserInfo);
-
-        User user = userRepository.findByProviderUserInfo(ssoUserInfo.getProviderUserInfo())
-                .orElseGet(() -> userRepository.save(User.create(ssoUserInfo)));
-
+        return ssoUserInfo;
+    }
+    
+    private TokenDto loginUser(User user) {
         String accessToken = accessTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue(),user.getSnsId());
         String refreshToken = refreshTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue());
 
@@ -64,6 +64,27 @@ public class SsoAuthService {
                 .firebaseCustomToken(customToken)
                 .build();
     }
+    
+    private User registerNewUser(SsoUserInfo ssoUserInfo) {
+        return userRepository.save(
+                User.create(ssoUserInfo));
+    }
+    
+    public TokenDto login(LoginRequest loginRequest) {
+        SsoUserInfo ssoUserInfo = getSsoUserInfo(loginRequest.type(), loginRequest.accessToken());
+        User user = userRepository.findByProviderUserInfo(ssoUserInfo.getProviderUserInfo())
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_REGISTERED));
+        return loginUser(user);
+    }
+    
+    public TokenDto register(LoginRequest loginRequest) {
+        SsoUserInfo ssoUserInfo = getSsoUserInfo(loginRequest.type(), loginRequest.accessToken());
+        if (userRepository.findByProviderUserInfo(ssoUserInfo.getProviderUserInfo())
+                .isPresent())
+            throw new CustomException(ErrorType.ALREADY_REGISTERED);
+        return loginUser(registerNewUser(ssoUserInfo));
+    }
+    
     public void logout(String accessToken,String refreshToken) {
         Claims accessClaims = accessTokenProvider.parseToken(accessToken);
         String accessJti = accessClaims.get("jti").toString();
