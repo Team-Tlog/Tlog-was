@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 
 import static lombok.AccessLevel.*;
 
-import com.se.Tlog.domain.User.domain.User;
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
 
 @Entity
 @Getter
@@ -16,30 +17,35 @@ public class TbtiAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
+    
     @ManyToOne
     @JoinColumn(name = "tbtiQuestion_id")
     private TbtiQuestion tbtiQuestion;
+    
+    private String content;
 
-    private int score;
+    private int percentage;
+    
+    public void setQuestion(TbtiQuestion question) {
+        this.tbtiQuestion = question;
+    }
 
     @Builder
-    private TbtiAnswer(User user, TbtiQuestion tbtiQuestion, int score) {
-        this.user = user;
-        this.tbtiQuestion = tbtiQuestion;
-        this.score = score;
+    private TbtiAnswer(String content, int percentage) {
+        this.content = content;
+        this.percentage = percentage;
     }
 
     //응답 생성 메서드
-    public static TbtiAnswer createAnswer(User user, TbtiQuestion tbtiQuestion, int score) {
+    public static TbtiAnswer createAnswer(String content, int percentage) {
+        if (content == null)
+            throw new CustomException(ErrorType.CONTENT_NOT_FOUND);
+        if (percentage < 0 || percentage > 99)
+            throw new CustomException(ErrorType.INVALID_ANSWER_PERCENTAGE);
+        
         return TbtiAnswer.builder()
-                .user(user)
-                .tbtiQuestion(tbtiQuestion)
-                .score(score)
+                .content(content)
+                .percentage(percentage)
                 .build();
     }
 }
