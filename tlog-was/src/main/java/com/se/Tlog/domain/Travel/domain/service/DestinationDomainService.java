@@ -30,7 +30,7 @@ public class DestinationDomainService {
         if (destination == null) {
             throw new CustomException(ErrorType.DESTINATION_NOT_FOUND);
         }
-        float approximateAverage = (float) (destination.getRatingSum() + rating) / (destination.getReviewCount());
+        float approximateAverage = (float) (destination.getRatingSum() + rating) / (destination.getReviewCount() + 1);
 
         destinationRepositoryService.increaseReviewCountAndRating(destinationId, rating, approximateAverage);
     }
