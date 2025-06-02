@@ -34,19 +34,21 @@ public class User {
 
     private User(
             String name,
-            String provider,
-            String providerId,
+            String providerUserInfo,
             String email
 
     ) {
         this.name = name;
-        this.providerUserInfo = provider + " " + providerId;
+        this.providerUserInfo = providerUserInfo;
         this.email = email;
 //        this.telephoneNumber = telephoneNumber;
         this.role = Role.USER;
     }
     public static User create(SsoUserInfo ssoUserInfo){
-        return new User(ssoUserInfo.nickname(), ssoUserInfo.provider(),ssoUserInfo.providerId(), ssoUserInfo.email());
+        return new User(
+                ssoUserInfo.nickname(),
+                ssoUserInfo.getProviderUserInfo(),
+                ssoUserInfo.email());
     }
 
     public void updateEmail(String email) {this.email = email;}

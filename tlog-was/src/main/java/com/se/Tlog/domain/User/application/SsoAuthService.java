@@ -39,9 +39,8 @@ public class SsoAuthService {
 
         SsoUserInfo ssoUserInfo = ssoService.getUserInfo(loginRequest.accessToken());
         System.out.println("ssoUserInfo = " + ssoUserInfo);
-        String providerUserInfo = ssoUserInfo.provider() + " " + ssoUserInfo.providerId();
 
-        User user = userRepository.findByProviderUserInfo(providerUserInfo)
+        User user = userRepository.findByProviderUserInfo(ssoUserInfo.getProviderUserInfo())
                 .orElseGet(() -> userRepository.save(User.create(ssoUserInfo)));
 
         String accessToken = accessTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue(),user.getSnsId());
