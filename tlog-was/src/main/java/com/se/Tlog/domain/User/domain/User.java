@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+import com.se.Tlog.domain.Tbti.domain.Tbti;
 import com.se.Tlog.domain.User.controller.dto.SsoUserInfo;
 
 @Entity
@@ -25,6 +26,8 @@ public class User {
     private String email;
 
     private String snsId;
+    
+    private int tbti;
     //private String telephoneNumber; 사용자가 동의하지 않은 경우 못받을 수 있음 nullable 하게 관리
 
     private String profileImage;
@@ -35,7 +38,8 @@ public class User {
     private User(
             String name,
             String providerUserInfo,
-            String email
+            String email,
+            int tbti
 
     ) {
         this.name = name;
@@ -43,12 +47,14 @@ public class User {
         this.email = email;
 //        this.telephoneNumber = telephoneNumber;
         this.role = Role.USER;
+        this.tbti = tbti;
     }
-    public static User create(SsoUserInfo ssoUserInfo){
+    public static User create(SsoUserInfo ssoUserInfo, Tbti tbti){
         return new User(
                 ssoUserInfo.nickname(),
                 ssoUserInfo.getProviderUserInfo(),
-                ssoUserInfo.email());
+                ssoUserInfo.email(),
+                tbti.getTbtiCode());
     }
 
     public void updateEmail(String email) {this.email = email;}
