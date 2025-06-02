@@ -30,7 +30,7 @@ public class TbtiController {
     		summary = "사용자용 TBTI 질문 전체 가져오기",
     		description = "모든 사용자용 TBTI 질문을 반환합니다.",
 			parameters = {
-					@Parameter(name = "categories", description = "TBTI 특성 카테고리입니다.")
+					@Parameter(name = "categories", description = "TBTI 특성 카테고리입니다. (RISK_TAKING, LOCATION_PREFERENCE, PLANNING_STYLE,  ACTIVITY_LEVEL)")
     		},
 			responses = {
 					@ApiResponse( responseCode = "200", description = "처리 성공시 반환되는 TBTI 질문 Page입니다.",

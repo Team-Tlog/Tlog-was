@@ -13,7 +13,7 @@ public record TbtiQuestionReq(
     @Schema(description = "질문의 가중치입니다. (1~5)")
     int weight,
 	
-	@Schema(description = "TBTI 유형입니다.")
+	@Schema(description = "TBTI 유형입니다. (RISK_TAKING, LOCATION_PREFERENCE, PLANNING_STYLE,  ACTIVITY_LEVEL)")
     String traitCategory,
     
     @Schema(description = "응답 형식")

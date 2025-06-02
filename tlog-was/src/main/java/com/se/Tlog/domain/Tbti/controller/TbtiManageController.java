@@ -29,7 +29,9 @@ public class TbtiManageController {
     @PostMapping("/user/question")
     @Operation (
     		summary = "새 TBTI 질문 등록하기",
-    		description = "새 TBTI 질문을 등록합니다.",
+    		description = "새 TBTI 질문을 등록합니다."
+    		            + "<br> 가중치는 1~5 사이의 값을 갖습니다."
+    		            + "<br> TBTI 카테고리는 [RISK_TAKING, LOCATION_PREFERENCE, PLANNING_STYLE,  ACTIVITY_LEVEL] 의 값을 갖습니다.",
 			responses = {
 					@ApiResponse( responseCode = "200", description = "성공"), 
 					@ApiResponse(responseCode = "505", description = "서버 내부 오류")}
