@@ -6,10 +6,13 @@ import com.se.Tlog.domain.User.repository.api.SsoService;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.User.controller.dto.LoginRequest;
+import com.se.Tlog.domain.User.controller.dto.RegisterRequest;
+import com.se.Tlog.domain.User.controller.dto.RegisterUserProfileDto;
 import com.se.Tlog.domain.User.controller.dto.SsoUserInfo;
 import com.se.Tlog.domain.User.controller.dto.TokenDto;
 import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.domain.User;
+import com.se.Tlog.domain.User.domain.UserRegisterInfo;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
@@ -65,9 +68,9 @@ public class SsoAuthService {
                 .build();
     }
     
-    private User registerNewUser(SsoUserInfo ssoUserInfo) {
+    private User registerNewUser(SsoUserInfo ssoUserInfo, RegisterUserProfileDto userProfiles) {
         return userRepository.save(
-                User.create(ssoUserInfo));
+                User.create(new UserRegisterInfo(ssoUserInfo, userProfiles)));
     }
     
     public TokenDto login(LoginRequest loginRequest) {
@@ -77,12 +80,12 @@ public class SsoAuthService {
         return loginUser(user);
     }
     
-    public TokenDto register(LoginRequest loginRequest) {
-        SsoUserInfo ssoUserInfo = getSsoUserInfo(loginRequest.type(), loginRequest.accessToken());
+    public TokenDto register(RegisterRequest registerRequest) {
+        SsoUserInfo ssoUserInfo = getSsoUserInfo(registerRequest.type(), registerRequest.accessToken());
         if (userRepository.findByProviderUserInfo(ssoUserInfo.getProviderUserInfo())
                 .isPresent())
             throw new CustomException(ErrorType.ALREADY_REGISTERED);
-        return loginUser(registerNewUser(ssoUserInfo));
+        return loginUser(registerNewUser(ssoUserInfo, registerRequest.userProfile()));
     }
     
     public void logout(String accessToken,String refreshToken) {
