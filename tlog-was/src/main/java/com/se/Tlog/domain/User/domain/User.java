@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-import com.se.Tlog.domain.Tbti.domain.Tbti;
-import com.se.Tlog.domain.User.controller.dto.SsoUserInfo;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,12 +46,12 @@ public class User {
         this.role = Role.USER;
         this.tbti = tbti;
     }
-    public static User create(SsoUserInfo ssoUserInfo, Tbti tbti){
+    public static User create(UserRegisterInfo userRegisterInfo){
         return new User(
-                ssoUserInfo.nickname(),
-                ssoUserInfo.getProviderUserInfo(),
-                ssoUserInfo.email(),
-                tbti.getTbtiCode());
+                userRegisterInfo.getNickname(),
+                userRegisterInfo.getProviderUserInfo(), 
+                userRegisterInfo.getEmail(), 
+                userRegisterInfo.getTbti().getTbtiCode());
     }
 
     public void updateEmail(String email) {this.email = email;}
