@@ -19,6 +19,7 @@ public enum ErrorType {
     SCRAP_UNSUPPORTED_TO_TEAM(HttpStatus.BAD_REQUEST, "팀에는 스크랩 기능을 지원하지 않습니다!"),
     INVITE_USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "초대하려는 유저 중 존재하지 않는 유저가 있습니다."),
     LOGOUT_FAILED(HttpStatus.BAD_REQUEST,"로그아웃에 실패하였습니다." ),
+    INSUFFICIENT_INFO_FOR_REGISTER(HttpStatus.BAD_REQUEST, "회원가입을 위한 정보가 부족합니다."),
     INVALID_REVIEW_RATING(HttpStatus.BAD_REQUEST, "리뷰 평점은 1점 이상 5점 이하여야 합니다."),
     INVALID_IMAGE_URL(HttpStatus.BAD_REQUEST, "잘못된 이미지 URL 입니다." ),
     // 사용자로부터 소셜 로그인 인증 실패
