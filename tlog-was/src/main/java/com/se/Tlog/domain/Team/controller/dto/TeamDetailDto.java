@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.Team.controller.dto;
 
+import com.se.Tlog.domain.Team.domain.InviteCodeUtil;
 import com.se.Tlog.domain.Team.domain.Team;
 import com.se.Tlog.domain.Travel.controller.dto.SimpleDestinationRes;
 
@@ -11,7 +12,7 @@ public record TeamDetailDto(
         UUID teamId,
         String teamName,
         //String teamTBTI,
-        long inviteCode,
+        String inviteCode,
         LocalDate startDate,
         LocalDate endDate,
         List<TeamMemberDto> members,
@@ -21,7 +22,7 @@ public record TeamDetailDto(
         return new TeamDetailDto(
                 team.getId(),
                 team.getName(),
-                team.getInviteCode(),
+                InviteCodeUtil.longToStr(team.getInviteCode()),
                 team.getCreatedAt().toLocalDate(),
                 LocalDate.now(),
                 members,

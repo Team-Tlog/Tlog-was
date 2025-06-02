@@ -27,7 +27,7 @@ public class InviteCodeUtil {
 	
 	public static long strToLong(String inviteCode) {
 		if (null == inviteCode || inviteCode.length() != INVITE_CODE_LEN)
-			throw new CustomException(ErrorType.INTERNAL_SERVER_ERROR);
+			throw new CustomException(ErrorType.INTERNAL_ERROR_BY_INVITE_CODE);
 		
 		long codeValue = 0;
 		long multiply = 1;
@@ -40,7 +40,7 @@ public class InviteCodeUtil {
 				codeValue += multiply * (26 + (code - 'A'));
 			}
 			else {
-				throw new CustomException(ErrorType.INTERNAL_SERVER_ERROR);
+				throw new CustomException(ErrorType.INTERNAL_ERROR_BY_INVITE_CODE);
 			}
 			multiply *= 52;
 		}
@@ -50,7 +50,7 @@ public class InviteCodeUtil {
 	
 	public static String longToStr(long inviteCode) {
 		if (!isValidCode(inviteCode))
-			throw new CustomException(ErrorType.INTERNAL_SERVER_ERROR);
+			throw new CustomException(ErrorType.INTERNAL_ERROR_BY_INVITE_CODE);
 		
 		char[] codes = new char[INVITE_CODE_LEN];
 		for (int i = INVITE_CODE_LEN - 1; i >= 0; i--) {
