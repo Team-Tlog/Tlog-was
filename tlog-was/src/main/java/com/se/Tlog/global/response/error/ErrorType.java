@@ -41,6 +41,11 @@ public enum ErrorType {
     INVALID_TLOG_MESSAGE(HttpStatus.BAD_REQUEST, "Tlog 메시지 규격에 맞지 않습니다."),
     INVALID_TLOG_MESSAGE_TYPE(HttpStatus.BAD_REQUEST, "Tlog 알림 타입이 없거나 잘못된 값입니다."),
     INVALID_LINK_MESSAGE_TYPE(HttpStatus.BAD_REQUEST, "링크 알림 타입이 없거나 잘못된 값입니다."),
+    
+    // TBTI 관련
+    INVALID_ANSWER_PERCENTAGE(HttpStatus.BAD_REQUEST, "TBTI 응답의 값은 0~99사이여야 합니다."),
+    QUESTION_HAS_NO_ANSWER(HttpStatus.BAD_REQUEST, "TBTI 질문에는 응답이 1개 이상 존재해야 합니다."),
+    INVALID_QUESTION_WEIGHT(HttpStatus.BAD_REQUEST, "TBTI 질문의 가중치는 1~5사이여야 합니다."),
 
     // 인증
     // 401
