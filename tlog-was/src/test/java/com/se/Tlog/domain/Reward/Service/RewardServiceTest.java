@@ -16,8 +16,10 @@ import com.se.Tlog.domain.Reward.domain.RewardCriteria;
 import com.se.Tlog.domain.Reward.domain.RewardCriteriaType;
 import com.se.Tlog.domain.Reward.domain.RewardInfo;
 import com.se.Tlog.domain.Reward.repository.jpa.RewardInfoRepository;
+import com.se.Tlog.domain.User.controller.dto.RegisterUserProfileDto;
 import com.se.Tlog.domain.User.controller.dto.SsoUserInfo;
 import com.se.Tlog.domain.User.domain.User;
+import com.se.Tlog.domain.User.domain.UserRegisterInfo;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -35,7 +37,10 @@ class RewardServiceTest {
 	@Test
 	@DisplayName("개발자 유형의 보상 지급 테스트")
 	void testAddRewardToUser() {
-		User testUser = User.create(new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"));
+		User testUser = User.create(
+		        new UserRegisterInfo(
+		                new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"),
+		                new RegisterUserProfileDto("00000000")));
 		RewardInfo testReward = RewardInfo.create("보상 1", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""));
 
 		userRepository.save(testUser);
@@ -48,7 +53,10 @@ class RewardServiceTest {
 	@Test
 	@DisplayName("유저가 보유한 모든 보상 조회 테스트")
 	void testGetReward() {
-		User testUser = User.create(new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"));
+		User testUser = User.create(
+		        new UserRegisterInfo(
+		                new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"), 
+		                new RegisterUserProfileDto("00000000")));
 		
 		List<RewardInfo> added = new ArrayList<RewardInfo>();
 		added.add(rewardInfoRepository.save(RewardInfo.create("보상 1", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
