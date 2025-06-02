@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static lombok.AccessLevel.*;
@@ -23,19 +25,33 @@ public class TbtiQuestion {
     @Enumerated(EnumType.STRING)
     private TraitCategory traitCategory;
 
-    private TbtiQuestion(String content, TraitCategory traitCategory) {
-        validateContent(content);
+    @OneToMany(mappedBy = "tbtiQuestion",
+            cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TbtiAnswer> tbtiAnswers;
+    
+    private int answerWeight;
+
+    private TbtiQuestion(String content, TraitCategory traitCategory, List<TbtiAnswer> tbtiAnswers, int answerWeight) {
         this.content = content;
         this.traitCategory = traitCategory;
+        this.tbtiAnswers = new ArrayList<TbtiAnswer>(tbtiAnswers);
+        this.tbtiAnswers.forEach(answer -> answer.setQuestion(this));
+        this.answerWeight = answerWeight;
     }
 
     // 질문 생성 메서드
-    public static TbtiQuestion create(String content, TraitCategory traitCategory) {
-        return new TbtiQuestion(content, traitCategory);
+    public static TbtiQuestion create(String content, TraitCategory traitCategory, List<TbtiAnswer> tbtiAnswers, int answerWeight) {
+        validateContent(content);
+        if (tbtiAnswers == null || tbtiAnswers.size() == 0)
+            throw new CustomException(ErrorType.QUESTION_HAS_NO_ANSWER);
+        if (answerWeight < 1 || answerWeight > 5)
+            throw new CustomException(ErrorType.INVALID_QUESTION_WEIGHT);
+        
+        return new TbtiQuestion(content, traitCategory, tbtiAnswers, answerWeight);
     }
 
     // 유효성 검사 메서드
-    private void validateContent(String content){
+    private static void validateContent(String content){
         if(content == null || content.isBlank()){
             throw new CustomException(ErrorType.CONTENT_NOT_FOUND);
         }
