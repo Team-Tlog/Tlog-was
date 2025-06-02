@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.se.Tlog.domain.User.application.AuthenticationService;
 import com.se.Tlog.domain.User.application.SsoAuthService;
 import com.se.Tlog.domain.User.controller.dto.LoginRequest;
+import com.se.Tlog.domain.User.controller.dto.RegisterRequest;
 import com.se.Tlog.domain.User.controller.dto.SsoLoginRequest;
 import com.se.Tlog.domain.User.controller.dto.TokenDto;
 import com.se.Tlog.domain.User.domain.SsoType;
@@ -82,13 +83,14 @@ public class AuthController {
             ),
             responses = {
                     @ApiResponse(responseCode = "200", description = "회원가입 성공 (액세스 토큰 및 리프레시 토큰 발급)"),
+                    @ApiResponse(responseCode = "400", description = "회원가입에 요구되는 정보가 잘못되었거나 부족합니다."),
                     @ApiResponse(responseCode = "401", description = "SSO 인증 토큰이 유효하지 않습니다."),
                     @ApiResponse(responseCode = "409", description = "이미 회원가입된 사용자입니다."),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류"),
                     @ApiResponse(responseCode = "501", description = "현재 해당 소셜 로그인 방식은 아직 지원되지 않습니다.")
             }
     )
-    public ResponseEntity<?> register(@RequestBody LoginRequest request){
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request){
 
         TokenDto tokenDto = ssoAuthService.register(request);
 
