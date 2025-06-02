@@ -57,12 +57,14 @@ public class DestinationController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<Slice<DestinationSummaryRes>> getAllDestinations(
+    public ResponseEntity<SuccessRes<Slice<DestinationSummaryRes>>> getAllDestinations(
             @PageableDefault(size = 10) Pageable pageable,
             @RequestParam String city,
             @RequestParam(defaultValue = "RECOMMAND") DestinationSortType sortType,
             @RequestParam(required = false) String tbti) {
-        return ResponseEntity.ok(destinationService.getAllDestinations(pageable,city,sortType,tbti));
+        return ResponseEntity
+                .status(SuccessType.DESTINATION_GET_SUCCESS.getStatus())
+                .body(SuccessRes.from(destinationService.getAllDestinations(pageable,city,sortType,tbti)));
     }
 
     @GetMapping("/{id}")
@@ -80,8 +82,10 @@ public class DestinationController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<DestinationDetailsRes> getDestinationById(
+    public ResponseEntity<SuccessRes<DestinationDetailsRes>> getDestinationById(
             @Parameter(description = "특정 destination의 UUID 입니다.") @PathVariable String id) {
-        return ResponseEntity.ok(destinationService.getDestinationById(id));
+        return ResponseEntity
+                .status(SuccessType.DESTINATION_GET_SUCCESS.getStatus())
+                .body(SuccessRes.from(destinationService.getDestinationById(id)));
     }
 }
