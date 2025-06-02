@@ -17,6 +17,7 @@ public enum SuccessType {
     AVAILABLE_ID(HttpStatus.OK, "사용가능한 아이디입니다."),
     TAG_UPDATE(HttpStatus.OK, "태그 상태 업데이트에 성공하였습니다." ),
     MESSAGE_READ_SUCCESS(HttpStatus.OK, "메시지 읽음 처리에 성공하였습니다."),
+    DESTINATION_GET_SUCCESS(HttpStatus.OK, "여행지 조회에 성공하였습니다."),
     // 201
     CREATED(HttpStatus.CREATED, "등록을 성공하였습니다."),
     CHATROOM_CREATE(HttpStatus.CREATED, "채팅방 생성을 성공하였습니다."),
