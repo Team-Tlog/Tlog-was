@@ -3,11 +3,9 @@ package com.se.Tlog.domain.Travel.application;
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Review.controller.dto.DestinationReviewDto;
 import com.se.Tlog.domain.Review.domain.service.ReviewDomainService;
-import com.se.Tlog.domain.Travel.controller.dto.AddFixedTagDto;
-import com.se.Tlog.domain.Travel.controller.dto.DestinationDetailsRes;
-import com.se.Tlog.domain.Travel.controller.dto.DestinationDto;
-import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
+import com.se.Tlog.domain.Travel.controller.dto.*;
 import com.se.Tlog.domain.Travel.domain.*;
+import com.se.Tlog.domain.Travel.domain.repository.CustomTagRepositoryService;
 import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
 import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
@@ -16,7 +14,6 @@ import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +28,7 @@ public class DestinationService {
     private final UnapprovedDestinationRepository unapprovedDestinationRepository;
     private final CustomTagService customTagService;
     private final ReviewDomainService reviewDomainService;
-    private final MongoTemplate mongoTemplate;
+    private final CustomTagRepositoryService customTagRepositoryService;
 
     public void generateNewDestination(DestinationDto destinationDto) {
         Destination destinationData = Destination.create(
@@ -109,6 +106,7 @@ public class DestinationService {
         List<TagCount> topTags = customTagService.getTopTags(destination.getId(), 3);
         List<DestinationReviewDto> top2Reviews = reviewDomainService.getTop2Reviews(destination.getId());
 
-        return DestinationDetailsRes.from(destination, topTags, top2Reviews);
+        List<DestinationSimilarDto> relatedDestinations = customTagRepositoryService.findRelatedDestinations(destination.getId(), topTags);
+        return DestinationDetailsRes.from(destination, topTags, top2Reviews, relatedDestinations);
     }
 }
