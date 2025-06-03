@@ -3,8 +3,6 @@ package com.se.Tlog.domain.tlog;
 import com.se.Tlog.domain.Tbti.domain.TbtiAnswer;
 import com.se.Tlog.domain.Tbti.domain.TbtiQuestion;
 import com.se.Tlog.domain.Tbti.domain.TraitCategory;
-import com.se.Tlog.domain.User.controller.dto.SsoUserInfo;
-import com.se.Tlog.domain.User.domain.User;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 
 @SpringBootTest
 @Slf4j
@@ -21,7 +21,7 @@ public class TbtiQuestionTest {
 
     String content = "너는 여행을 계획할 때 활동적인게 좋아?";
     TraitCategory traitCategory = TraitCategory.ACTIVITY_LEVEL;
-    TbtiQuestion tbtiQuestion = TbtiQuestion.create(content, traitCategory);
+    TbtiQuestion tbtiQuestion = TbtiQuestion.create(content, traitCategory, List.of(TbtiAnswer.createAnswer("응답 1", 50)), 1);
 
 
     @Test
@@ -34,6 +34,10 @@ public class TbtiQuestionTest {
         assertThat(tbtiQuestion.getTraitCategory()).isEqualTo(traitCategory);
     }
 
+    /*
+     * 25.05.31
+     * TbtiAnswer 엔티티의 용도가 변경됨에 따라 테스트 로직이 수정되었습니다.
+     * 
     @Test
     @DisplayName("질문 응답 테스트")
     void tbtiAnswerTest() {
@@ -56,5 +60,5 @@ public class TbtiQuestionTest {
         assertThat(tbtiAnswer.getScore()).isEqualTo(score);
         assertThat(tbtiAnswer.getUser()).isEqualTo(user);
 
-    }
+    }*/
 }
