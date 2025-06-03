@@ -27,6 +27,7 @@ public class Review {
 	private String userId;
 	private String destinationId;
 
+	// 추후 리팩토링 소요 : 사용자 정보를 리뷰에서 가지고 있음
 	private String username;
 
 	private int rating;
@@ -41,6 +42,7 @@ public class Review {
 		return new Review(
 				dto.userId(),
 				dto.destinationId(),
+				// 추후 리팩토링 소요 : 사용자 정보를 리뷰에서 가지고 있음
 				dto.username(),
 				dto.rating(),
 				dto.content(),
@@ -51,6 +53,7 @@ public class Review {
 	private Review(
 			String userId,
 			String destinationId,
+			// 추후 리팩토링 소요 : 사용자 정보를 리뷰에서 가지고 있음
 			String username,
 			int rating,
 			String content,
@@ -58,6 +61,7 @@ public class Review {
 	){
 		this.userId = userId;
 		this.destinationId = destinationId;
+		// 추후 리팩토링 소요 : 사용자 정보를 리뷰에서 가지고 있음
 		this.username = username;
 		this.rating = rating;
 		this.content = content;

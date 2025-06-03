@@ -12,6 +12,7 @@ import java.util.TreeMap;
 public record DestinationDetailsRes(
         String id,
         String name,
+        String description,
         String address,
         Location location,
         String city,
@@ -36,6 +37,7 @@ public record DestinationDetailsRes(
         return new DestinationDetailsRes(
                 destination.getId(),
                 destination.getName(),
+                destination.getDescription(),
                 destination.getAddress(),
                 destination.getLocation(),
                 destination.getCity(),

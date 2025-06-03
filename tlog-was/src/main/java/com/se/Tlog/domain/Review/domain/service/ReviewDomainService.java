@@ -28,12 +28,15 @@ public class ReviewDomainService {
                 .map(Review::getUserId)
                 .map(UUID::fromString)
                 .collect(Collectors.toSet());
-        Map<UUID,UserProfileInfo> userProfiles = userDomainService.getUserProfile(uniqueUserIds);
+        Map<UUID,UserProfileInfo> userProfiles = userDomainService.getUserProfileOnlyExist(uniqueUserIds);
 
         return reviews.stream().map(review -> {
             UUID userId = UUID.fromString(review.getUserId());
             UserProfileInfo userProfileInfo = userProfiles.get(userId);
-            return DestinationReviewDto.from(review, userProfileInfo);
+            if (userProfileInfo != null)
+                return DestinationReviewDto.from(review, review.getUsername(), userProfileInfo);
+            else
+                return DestinationReviewDto.from(review, "탈퇴한 사용자", UserProfileInfo.getNullProfile());
         }).toList();
     }
 }

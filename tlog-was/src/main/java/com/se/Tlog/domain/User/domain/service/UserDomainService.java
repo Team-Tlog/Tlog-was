@@ -30,11 +30,19 @@ public class UserDomainService {
                 .map(UserSummaryDto::from)
                 .toList();
     }
+    
     public Map<UUID,UserProfileInfo> getUserProfile(Set<UUID> userIds) {
         List<User> users = userRepository.findByIdIn(userIds);
         if(users.size() != userIds.size()){
             throw new CustomException(ErrorType.USER_NOT_FOUND);
         }
+
+        return users.stream()
+                .collect(Collectors.toMap(User::getId, UserProfileInfo::of));
+    }
+    
+    public Map<UUID,UserProfileInfo> getUserProfileOnlyExist(Set<UUID> userIds) {
+        List<User> users = userRepository.findByIdIn(userIds);
 
         return users.stream()
                 .collect(Collectors.toMap(User::getId, UserProfileInfo::of));

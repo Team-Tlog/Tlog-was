@@ -10,4 +10,8 @@ public record UserProfileInfo(
                 user.getProfileImage()
         );
     }
+    
+    public static UserProfileInfo getNullProfile() {
+        return new UserProfileInfo("" /*, "탈퇴한 사용자"*/);
+    }
 }

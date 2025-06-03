@@ -16,11 +16,15 @@ public record DestinationReviewDto(
         List<String> reviewImageUrl,
         LocalDateTime createdAt
 ) {
-    public static DestinationReviewDto from(Review review, UserProfileInfo userProfileInfo) {
+    public static DestinationReviewDto from(
+            Review review, 
+            // 추후 username과 UserProfileInfo를 합쳐 사용자 데이터로 묶는게 좋겠습니다!
+            String username, 
+            UserProfileInfo userProfileInfo) {
         return new DestinationReviewDto(
                 review.getId(),
                 review.getUserId(),
-                review.getUsername(),
+                username,
                 userProfileInfo.imageUrl(),
                 review.getRating(),
                 review.getContent(),

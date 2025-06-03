@@ -39,7 +39,7 @@ public class Destination {
 	private int reviewCount;
 	private float averageRating;
 
-	private final int[] ratingCount = new int[5];
+	private int[] ratingCount = new int[5];
 
 	private String description;
 
