@@ -25,9 +25,11 @@ public record DestinationDetailsRes(
         String imageUrl,
         List<TagCount> topTags,
         Map<Integer,Integer> ratingDistribution,
-        List<DestinationReviewDto> top2Reviews
+        List<DestinationReviewDto> top2Reviews,
+        List<DestinationSimilarDto> relatedDestinations
 ) {
-    public static DestinationDetailsRes from(Destination destination, List<TagCount> topTags, List<DestinationReviewDto> top2Reviews) {
+    public static DestinationDetailsRes from(Destination destination, List<TagCount> topTags, List<DestinationReviewDto> top2Reviews,
+                                             List<DestinationSimilarDto> relatedDestinations) {
         Map<Integer, Integer> distribution = new TreeMap<>();
         int[] ratingCount = destination.getRatingCount();
         for (int i = 0; i < 5; i++) {
@@ -50,7 +52,8 @@ public record DestinationDetailsRes(
                 destination.getImageUrl(),
                 topTags,
                 distribution,
-                top2Reviews
+                top2Reviews,
+                relatedDestinations
         );
     }
 }
