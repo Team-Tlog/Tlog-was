@@ -47,7 +47,7 @@ public class ReviewService {
         List<DestinationReviewDto> dtoList = reviews.getContent().stream().map(review -> {
             UUID userId = UUID.fromString(review.getUserId());
             UserProfileInfo userProfileInfo = userProfiles.get(userId);
-            return DestinationReviewDto.from(review, userProfileInfo);
+            return DestinationReviewDto.from(review, review.getUsername(), userProfileInfo);
         }).toList();
 
         return new SliceImpl<>(dtoList, sortedPageable, reviews.hasNext());
