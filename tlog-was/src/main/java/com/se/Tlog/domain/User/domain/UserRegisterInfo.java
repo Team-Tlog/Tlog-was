@@ -26,7 +26,11 @@ public class UserRegisterInfo {
         this.email = ssoUserInfo.email();
         this.providerUserInfo = ssoUserInfo.getProviderUserInfo();
         this.profileImage = "";
-        this.tbti = new Tbti(Integer.parseInt(userProfiles.tbtiValue()));
+        try {
+            this.tbti = new Tbti(Integer.parseInt(userProfiles.tbtiValue()));
+        } catch (Exception e) {
+            throw new CustomException(ErrorType.INVALID_TBTI_CODE);
+        }
     }
     
     public void setEmail(String email) {
