@@ -3,6 +3,7 @@ package com.se.Tlog.domain.Review.application;
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Review.controller.dto.DestinationReviewDto;
 import com.se.Tlog.domain.Review.controller.dto.ReviewCreateDto;
+import com.se.Tlog.domain.Review.controller.dto.ReviewsRes;
 import com.se.Tlog.domain.Review.domain.Review;
 import com.se.Tlog.domain.Review.domain.SortType;
 import com.se.Tlog.domain.Review.repository.mongo.ReviewRepository;
@@ -28,8 +29,8 @@ public class ReviewService {
     private final DestinationDomainService destinationDomainService;
     private final UserDomainService userDomainService;
 
-    public Slice<DestinationReviewDto> getReviewsByDestinationId(String destinationId, SortType sortType, Pageable pageable) {
-        destinationDomainService.validateExists(destinationId);
+    public ReviewsRes getReviewsByDestinationId(String destinationId, SortType sortType, Pageable pageable) {
+        Map<Integer, Integer> distributionMap = destinationDomainService.getRatingDistribution(destinationId);
 
         Pageable sortedPageable = PageRequest.of(
                 pageable.getPageNumber(),
@@ -52,8 +53,10 @@ public class ReviewService {
             else
                 return DestinationReviewDto.from(review, "탈퇴한 사용자", UserProfileInfo.getNullProfile());
         }).toList();
+        
+        Slice<DestinationReviewDto> reviewDtos = new SliceImpl<>(dtoList, sortedPageable, reviews.hasNext());
 
-        return new SliceImpl<>(dtoList, sortedPageable, reviews.hasNext());
+        return new ReviewsRes(distributionMap, reviewDtos);
     }
 
     public void createReview(ReviewCreateDto reviewCreateDto) {
