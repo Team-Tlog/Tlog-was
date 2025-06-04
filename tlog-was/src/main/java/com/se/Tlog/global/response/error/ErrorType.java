@@ -44,6 +44,7 @@ public enum ErrorType {
     INVALID_LINK_MESSAGE_TYPE(HttpStatus.BAD_REQUEST, "링크 알림 타입이 없거나 잘못된 값입니다."),
     
     // TBTI 관련
+    INVALID_TBTI_STRING(HttpStatus.BAD_REQUEST, "올바른 TBTI 알파벳이 아닙니다."),
     INVALID_TBTI_CODE(HttpStatus.BAD_REQUEST, "TBTI 코드는 0~99999999사이여야 합니다."),
     INVALID_ANSWER_PERCENTAGE(HttpStatus.BAD_REQUEST, "TBTI 응답의 값은 0~99사이여야 합니다."),
     QUESTION_HAS_NO_ANSWER(HttpStatus.BAD_REQUEST, "TBTI 질문에는 응답이 1개 이상 존재해야 합니다."),
@@ -84,6 +85,7 @@ public enum ErrorType {
     ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 회원가입된 사용자입니다."),
     ALREADY_EXISTS_SNSId(HttpStatus.CONFLICT, "이미 존재하는 Id 입니다."),
     ALREADY_EXISTS_TAG(HttpStatus.CONFLICT, "이미 존재하는 태그입니다."),
+    ALREADY_EXISTS_TBTI_INFO(HttpStatus.CONFLICT, "이미 존재하는 TBTI 설명입니다."),
     ALREADY_EXISTS_DESTINATION(HttpStatus.CONFLICT, "이미 존재하는 여행지입니다."),
     ALREADY_OWN_REWARD(HttpStatus.CONFLICT, "이미 보유하고 있는 보상입니다."),
     ALREADY_EXIST_IN_TEAM(HttpStatus.CONFLICT, "이미 팀에 속해있는 유저입니다."),
