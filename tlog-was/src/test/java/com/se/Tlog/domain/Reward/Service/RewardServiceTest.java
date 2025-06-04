@@ -1,7 +1,7 @@
 package com.se.Tlog.domain.Reward.Service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.se.Tlog.domain.Reward.application.RewardService;
+import com.se.Tlog.domain.Reward.controller.dto.UserRewardDto;
 import com.se.Tlog.domain.Reward.domain.RewardCriteria;
 import com.se.Tlog.domain.Reward.domain.RewardCriteriaType;
 import com.se.Tlog.domain.Reward.domain.RewardInfo;
@@ -71,7 +72,11 @@ class RewardServiceTest {
 		assertThatNoException().isThrownBy(()->rewardService.addRewardToUser(testUser.getId(), added.get(2).getId()));
 		assertThatNoException().isThrownBy(()->rewardService.addRewardToUser(testUser.getId(), added.get(3).getId()));
 		
-		assertThat(rewardService.getAllRewardOfUser(testUser.getId()))
-		.containsAll(added);
+		List<UserRewardDto> result = rewardService.getAllRewardOfUser(testUser.getId());
+		assertEquals(result.size(), added.size());
+		for (int i = 0; i < result.size(); i++) {
+		    assertEquals(result.get(i).rewardId(), added.get(i).getId());
+		    assertEquals(result.get(i).name(), added.get(i).getName());
+		}
 	}
 }
