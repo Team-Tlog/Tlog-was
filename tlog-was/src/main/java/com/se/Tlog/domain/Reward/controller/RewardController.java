@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.se.Tlog.domain.Reward.application.RewardService;
 import com.se.Tlog.domain.Reward.controller.dto.AddRewardToUserRequest;
-import com.se.Tlog.domain.Reward.controller.dto.RewardInfoDto;
+import com.se.Tlog.domain.Reward.controller.dto.UserRewardDto;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorRes;
 import com.se.Tlog.global.response.error.ErrorType;
@@ -71,11 +71,9 @@ public class RewardController {
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류. 조회에 실패했습니다.",
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
-	public ResponseEntity<SuccessRes<List<RewardInfoDto>>> getRewardsByUser(@RequestParam UUID userId) {
+	public ResponseEntity<SuccessRes<List<UserRewardDto>>> getRewardsByUser(@RequestParam UUID userId) {
 		return ResponseEntity.ok(
 				SuccessRes.from(
-						rewardService.getAllRewardOfUser(userId)
-						.stream().map(RewardInfoDto::fromEntity)
-						.toList()));
+						rewardService.getAllRewardOfUser(userId)));
 	}
 }
