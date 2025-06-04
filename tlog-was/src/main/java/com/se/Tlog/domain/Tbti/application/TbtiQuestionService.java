@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @ApplicationService
 @RequiredArgsConstructor
-public class TbtiService {
+public class TbtiQuestionService {
 
     private final TbtiQuestionRepository tbtiQuestionRepository;
 

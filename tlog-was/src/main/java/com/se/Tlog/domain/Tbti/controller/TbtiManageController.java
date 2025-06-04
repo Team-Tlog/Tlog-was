@@ -1,6 +1,6 @@
 package com.se.Tlog.domain.Tbti.controller;
 
-import com.se.Tlog.domain.Tbti.application.TbtiService;
+import com.se.Tlog.domain.Tbti.application.TbtiQuestionService;
 import com.se.Tlog.domain.Tbti.controller.dto.TbtiQuestionReq;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
@@ -24,7 +24,7 @@ import java.util.UUID;
         name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
         scopes = {"scope1", "scope2"})
 public class TbtiManageController {
-    private final TbtiService tbtiService;
+    private final TbtiQuestionService tbtiService;
 
     @PostMapping("/user/question")
     @Operation (
