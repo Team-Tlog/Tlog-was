@@ -1,9 +1,8 @@
 package com.se.Tlog.domain.Review.controller;
 
 import com.se.Tlog.domain.Review.application.ReviewService;
-import com.se.Tlog.domain.Review.controller.dto.DestinationReviewDto;
 import com.se.Tlog.domain.Review.controller.dto.ReviewCreateDto;
-
+import com.se.Tlog.domain.Review.controller.dto.ReviewsRes;
 import com.se.Tlog.domain.Review.domain.SortType;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -62,7 +60,7 @@ public class ReviewController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<SuccessRes<Slice<DestinationReviewDto>>> getReviewsByDestinationId(
+    public ResponseEntity<SuccessRes<ReviewsRes>> getReviewsByDestinationId(
             @PathVariable String destinationId,
             @RequestParam SortType sortType,
             @PageableDefault(size = 5) Pageable pageable) {
