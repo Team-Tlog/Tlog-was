@@ -26,7 +26,7 @@ public class UserRegisterInfo {
         this.email = ssoUserInfo.email();
         this.providerUserInfo = ssoUserInfo.getProviderUserInfo();
         this.profileImage = "";
-        this.tbti = new Tbti(userProfiles.tbtiValue());
+        this.tbti = new Tbti(Integer.parseInt(userProfiles.tbtiValue()));
     }
     
     public void setEmail(String email) {
