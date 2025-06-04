@@ -39,7 +39,7 @@ public class ReviewController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<?> createReview(@RequestBody ReviewCreateDto reviewCreateDto) {
+    public ResponseEntity<SuccessRes<?>> createReview(@RequestBody ReviewCreateDto reviewCreateDto) {
         reviewService.createReview(reviewCreateDto);
         return ResponseEntity
                 .status(SuccessType.REVIEW_CREATED.getStatus())
@@ -62,11 +62,12 @@ public class ReviewController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<Slice<DestinationReviewDto>> getReviewsByDestinationId(
+    public ResponseEntity<SuccessRes<Slice<DestinationReviewDto>>> getReviewsByDestinationId(
             @PathVariable String destinationId,
             @RequestParam SortType sortType,
             @PageableDefault(size = 5) Pageable pageable) {
-        return ResponseEntity.ok(reviewService.getReviewsByDestinationId(destinationId, sortType, pageable));
+        return ResponseEntity.ok(
+                SuccessRes.from(reviewService.getReviewsByDestinationId(destinationId, sortType, pageable)));
     }
 
     @DeleteMapping("/{reviewId}")
@@ -85,7 +86,7 @@ public class ReviewController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<?> deleteReview(
+    public ResponseEntity<SuccessRes<?>> deleteReview(
             @PathVariable String reviewId,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         String userId = userDetails.getId();
