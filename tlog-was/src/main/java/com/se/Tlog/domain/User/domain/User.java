@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-import com.se.Tlog.domain.User.controller.dto.SsoUserInfo;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,6 +23,8 @@ public class User {
     private String email;
 
     private String snsId;
+    
+    private int tbti;
     //private String telephoneNumber; 사용자가 동의하지 않은 경우 못받을 수 있음 nullable 하게 관리
 
     private String profileImage;
@@ -34,19 +34,24 @@ public class User {
 
     private User(
             String name,
-            String provider,
-            String providerId,
-            String email
+            String providerUserInfo,
+            String email,
+            int tbti
 
     ) {
         this.name = name;
-        this.providerUserInfo = provider + " " + providerId;
+        this.providerUserInfo = providerUserInfo;
         this.email = email;
 //        this.telephoneNumber = telephoneNumber;
         this.role = Role.USER;
+        this.tbti = tbti;
     }
-    public static User create(SsoUserInfo ssoUserInfo){
-        return new User(ssoUserInfo.nickname(), ssoUserInfo.provider(),ssoUserInfo.providerId(), ssoUserInfo.email());
+    public static User create(UserRegisterInfo userRegisterInfo){
+        return new User(
+                userRegisterInfo.getNickname(),
+                userRegisterInfo.getProviderUserInfo(), 
+                userRegisterInfo.getEmail(), 
+                userRegisterInfo.getTbti().getTbtiCode());
     }
 
     public void updateEmail(String email) {this.email = email;}

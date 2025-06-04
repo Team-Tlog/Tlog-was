@@ -6,4 +6,7 @@ public record SsoUserInfo(
         String nickname,
         String provider
 ) {
+    public String getProviderUserInfo() {
+        return provider + " " + providerId;
+    }
 }

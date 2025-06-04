@@ -19,6 +19,7 @@ public enum ErrorType {
     SCRAP_UNSUPPORTED_TO_TEAM(HttpStatus.BAD_REQUEST, "팀에는 스크랩 기능을 지원하지 않습니다!"),
     INVITE_USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "초대하려는 유저 중 존재하지 않는 유저가 있습니다."),
     LOGOUT_FAILED(HttpStatus.BAD_REQUEST,"로그아웃에 실패하였습니다." ),
+    INSUFFICIENT_INFO_FOR_REGISTER(HttpStatus.BAD_REQUEST, "회원가입을 위한 정보가 부족합니다."),
     INVALID_REVIEW_RATING(HttpStatus.BAD_REQUEST, "리뷰 평점은 1점 이상 5점 이하여야 합니다."),
     INVALID_IMAGE_URL(HttpStatus.BAD_REQUEST, "잘못된 이미지 URL 입니다." ),
     // 사용자로부터 소셜 로그인 인증 실패
@@ -43,6 +44,7 @@ public enum ErrorType {
     INVALID_LINK_MESSAGE_TYPE(HttpStatus.BAD_REQUEST, "링크 알림 타입이 없거나 잘못된 값입니다."),
     
     // TBTI 관련
+    INVALID_TBTI_CODE(HttpStatus.BAD_REQUEST, "TBTI 코드는 0~99999999사이여야 합니다."),
     INVALID_ANSWER_PERCENTAGE(HttpStatus.BAD_REQUEST, "TBTI 응답의 값은 0~99사이여야 합니다."),
     QUESTION_HAS_NO_ANSWER(HttpStatus.BAD_REQUEST, "TBTI 질문에는 응답이 1개 이상 존재해야 합니다."),
     INVALID_QUESTION_WEIGHT(HttpStatus.BAD_REQUEST, "TBTI 질문의 가중치는 1~5사이여야 합니다."),
@@ -64,6 +66,7 @@ public enum ErrorType {
     ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "역할이 존재하지 않습니다."),
     INVALID_TBTI_CATEGORY(HttpStatus.NOT_FOUND, "존재하지 않는 카테고리 입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 사용자 입니다."),
+    NOT_REGISTERED(HttpStatus.NOT_FOUND, "회원 등록되지 않은 사용자입니다."),
     ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 관리자 입니다."),
     CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 채팅방 입니다."),
     MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않은 메시지 입니다."),
@@ -78,6 +81,7 @@ public enum ErrorType {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 코스 리뷰(게시글)입니다."),
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
     //데이터 충돌
+    ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 회원가입된 사용자입니다."),
     ALREADY_EXISTS_SNSId(HttpStatus.CONFLICT, "이미 존재하는 Id 입니다."),
     ALREADY_EXISTS_TAG(HttpStatus.CONFLICT, "이미 존재하는 태그입니다."),
     ALREADY_EXISTS_DESTINATION(HttpStatus.CONFLICT, "이미 존재하는 여행지입니다."),
