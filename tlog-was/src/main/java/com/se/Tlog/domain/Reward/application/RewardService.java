@@ -5,8 +5,8 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Reward.controller.dto.UserRewardDto;
 import com.se.Tlog.domain.Reward.domain.Reward;
-import com.se.Tlog.domain.Reward.domain.RewardInfo;
 import com.se.Tlog.domain.Reward.domain.repository.RewardRepositoryService;
 import com.se.Tlog.domain.Reward.repository.jpa.RewardInfoRepository;
 import com.se.Tlog.domain.Reward.repository.jpa.RewardRepository;
@@ -48,9 +48,13 @@ public class RewardService {
 	 * @param userId
 	 * @return
 	 */
-	public List<RewardInfo> getAllRewardOfUser(UUID userId) {
+	public List<UserRewardDto> getAllRewardOfUser(UUID userId) {
 		return rewardRepository.findAllByUser_Id(userId)
-				.stream().map(Reward::getRewardInfo)
+				.stream().map(reward -> new UserRewardDto(
+				        reward.getRewardInfo().getId(),
+				        reward.getRewardInfo().getName(), 
+				        reward.getRewardInfo().getDescription(),
+				        reward.getRewardInfo().getIconImageUrl()))
 				.toList();
 	}
 }
