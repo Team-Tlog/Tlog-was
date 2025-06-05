@@ -26,7 +26,6 @@ public class RewardService {
 	
 	/**
 	 * 특정 유저에게 보상을 설정합니다.
-	 * <br/> 보상 조건이 맞지 않으면 보상 설정에 실패하며, <code>false</code>를 반환합니다.
 	 * @param userId
 	 * @param rewardInfoId
 	 * @return
@@ -44,6 +43,29 @@ public class RewardService {
 	}
 	
 	/**
+	 * 특정 유저가 기본으로 표시할 보상을 설정합니다.
+	 * @param userId
+	 * @param rewardInfoId
+	 */
+	public void setDefaultReward(UUID userId, Long rewardInfoId) {
+	    if (!userRepository.existsById(userId))
+	        throw new CustomException(ErrorType.USER_NOT_FOUND);
+	    
+	    List<Reward> userRewards = rewardRepository.findAllByUser_Id(userId);
+	    Reward selection = null;
+	    for (Reward r : userRewards)
+	        if (r.getRewardInfo().getId() == rewardInfoId)
+	            selection = r;
+        if (selection == null)
+            throw new CustomException(ErrorType.REWARD_NOT_RECEIVED);
+	    
+	    userRewards.forEach(reward -> reward.setDefault(false));
+        selection.setDefault(true);
+	    
+	    rewardRepository.saveAll(userRewards);
+	}
+	
+	/**
 	 * 특정 유저가 보유하고 있는 모든 보상을 조회합니다.
 	 * @param userId
 	 * @return
@@ -52,9 +74,10 @@ public class RewardService {
 		return rewardRepository.findAllByUser_Id(userId)
 				.stream().map(reward -> new UserRewardDto(
 				        reward.getRewardInfo().getId(),
-				        reward.getRewardInfo().getName(), 
+				        reward.getRewardInfo().getName(),
 				        reward.getRewardInfo().getDescription(),
-				        reward.getRewardInfo().getIconImageUrl()))
+				        reward.getRewardInfo().getIconImageUrl(),
+				        reward.isDefault()))
 				.toList();
 	}
 }
