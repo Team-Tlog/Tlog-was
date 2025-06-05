@@ -14,6 +14,7 @@ import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @ApplicationService
@@ -47,22 +48,15 @@ public class RewardService {
 	 * @param userId
 	 * @param rewardInfoId
 	 */
+	@Transactional
 	public void setDefaultReward(UUID userId, Long rewardInfoId) {
 	    if (!userRepository.existsById(userId))
 	        throw new CustomException(ErrorType.USER_NOT_FOUND);
 	    
-	    List<Reward> userRewards = rewardRepository.findAllByUser_Id(userId);
-	    Reward selection = null;
-	    for (Reward r : userRewards)
-	        if (r.getRewardInfo().getId() == rewardInfoId)
-	            selection = r;
-        if (selection == null)
+        if (!rewardRepository.existsByRewardInfo_IdAndUser_Id(rewardInfoId, userId))
             throw new CustomException(ErrorType.REWARD_NOT_RECEIVED);
 	    
-	    userRewards.forEach(reward -> reward.setDefault(false));
-        selection.setDefault(true);
-	    
-	    rewardRepository.saveAll(userRewards);
+        rewardRepository.updateDefaultReward(rewardInfoId, userId);
 	}
 	
 	/**
