@@ -41,7 +41,7 @@ class RewardServiceTest {
 		        new UserRegisterInfo(
 		                new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"),
 		                new RegisterUserProfileDto("00000000")));
-		RewardInfo testReward = RewardInfo.create("보상 1", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""));
+		RewardInfo testReward = RewardInfo.create("", "보상 1", "테스트 보상 1", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""));
 
 		userRepository.save(testUser);
 		rewardInfoRepository.save(testReward);
@@ -59,10 +59,10 @@ class RewardServiceTest {
 		                new RegisterUserProfileDto("00000000")));
 		
 		List<RewardInfo> added = new ArrayList<RewardInfo>();
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 1", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 2", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 3", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 4", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 1", "테스트 보상 1", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 2", "테스트 보상 2", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 3", "테스트 보상 3", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 4", "테스트 보상 4", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
 		
 		userRepository.save(testUser);
 		

@@ -1,5 +1,8 @@
 package com.se.Tlog.domain.Reward.domain;
 
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
+
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,22 +22,30 @@ public class RewardInfo {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+    
+    private String iconImageUrl;
 	
 	private String name;
+    
+    private String description;
 	
 	@Embedded
 	private RewardCriteria rewardCriteria;
 	
-	// private media icon // 보상 뱃지 아이콘 등 부가 정보
-	
-	// private String description = "팔로워 수를 100명 돌파했어요!!"
-	
-	private RewardInfo(String name, RewardCriteria rewardCriteria) {
+	private RewardInfo(String iconImageUrl, String name, String description, RewardCriteria rewardCriteria) {
+	    this.iconImageUrl = iconImageUrl;
 		this.name = name;
+		this.description = description;
 		this.rewardCriteria = rewardCriteria;
 	}
 	
-	public static RewardInfo create(String name, RewardCriteria rewardCriteria) {
-		return new RewardInfo(name, rewardCriteria);
+	public static RewardInfo create(String iconImageUrl, String name, String description, RewardCriteria rewardCriteria) {
+	    if (iconImageUrl == null
+	            || name == null || name.trim().isEmpty()
+	            || description == null || description.trim().isEmpty()
+	            || rewardCriteria == null)
+	        throw new CustomException(ErrorType.ILLEGAL_ARGUMENT);
+	    
+		return new RewardInfo(iconImageUrl, name, description, rewardCriteria);
 	}
 }

@@ -25,7 +25,9 @@ public class RewardInfoService {
 	public RewardInfo addNewRewardInfo(CreateRewardInfoRequest request) {
 		RewardInfo newRewardInfo = 
 				RewardInfo.create(
+				        request.iconImageUrl(),
 						request.name(),
+						request.description(),
 						RewardCriteria.create(request.criteriaType(), request.criteriaParameter()));
 		return rewardInfoRepository.save(newRewardInfo);
 	}
