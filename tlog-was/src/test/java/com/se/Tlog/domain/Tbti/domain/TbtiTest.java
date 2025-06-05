@@ -19,50 +19,73 @@ public class TbtiTest {
         assertThatNoException().isThrownBy(() -> new Tbti(50000));
         assertThatNoException().isThrownBy(() -> new Tbti(99999999));
         assertThatException().isThrownBy(() -> new Tbti(100000000));
-
-        assertThatException().isThrownBy(() -> new Tbti(null));
-        assertThatException().isThrownBy(() -> new Tbti(""));
-        assertThatException().isThrownBy(() -> new Tbti("hello"));
-        assertThatException().isThrownBy(() -> new Tbti("1.15"));
-        assertThatException().isThrownBy(() -> new Tbti("-1"));
-        assertThatException().isThrownBy(() -> new Tbti("15123"));
-        assertThatException().isThrownBy(() -> new Tbti("001200"));
-        assertThatException().isThrownBy(() -> new Tbti("15123--1"));
-        assertThatException().isThrownBy(() -> new Tbti("1.121231"));
-        assertThatException().isThrownBy(() -> new Tbti("0ii01200"));
-        assertThatException().isThrownBy(() -> new Tbti("-1121231"));
-        
-        assertThatNoException().isThrownBy(() -> new Tbti("00000000"));
-        assertThatNoException().isThrownBy(() -> new Tbti("99999999"));
-        assertThatNoException().isThrownBy(() -> new Tbti("12345678"));
-        assertThatNoException().isThrownBy(() -> new Tbti("10000010"));
     }
 
     @Test
-    @DisplayName("TBTI 값 변환 테스트")
-    public void testConvert() {
+    @DisplayName("TBTI 값 변환 테스트1")
+    public void testConvert1() {
         Tbti value = new Tbti(12119931);
+        assertEquals(12119931, value.getTbtiCode());
         assertEquals(12, value.getPercentage(TraitCategory.RISK_TAKING));
         assertEquals(11, value.getPercentage(TraitCategory.LOCATION_PREFERENCE));
         assertEquals(99, value.getPercentage(TraitCategory.PLANNING_STYLE));
         assertEquals(31, value.getPercentage(TraitCategory.ACTIVITY_LEVEL));
         assertEquals("SENA", value.toString());
         
-        value = new Tbti("00120134");
-        assertEquals(00, value.getPercentage(TraitCategory.RISK_TAKING));
+        value = new Tbti(120134);
+        assertEquals(120134, value.getTbtiCode());
+        assertEquals(0, value.getPercentage(TraitCategory.RISK_TAKING));
         assertEquals(12, value.getPercentage(TraitCategory.LOCATION_PREFERENCE));
-        assertEquals(01, value.getPercentage(TraitCategory.PLANNING_STYLE));
+        assertEquals(1, value.getPercentage(TraitCategory.PLANNING_STYLE));
         assertEquals(34, value.getPercentage(TraitCategory.ACTIVITY_LEVEL));
         assertEquals("SELA", value.toString());
 
-        value = new Tbti("00000001");
-        assertEquals(00, value.getPercentage(TraitCategory.RISK_TAKING));
-        assertEquals(00, value.getPercentage(TraitCategory.LOCATION_PREFERENCE));
-        assertEquals(00, value.getPercentage(TraitCategory.PLANNING_STYLE));
-        assertEquals(01, value.getPercentage(TraitCategory.ACTIVITY_LEVEL));
+        value = new Tbti(1);
+        assertEquals(1, value.getTbtiCode());
+        assertEquals(0, value.getPercentage(TraitCategory.RISK_TAKING));
+        assertEquals(0, value.getPercentage(TraitCategory.LOCATION_PREFERENCE));
+        assertEquals(0, value.getPercentage(TraitCategory.PLANNING_STYLE));
+        assertEquals(1, value.getPercentage(TraitCategory.ACTIVITY_LEVEL));
         assertEquals("SELA", value.toString());
 
         value = new Tbti(99999999);
+        assertEquals(99999999, value.getTbtiCode());
+        assertEquals(99, value.getPercentage(TraitCategory.RISK_TAKING));
+        assertEquals(99, value.getPercentage(TraitCategory.LOCATION_PREFERENCE));
+        assertEquals(99, value.getPercentage(TraitCategory.PLANNING_STYLE));
+        assertEquals(99, value.getPercentage(TraitCategory.ACTIVITY_LEVEL));
+        assertEquals("RONI", value.toString());
+    }
+
+    @Test
+    @DisplayName("TBTI 값 변환 테스트2")
+    public void testConvert2() {
+        Tbti value = new Tbti("SENA");
+        assertEquals(9900, value.getTbtiCode());
+        assertEquals(00, value.getPercentage(TraitCategory.RISK_TAKING));
+        assertEquals(00, value.getPercentage(TraitCategory.LOCATION_PREFERENCE));
+        assertEquals(99, value.getPercentage(TraitCategory.PLANNING_STYLE));
+        assertEquals(00, value.getPercentage(TraitCategory.ACTIVITY_LEVEL));
+        assertEquals("SENA", value.toString());
+        
+        value = new Tbti("SELI");
+        assertEquals(99, value.getTbtiCode());
+        assertEquals(0, value.getPercentage(TraitCategory.RISK_TAKING));
+        assertEquals(0, value.getPercentage(TraitCategory.LOCATION_PREFERENCE));
+        assertEquals(0, value.getPercentage(TraitCategory.PLANNING_STYLE));
+        assertEquals(99, value.getPercentage(TraitCategory.ACTIVITY_LEVEL));
+        assertEquals("SELI", value.toString());
+
+        value = new Tbti("SOLI");
+        assertEquals(990099, value.getTbtiCode());
+        assertEquals(00, value.getPercentage(TraitCategory.RISK_TAKING));
+        assertEquals(99, value.getPercentage(TraitCategory.LOCATION_PREFERENCE));
+        assertEquals(00, value.getPercentage(TraitCategory.PLANNING_STYLE));
+        assertEquals(99, value.getPercentage(TraitCategory.ACTIVITY_LEVEL));
+        assertEquals("SOLI", value.toString());
+
+        value = new Tbti("RONI");
+        assertEquals(99999999, value.getTbtiCode());
         assertEquals(99, value.getPercentage(TraitCategory.RISK_TAKING));
         assertEquals(99, value.getPercentage(TraitCategory.LOCATION_PREFERENCE));
         assertEquals(99, value.getPercentage(TraitCategory.PLANNING_STYLE));

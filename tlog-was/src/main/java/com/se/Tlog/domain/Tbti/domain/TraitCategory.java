@@ -22,6 +22,14 @@ public enum TraitCategory {
     public char getMaxCategoryInitial() {
         return categoryInitial.charAt(2);
     }
+    public int getPercentage(char initial) {
+        if (initial == categoryInitial.charAt(0))
+            return 0;
+        else if (initial == categoryInitial.charAt(2))
+            return 99;
+        else
+            throw new CustomException(ErrorType.INVALID_TBTI_STRING);
+    }
     
     public static TraitCategory fromString(String traitCategory) {
         try {

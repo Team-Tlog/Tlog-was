@@ -10,16 +10,6 @@ public class Tbti {
     public static final int MIN_TBTI_CODE = 00000000;
     public static final int MAX_TBTI_CODE = 99999999;
     public static final int FEATURE_THRESHOLD = 50;
-
-    public static int toTbtiCode(String tbtiCode) {
-        try {
-            if (tbtiCode.length() != 8)
-                throw new CustomException(ErrorType.INVALID_TBTI_CODE);
-            return Integer.parseInt(tbtiCode);
-        } catch (Exception e) {
-            throw new CustomException(ErrorType.INVALID_TBTI_CODE);
-        }
-    }
     
     private int rawTbtiCode;
     
@@ -29,8 +19,17 @@ public class Tbti {
         this.rawTbtiCode = tbtiCode;
     }
     
-    public Tbti(String tbtiCode) {
-        this(toTbtiCode(tbtiCode));
+    public Tbti(String tbtiString) {
+        TraitCategory[] categories = TraitCategory.values();
+        if (tbtiString == null || tbtiString.length() != categories.length)
+            throw new CustomException(ErrorType.INVALID_TBTI_STRING);
+        
+        tbtiString = tbtiString.toUpperCase();
+        rawTbtiCode = 0;
+        for (int i = 0; i < categories.length; i++) {
+            rawTbtiCode *= 100;
+            rawTbtiCode += categories[i].getPercentage(tbtiString.charAt(i));
+        }
     }
     
     public int getTbtiCode() {
