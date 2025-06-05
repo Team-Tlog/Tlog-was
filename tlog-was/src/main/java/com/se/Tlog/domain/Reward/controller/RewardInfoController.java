@@ -70,10 +70,7 @@ public class RewardInfoController {
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
 	public ResponseEntity<SuccessRes<?>> createRewardInfo(@RequestBody CreateRewardInfoRequest requestData) {
-		rewardInfoService.addNewRewardInfo(
-				requestData.name(),
-				requestData.criteriaType(),
-				requestData.criteriaParameter());
+		rewardInfoService.addNewRewardInfo(requestData);
 		return ResponseEntity.ok().body(SuccessRes.from(SuccessType.CREATED)); 
 	}
 	

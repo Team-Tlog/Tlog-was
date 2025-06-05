@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.se.Tlog.domain.Reward.application.RewardInfoService;
+import com.se.Tlog.domain.Reward.controller.dto.CreateRewardInfoRequest;
 import com.se.Tlog.domain.Reward.domain.RewardCriteria;
 import com.se.Tlog.domain.Reward.domain.RewardCriteriaType;
 import com.se.Tlog.domain.Reward.domain.RewardInfo;
@@ -30,10 +31,10 @@ class RewardInfoServiceTest {
 	@DisplayName("새 보상 형식 등록 테스트")
 	void testAddNewRewardInfo() {
 		List<RewardInfo> added = new ArrayList<RewardInfo>();
-		added.add(rewardInfoService.addNewRewardInfo("보상 1", RewardCriteriaType.TEST_NULL_CRITERIA, ""));
-		added.add(rewardInfoService.addNewRewardInfo("보상 2", RewardCriteriaType.IS_DEVELOPER, ""));
-		added.add(rewardInfoService.addNewRewardInfo("보상 3", RewardCriteriaType.TEST_NULL_CRITERIA, ""));
-		added.add(rewardInfoService.addNewRewardInfo("보상 4", RewardCriteriaType.IS_DEVELOPER, ""));
+		added.add(rewardInfoService.addNewRewardInfo(new CreateRewardInfoRequest("보상 1", RewardCriteriaType.TEST_NULL_CRITERIA, "")));
+		added.add(rewardInfoService.addNewRewardInfo(new CreateRewardInfoRequest("보상 2", RewardCriteriaType.IS_DEVELOPER, "")));
+		added.add(rewardInfoService.addNewRewardInfo(new CreateRewardInfoRequest("보상 3", RewardCriteriaType.TEST_NULL_CRITERIA, "")));
+		added.add(rewardInfoService.addNewRewardInfo(new CreateRewardInfoRequest("보상 4", RewardCriteriaType.IS_DEVELOPER, "")));
 		
 		assertThat(rewardInfoRepository.findAll())
 		.containsAll(added);

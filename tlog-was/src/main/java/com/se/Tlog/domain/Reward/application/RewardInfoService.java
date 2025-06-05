@@ -3,8 +3,8 @@ package com.se.Tlog.domain.Reward.application;
 import java.util.List;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Reward.controller.dto.CreateRewardInfoRequest;
 import com.se.Tlog.domain.Reward.domain.RewardCriteria;
-import com.se.Tlog.domain.Reward.domain.RewardCriteriaType;
 import com.se.Tlog.domain.Reward.domain.RewardInfo;
 import com.se.Tlog.domain.Reward.repository.jpa.RewardInfoRepository;
 
@@ -22,11 +22,11 @@ public class RewardInfoService {
 	 * @param parameter
 	 * @return
 	 */
-	public RewardInfo addNewRewardInfo(String name, RewardCriteriaType type, String parameter) {
+	public RewardInfo addNewRewardInfo(CreateRewardInfoRequest request) {
 		RewardInfo newRewardInfo = 
 				RewardInfo.create(
-						name,
-						RewardCriteria.create(type, parameter));
+						request.name(),
+						RewardCriteria.create(request.criteriaType(), request.criteriaParameter()));
 		return rewardInfoRepository.save(newRewardInfo);
 	}
 
