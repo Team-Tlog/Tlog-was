@@ -88,7 +88,10 @@ public class Team {
 	}
 	
 	public void setTbti(Tbti tbti) {
-	    this.tbti = tbti.getTbtiCode();
+	    if (tbti == null)
+	        this.tbti = null;
+	    else
+	        this.tbti = tbti.getTbtiCode();
 	}
 	
 	public String getTbtiString() {
