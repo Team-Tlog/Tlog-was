@@ -5,6 +5,8 @@ import com.se.Tlog.domain.User.application.UserService;
 
 import com.se.Tlog.domain.User.controller.dto.ProfileImageRequest;
 import com.se.Tlog.domain.User.controller.dto.SnsIdUpdateRequest;
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
 import com.se.Tlog.global.security.dto.CustomUserDetails;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,6 +28,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@SecurityRequirement(
+        name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
+        scopes = {"scope1", "scope2"})
 public class UserController {
 
     private final UserService userService;
@@ -37,7 +43,7 @@ public class UserController {
     /*@PatchMapping("/email")
     @Operation(
             summary = "사용자 email 업데이트",
-            description = "사용자 본인의 이메일을 설정 또는 수정합니다.",
+            description = "사용자 본인의 이메일을 설정 또는 수정합니다.<br><br><b>인증 토큰이 필요합니다!</b>",
             tags = {"User"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "사용자 이메일 업데이트 합니다.",
@@ -52,6 +58,8 @@ public class UserController {
     public ResponseEntity<?> updateEmail(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody EmailUpdateRequest request) {
+        if (user == null)
+            throw new CustomException(ErrorType.UN_AUTHENTICATION);
 
         userService.updateEmail(UUID.fromString(user.getId()),request.email());
         return ResponseEntity
@@ -64,7 +72,8 @@ public class UserController {
             summary = "SNS ID(유저명) 업데이트",
             description = """
         사용자 본인의 SNS ID(서비스 내 고유 사용자명)를 설정 또는 수정합니다.  
-        중복된 SNS ID는 사용할 수 없습니다. 
+        중복된 SNS ID는 사용할 수 없습니다.
+        <br><br><b>인증 토큰이 필요합니다!</b>
         """,
             tags = {"User"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -81,6 +90,8 @@ public class UserController {
     public ResponseEntity<?> updateSnsId(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody SnsIdUpdateRequest request) {
+        if (user == null)
+            throw new CustomException(ErrorType.UN_AUTHENTICATION);
 
         String newAccessToken = userService.updateSnsId(UUID.fromString(user.getId()), request.snsId());
         return ResponseEntity
@@ -91,7 +102,8 @@ public class UserController {
 
     @Operation(
             summary = "프로필 이미지 업로드",
-            description = "사용자의 프로필 이미지를 업로드하고 Firebase Storage에 저장된 CDN URL을 반환합니다.",
+            description = "사용자의 프로필 이미지를 업로드하고 Firebase Storage에 저장된 CDN URL을 반환합니다."
+                        + "<br><br><b>인증 토큰이 필요합니다!</b>",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
                     content = @Content(
@@ -112,6 +124,8 @@ public class UserController {
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody ProfileImageRequest request
     ) {
+        if (user == null)
+            throw new CustomException(ErrorType.UN_AUTHENTICATION);
         userService.uploadProfileImage(user.getId(), request.imageUrl());
 
         return ResponseEntity
@@ -122,7 +136,8 @@ public class UserController {
     @PostMapping("/tbti")
     @Operation(
             summary = "사용자 TBTI 변경",
-            description = "사용자의 TBTI를 변경합니다.<br><b>갱신된 TBTI의 설명을 반환합니다.</b>",
+            description = "사용자의 TBTI를 변경합니다.<br><b>갱신된 TBTI의 설명을 반환합니다.</b>"
+                        + "<br><br><b>인증 토큰이 필요합니다!</b>",
             tags = { "User Profile" },
             parameters = @Parameter(name = "tbti", example = "00127623", description = "TBTI 숫자 코드입니다. (0~99999999)"),
             responses = {
@@ -133,6 +148,8 @@ public class UserController {
     public ResponseEntity<SuccessRes<TbtiInfoRes>> uploadProfileImage(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam(name = "tbti") int tbtiValue) {
+        if (user == null)
+            throw new CustomException(ErrorType.UN_AUTHENTICATION);
         return ResponseEntity.ok(SuccessRes.from(
                 userService.updateUserTbti(UUID.fromString(user.getId()), tbtiValue)));
     }
