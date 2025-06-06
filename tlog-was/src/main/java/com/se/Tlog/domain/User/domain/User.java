@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+import com.se.Tlog.domain.Tbti.domain.Tbti;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -53,6 +55,8 @@ public class User {
                 userRegisterInfo.getEmail(), 
                 userRegisterInfo.getTbti().getTbtiCode());
     }
+    
+    public String getTbtiString() {return new Tbti(tbti).toString();}
 
     public void updateEmail(String email) {this.email = email;}
     public void updateSnsId(String snsId) {this.snsId = snsId;}
