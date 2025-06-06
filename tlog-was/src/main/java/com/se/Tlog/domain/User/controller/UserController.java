@@ -12,9 +12,6 @@ import com.se.Tlog.global.response.success.SuccessType;
 import com.se.Tlog.global.security.dto.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Encoding;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -102,25 +99,21 @@ public class UserController {
 
     @Operation(
             summary = "프로필 이미지 업로드",
-            description = "사용자의 프로필 이미지를 업로드하고 Firebase Storage에 저장된 CDN URL을 반환합니다."
+            description = "사용자의 프로필 이미지를 설정 또는 수정합니다."
                         + "<br><br><b>인증 토큰이 필요합니다!</b>",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    content = @Content(
-                            mediaType = "multipart/form-data",
-                            schema = @Schema(type = "object", requiredProperties = { "file" }),
-                            encoding = @Encoding(name = "file", contentType = "image/*")
-                    )
+                    description = "프로필 이미지 업데이트 요청 (imageUrl 필드 필수)",
+                    required = true
             ),
             responses = {
-                    @ApiResponse(responseCode = "200", description = "이미지 업로드 성공 (imageUrl 반환)"),
+                    @ApiResponse(responseCode = "200", description = "이미지 업로드 성공"),
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 데이터 입니다."),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             },
             tags = { "User Profile" }
     )
     @PostMapping("/profile-image")
-    public ResponseEntity<?> uploadProfileImage(
+    public ResponseEntity<SuccessRes<?>> uploadProfileImage(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody ProfileImageRequest request
     ) {
