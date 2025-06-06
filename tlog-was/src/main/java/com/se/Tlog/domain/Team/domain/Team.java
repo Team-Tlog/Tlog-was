@@ -3,6 +3,7 @@ package com.se.Tlog.domain.Team.domain;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.se.Tlog.domain.Tbti.domain.Tbti;
 import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.global.exception.CustomException;
@@ -31,7 +32,7 @@ public class Team {
 	
 	private String name;
 	
-	// private Tbti tbti;
+	private Integer tbti;
 
 	@CreatedDate
 	@Column(updatable = false)
@@ -40,6 +41,7 @@ public class Team {
 	private Team(String name, Long inviteCode) {
 		this.name = name;
 		this.inviteCode = inviteCode;
+		this.tbti = null;
 	}
 	
 	public static Team create(
@@ -83,5 +85,16 @@ public class Team {
 		// 기타 팀원 삭제 후 처리내용
 		
 		log.info("팀원을 팀 " + this.name + "에서 제거합니다. : " + user.getName());
+	}
+	
+	public void setTbti(Tbti tbti) {
+	    this.tbti = tbti.getTbtiCode();
+	}
+	
+	public String getTbtiString() {
+	    if (tbti == null)
+	        return "아직 TBTI 검사가 진행되지 않았습니다!";
+	    else 
+	        return new Tbti(tbti).toString();
 	}
 }

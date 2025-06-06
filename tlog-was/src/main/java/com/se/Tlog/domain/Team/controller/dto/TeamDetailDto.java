@@ -11,7 +11,7 @@ import java.util.UUID;
 public record TeamDetailDto(
         UUID teamId,
         String teamName,
-        //String teamTBTI,
+        String tbtiString,
         String inviteCode,
         LocalDate startDate,
         LocalDate endDate,
@@ -22,6 +22,7 @@ public record TeamDetailDto(
         return new TeamDetailDto(
                 team.getId(),
                 team.getName(),
+                team.getTbtiString(), // 만약 TBTI 설명까지 추가해야 할 경우, 여기서 처리하지 않고 외부에서 설명 DTO를 파라미터로 받을 것!
                 InviteCodeUtil.longToStr(team.getInviteCode()),
                 team.getCreatedAt().toLocalDate(),
                 LocalDate.now(),
