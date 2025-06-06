@@ -90,9 +90,12 @@ public class TeamService {
 		.toList();
 	}
 	
-	public void deleteTeam(UUID teamId) {
+	public void deleteTeam(UUID requesterId, UUID teamId) {
 		if (!teamRepository.existsById(teamId))
 			throw new CustomException(ErrorType.TEAM_NOT_FOUND);
+		TeamUserJpaEntity teamUser = teamUserRepository.findByTeam_IdAndUser_Id(teamId, requesterId).orElse(null);
+		if (teamUser == null || !teamUser.isLeader())
+		    throw new CustomException(ErrorType.UN_AUTHORIZATION);
 		
 		teamDomainService.deleteTeamData(teamRepository.findById(teamId).get());
 		teamRepository.deleteById(teamId);
