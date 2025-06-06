@@ -6,8 +6,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "새 보상 형식의 생성 요청을 위한 정보입니다.")
 public record CreateRewardInfoRequest(
+        @Schema(description = "보상 형식의 아이콘 이미지")
+        String iconImageUrl,
+        
 		@Schema(description = "보상의 이름")
 		String name,
+		
+        @Schema(description = "보상 설명 문구")
+        String description,
 		
 		@Schema(description = "보상 달성 조건의 유형")
 		RewardCriteriaType criteriaType,

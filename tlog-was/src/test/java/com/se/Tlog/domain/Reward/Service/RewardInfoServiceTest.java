@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.se.Tlog.domain.Reward.application.RewardInfoService;
+import com.se.Tlog.domain.Reward.controller.dto.CreateRewardInfoRequest;
 import com.se.Tlog.domain.Reward.domain.RewardCriteria;
 import com.se.Tlog.domain.Reward.domain.RewardCriteriaType;
 import com.se.Tlog.domain.Reward.domain.RewardInfo;
@@ -30,10 +31,10 @@ class RewardInfoServiceTest {
 	@DisplayName("새 보상 형식 등록 테스트")
 	void testAddNewRewardInfo() {
 		List<RewardInfo> added = new ArrayList<RewardInfo>();
-		added.add(rewardInfoService.addNewRewardInfo("보상 1", RewardCriteriaType.TEST_NULL_CRITERIA, ""));
-		added.add(rewardInfoService.addNewRewardInfo("보상 2", RewardCriteriaType.IS_DEVELOPER, ""));
-		added.add(rewardInfoService.addNewRewardInfo("보상 3", RewardCriteriaType.TEST_NULL_CRITERIA, ""));
-		added.add(rewardInfoService.addNewRewardInfo("보상 4", RewardCriteriaType.IS_DEVELOPER, ""));
+		added.add(rewardInfoService.addNewRewardInfo(new CreateRewardInfoRequest("", "보상 1", "테스트 보상 1", RewardCriteriaType.TEST_NULL_CRITERIA, "")));
+		added.add(rewardInfoService.addNewRewardInfo(new CreateRewardInfoRequest("", "보상 2", "테스트 보상 2", RewardCriteriaType.IS_DEVELOPER, "")));
+		added.add(rewardInfoService.addNewRewardInfo(new CreateRewardInfoRequest("", "보상 3", "테스트 보상 3", RewardCriteriaType.TEST_NULL_CRITERIA, "")));
+		added.add(rewardInfoService.addNewRewardInfo(new CreateRewardInfoRequest("", "보상 4", "테스트 보상 4", RewardCriteriaType.IS_DEVELOPER, "")));
 		
 		assertThat(rewardInfoRepository.findAll())
 		.containsAll(added);
@@ -44,10 +45,10 @@ class RewardInfoServiceTest {
 	@DisplayName("보상 형식 조회 테스트")
 	void testGetAllRewardInfo() {
 		List<RewardInfo> added = new ArrayList<RewardInfo>();
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 1", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 2", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 3", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 4", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 1", "테스트 보상 1", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 2", "테스트 보상 2", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 3", "테스트 보상 3", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 4", "테스트 보상 4", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
 		
 		assertThat(rewardInfoService.getAllRewardInfo())
 		.containsAll(added);
@@ -58,10 +59,10 @@ class RewardInfoServiceTest {
 	@DisplayName("보상 형식 제거 테스트")
 	void testDeleteRewardInfo() {
 		List<RewardInfo> added = new ArrayList<RewardInfo>();
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 1", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 2", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 3", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 4", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 1", "테스트 보상 1", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 2", "테스트 보상 2", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 3", "테스트 보상 3", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 4", "테스트 보상 4", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
 		
 		rewardInfoService.deleteRewardInfo(added.get(1).getId());
 		rewardInfoService.deleteRewardInfo(added.get(3).getId());

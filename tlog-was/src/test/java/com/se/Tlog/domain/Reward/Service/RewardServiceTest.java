@@ -1,7 +1,7 @@
 package com.se.Tlog.domain.Reward.Service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.se.Tlog.domain.Reward.application.RewardService;
+import com.se.Tlog.domain.Reward.controller.dto.UserRewardDto;
 import com.se.Tlog.domain.Reward.domain.RewardCriteria;
 import com.se.Tlog.domain.Reward.domain.RewardCriteriaType;
 import com.se.Tlog.domain.Reward.domain.RewardInfo;
@@ -41,7 +42,7 @@ class RewardServiceTest {
 		        new UserRegisterInfo(
 		                new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"),
 		                new RegisterUserProfileDto("00000000")));
-		RewardInfo testReward = RewardInfo.create("보상 1", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""));
+		RewardInfo testReward = RewardInfo.create("", "보상 1", "테스트 보상 1", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""));
 
 		userRepository.save(testUser);
 		rewardInfoRepository.save(testReward);
@@ -59,10 +60,10 @@ class RewardServiceTest {
 		                new RegisterUserProfileDto("00000000")));
 		
 		List<RewardInfo> added = new ArrayList<RewardInfo>();
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 1", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 2", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 3", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
-		added.add(rewardInfoRepository.save(RewardInfo.create("보상 4", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 1", "테스트 보상 1", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 2", "테스트 보상 2", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 3", "테스트 보상 3", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
+		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 4", "테스트 보상 4", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""))));
 		
 		userRepository.save(testUser);
 		
@@ -71,7 +72,11 @@ class RewardServiceTest {
 		assertThatNoException().isThrownBy(()->rewardService.addRewardToUser(testUser.getId(), added.get(2).getId()));
 		assertThatNoException().isThrownBy(()->rewardService.addRewardToUser(testUser.getId(), added.get(3).getId()));
 		
-		assertThat(rewardService.getAllRewardOfUser(testUser.getId()))
-		.containsAll(added);
+		List<UserRewardDto> result = rewardService.getAllRewardOfUser(testUser.getId());
+		assertEquals(result.size(), added.size());
+		for (int i = 0; i < result.size(); i++) {
+		    assertEquals(result.get(i).rewardId(), added.get(i).getId());
+		    assertEquals(result.get(i).name(), added.get(i).getName());
+		}
 	}
 }

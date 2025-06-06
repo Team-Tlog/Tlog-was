@@ -34,6 +34,12 @@ public class Reward {
 	@JoinColumn(name = "reward_info")
 	private RewardInfo rewardInfo;
 	
+	private boolean isDefault;
+	
+	public void setDefault(boolean isDefault) {
+	    this.isDefault = isDefault;
+	}
+	
 	private Reward(User user, RewardInfo rewardInfo) {
 		this.user = user;
 		this.rewardInfo = rewardInfo;

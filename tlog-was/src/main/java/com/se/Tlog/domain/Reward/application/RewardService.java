@@ -5,8 +5,8 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Reward.controller.dto.UserRewardDto;
 import com.se.Tlog.domain.Reward.domain.Reward;
-import com.se.Tlog.domain.Reward.domain.RewardInfo;
 import com.se.Tlog.domain.Reward.domain.repository.RewardRepositoryService;
 import com.se.Tlog.domain.Reward.repository.jpa.RewardInfoRepository;
 import com.se.Tlog.domain.Reward.repository.jpa.RewardRepository;
@@ -14,6 +14,7 @@ import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @ApplicationService
@@ -26,7 +27,6 @@ public class RewardService {
 	
 	/**
 	 * 특정 유저에게 보상을 설정합니다.
-	 * <br/> 보상 조건이 맞지 않으면 보상 설정에 실패하며, <code>false</code>를 반환합니다.
 	 * @param userId
 	 * @param rewardInfoId
 	 * @return
@@ -44,13 +44,34 @@ public class RewardService {
 	}
 	
 	/**
+	 * 특정 유저가 기본으로 표시할 보상을 설정합니다.
+	 * @param userId
+	 * @param rewardInfoId
+	 */
+	@Transactional
+	public void setDefaultReward(UUID userId, Long rewardInfoId) {
+	    if (!userRepository.existsById(userId))
+	        throw new CustomException(ErrorType.USER_NOT_FOUND);
+	    
+        if (!rewardRepository.existsByRewardInfo_IdAndUser_Id(rewardInfoId, userId))
+            throw new CustomException(ErrorType.REWARD_NOT_RECEIVED);
+	    
+        rewardRepository.updateDefaultReward(rewardInfoId, userId);
+	}
+	
+	/**
 	 * 특정 유저가 보유하고 있는 모든 보상을 조회합니다.
 	 * @param userId
 	 * @return
 	 */
-	public List<RewardInfo> getAllRewardOfUser(UUID userId) {
+	public List<UserRewardDto> getAllRewardOfUser(UUID userId) {
 		return rewardRepository.findAllByUser_Id(userId)
-				.stream().map(Reward::getRewardInfo)
+				.stream().map(reward -> new UserRewardDto(
+				        reward.getRewardInfo().getId(),
+				        reward.getRewardInfo().getName(),
+				        reward.getRewardInfo().getDescription(),
+				        reward.getRewardInfo().getIconImageUrl(),
+				        reward.isDefault()))
 				.toList();
 	}
 }
