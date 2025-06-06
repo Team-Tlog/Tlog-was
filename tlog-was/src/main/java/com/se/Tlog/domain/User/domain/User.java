@@ -61,4 +61,5 @@ public class User {
     public void updateEmail(String email) {this.email = email;}
     public void updateSnsId(String snsId) {this.snsId = snsId;}
     public void updateProfileImage(String profileImage) {this.profileImage = profileImage;}
+    public void updateTbti(Tbti tbti) {this.tbti = tbti.getTbtiCode();}
 }

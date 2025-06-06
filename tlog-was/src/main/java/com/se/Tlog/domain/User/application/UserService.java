@@ -1,6 +1,9 @@
 package com.se.Tlog.domain.User.application;
 
 
+import com.se.Tlog.domain.Tbti.application.TbtiInfoService;
+import com.se.Tlog.domain.Tbti.controller.dto.TbtiInfoRes;
+import com.se.Tlog.domain.Tbti.domain.Tbti;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
@@ -20,6 +23,7 @@ import java.util.UUID;
 public class UserService {
     private final AccessTokenProvider accessTokenProvider;
     private final UserRepository userRepository;
+    private final TbtiInfoService tbtiInfoService;
 
     /*@Transactional
     public void updateEmail(UUID userId, String email) {
@@ -38,11 +42,21 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
 
         user.updateSnsId(snsId);
+        // 위험 : 이전 토큰이 무효화되지 않아 이전 토큰이 여전히 사용가능!
         return accessTokenProvider.generateToken(
                 user.getId().toString(),
                 user.getRole().getValue(),
                 user.getSnsId()
         );
+    }
+    
+    @Transactional
+    public TbtiInfoRes updateUserTbti(UUID userId, int tbtiValue) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
+        Tbti newTbti = new Tbti(tbtiValue);
+        user.updateTbti(newTbti);
+        return tbtiInfoService.getTbtiInfo(newTbti);
     }
 
     @Transactional
