@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.User.controller;
 
+import com.se.Tlog.domain.Tbti.controller.dto.TbtiInfoRes;
 import com.se.Tlog.domain.User.application.UserService;
 
 import com.se.Tlog.domain.User.controller.dto.ProfileImageRequest;
@@ -8,6 +9,7 @@ import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
 import com.se.Tlog.global.security.dto.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -115,5 +117,23 @@ public class UserController {
         return ResponseEntity
                 .status(SuccessType.OK.getStatus())
                 .body(SuccessRes.from(SuccessType.OK));
+    }
+
+    @PostMapping("/tbti")
+    @Operation(
+            summary = "사용자 TBTI 변경",
+            description = "사용자의 TBTI를 변경합니다.<br><b>갱신된 TBTI의 설명을 반환합니다.</b>",
+            tags = { "User Profile" },
+            parameters = @Parameter(name = "tbti", example = "00127623", description = "TBTI 숫자 코드입니다. (0~99999999)"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "사용자 TBTI 업데이트 성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+            }
+    )
+    public ResponseEntity<SuccessRes<TbtiInfoRes>> uploadProfileImage(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestParam(name = "tbti") int tbtiValue) {
+        return ResponseEntity.ok(SuccessRes.from(
+                userService.updateUserTbti(UUID.fromString(user.getId()), tbtiValue)));
     }
 }
