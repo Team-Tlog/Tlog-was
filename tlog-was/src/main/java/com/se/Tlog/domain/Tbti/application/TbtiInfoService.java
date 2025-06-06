@@ -28,8 +28,7 @@ public class TbtiInfoService {
                         request.description()));
     }
     
-    public TbtiInfoRes getTbtiInfo(String tbtiString) {
-        Tbti tbti = new Tbti(tbtiString);
+    public TbtiInfoRes getTbtiInfo(Tbti tbti) {
         TbtiInfo tbtiInfo = tbtiInfoRepository.findByTbtiString(tbti.toString());
         if (tbtiInfo == null)
             return TbtiInfoRes.getNullDto(tbti);
@@ -39,6 +38,10 @@ public class TbtiInfoService {
                     tbtiInfo.getImageUrl(),
                     tbtiInfo.getSecondName(),
                     tbtiInfo.getDescription());
+    }
+    
+    public TbtiInfoRes getTbtiInfo(String tbtiString) {
+        return getTbtiInfo(new Tbti(tbtiString));
     }
     
     public void deleteTbtiInfo(String tbtiString) {
