@@ -28,11 +28,16 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/api/team")
 @RequiredArgsConstructor
+@Tag(name = "팀 관리")
+@SecurityRequirement(
+        name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
+        scopes = {"scope1", "scope2"})
 public class TeamController {
 	private final TeamService teamService;
 	
@@ -40,10 +45,6 @@ public class TeamController {
 	@Operation (
 			summary = "팀 생성",
     		description = "새로운 여행 팀을 생성하고 팀 채팅방이 자동으로 생성됩니다.",
-			tags = {"팀 관리"},
-			security = @SecurityRequirement(
-					name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
-					scopes = {"scope1", "scope2"}),
 			responses = {
 					@ApiResponse(responseCode = "200", description = "채팅방이 자동으로 생성되었습니다. 팀원들과 소통을 시작해보세요!"),
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류. 팀 생성에 실패했습니다.",
@@ -58,10 +59,6 @@ public class TeamController {
 	@Operation (
 			summary = "팀 조회",
     		description = "특정 유저가 속한 팀을 모두 표시합니다.",
-			tags = {"팀 관리"},
-			security = @SecurityRequirement(
-					name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
-					scopes = {"scope1", "scope2"}),
 			responses = {
 					@ApiResponse(responseCode = "200", description = "처리 성공."),
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류. 팀 생성에 실패했습니다.",
@@ -76,11 +73,6 @@ public class TeamController {
 	@Operation(
 			summary = "특정 팀 상세 정보 조회",
 			description = "특정 팀의 상세 정보와 장바구니 여행지 목록을 함께 반환합니다.",
-			tags = {"팀 관리"},
-			security = @SecurityRequirement(
-					name = "JwtAuthScheme",
-					scopes = {"scope1", "scope2"}
-			),
 			parameters = {
 					@Parameter(name = "teamId", description = "조회할 팀의 UUID", required = true)
 			},
@@ -99,10 +91,6 @@ public class TeamController {
 	@Operation (
 			summary = "팀 삭제",
     		description = "기존 팀을 삭제합니다.",
-			tags = {"팀 관리"},
-			security = @SecurityRequirement(
-					name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
-					scopes = {"scope1", "scope2"}),
 			parameters = {
 					@Parameter(name = "teamId", description = "삭제할 팀의 id")
 			},
@@ -120,10 +108,6 @@ public class TeamController {
 	@Operation (
 			summary = "팀원 초대",
     		description = "새로운 팀원을 초대합니다.",
-			tags = {"팀 관리"},
-			security = @SecurityRequirement(
-					name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
-					scopes = {"scope1", "scope2"}),
 			responses = {
 					@ApiResponse(responseCode = "200", description = "처리 성공. 해당 유저에게 초대 요청을 보냅니다."),
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류. 유저 초대에 실패했습니다.",
@@ -138,10 +122,6 @@ public class TeamController {
 	@Operation (
 			summary = "팀원 가입",
     		description = "특정 유저를 팀에 추가합니다.",
-			tags = {"팀 관리"},
-			security = @SecurityRequirement(
-					name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
-					scopes = {"scope1", "scope2"}),
 			responses = {
 					@ApiResponse(responseCode = "200", description = "처리 성공. 해당 유저에게 초대 요청을 보냅니다."),
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류. 유저 초대에 실패했습니다.",
@@ -156,10 +136,6 @@ public class TeamController {
 	@Operation (
 			summary = "팀원 삭제",
     		description = "팀에서 특정 유저를 삭제합니다.",
-			tags = {"팀 관리"},
-			security = @SecurityRequirement(
-					name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
-					scopes = {"scope1", "scope2"}),
 			parameters = {
 					@Parameter(name = "teamId", description = "팀원이 제거될 팀의 id"),
 					@Parameter(name = "userId", description = "제거될 유저의 id")
