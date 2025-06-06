@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.se.Tlog.domain.Team.controller.dto.TeamCreateRes;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +19,12 @@ import com.se.Tlog.domain.Team.application.TeamService;
 import com.se.Tlog.domain.Team.controller.dto.CreateTeamRequestDto;
 import com.se.Tlog.domain.Team.controller.dto.TeamResponseDto;
 import com.se.Tlog.domain.Team.controller.dto.TeamUserRequestDto;
+import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorRes;
+import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
+import com.se.Tlog.global.security.dto.CustomUserDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -51,6 +55,7 @@ public class TeamController {
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
 	public ResponseEntity<SuccessRes<TeamCreateRes>> createTeam(@RequestBody CreateTeamRequestDto request) {
+	    // 추후 인증 토큰을 사용해, 타 사용자의 명의로 팀을 생성하지 못하도록 변경 예정
 		return ResponseEntity.ok(SuccessRes.of(SuccessType.TEAM_CREATE_SUCCESS,
 				teamService.createTeam(request)));
 	}
@@ -65,6 +70,7 @@ public class TeamController {
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
 	public ResponseEntity<SuccessRes<List<TeamResponseDto>>> getMyTeam(@RequestParam(name = "userId") UUID userId) {
+	    // 추후 인증 토큰을 사용해, 타 사용자의 팀을 함부로 조회하지 못하도록 변경 예정
 		return ResponseEntity.ok(SuccessRes.from(
 				teamService.getTeamOfUser(userId)));
 	}
@@ -83,6 +89,7 @@ public class TeamController {
 			}
 	)
 	public ResponseEntity<?> getTeamDetails(@PathVariable UUID teamId) {
+	    // 추후 인증 토큰을 사용해, 타 사용자의 팀을 함부로 조회하지 못하도록 변경 예정
 		return ResponseEntity.
 				ok(SuccessRes.from(teamService.getTeamDetails(teamId)));
 	}
@@ -90,7 +97,9 @@ public class TeamController {
 	@DeleteMapping("/{teamId}")
 	@Operation (
 			summary = "팀 삭제",
-    		description = "기존 팀을 삭제합니다.",
+    		description = "기존 팀을 삭제합니다."
+    		            + "<br>팀장만 팀을 삭제할 수 있습니다."
+    		            + "<br><br><b>인증 토큰이 필요합니다!</b>",
 			parameters = {
 					@Parameter(name = "teamId", description = "삭제할 팀의 id")
 			},
@@ -99,8 +108,13 @@ public class TeamController {
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류. 팀 삭제에 실패했습니다.",
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
-	public ResponseEntity<SuccessRes<?>> deleteTeam(@PathVariable(name = "teamId") UUID teamId) {
-		teamService.deleteTeam(teamId);
+	public ResponseEntity<SuccessRes<?>> deleteTeam(
+	        @AuthenticationPrincipal CustomUserDetails user,
+	        @PathVariable(name = "teamId") UUID teamId) {
+	    if (user == null)
+	        throw new CustomException(ErrorType.UN_AUTHENTICATION);
+	    
+		teamService.deleteTeam(UUID.fromString(user.getId()), teamId);
 		return ResponseEntity.ok(SuccessRes.from(SuccessType.OK));
 	}
 
@@ -128,6 +142,7 @@ public class TeamController {
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
 	public ResponseEntity<SuccessRes<?>> addUser(@RequestBody TeamUserRequestDto request) {
+	    // 추후 인증 토큰을 사용해, 타 사용자의 팀 가입을 조작하지 못하도록 변경 예정
 		teamService.joinTeamByInviteCode(request);
 		return ResponseEntity.ok(SuccessRes.from(SuccessType.OK));
 	}
@@ -146,6 +161,7 @@ public class TeamController {
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
 	public ResponseEntity<SuccessRes<?>> deleteTeam(@PathVariable(name = "teamId") UUID teamId, @PathVariable(name = "userId") UUID userId) {
+	    // 추후 인증 토큰을 사용해, 권한 없이 강제 탈퇴를 조작하지 못하도록 변경 예정
 		teamService.leaveTeam(teamId, userId);
 		return ResponseEntity.ok(SuccessRes.from(SuccessType.OK));
 	}
