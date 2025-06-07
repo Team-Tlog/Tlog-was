@@ -2,7 +2,7 @@ package com.se.Tlog.domain.Team.controller.dto;
 
 import com.se.Tlog.domain.Team.domain.InviteCodeUtil;
 import com.se.Tlog.domain.Team.domain.Team;
-import com.se.Tlog.domain.Travel.controller.dto.SimpleDestinationRes;
+import com.se.Tlog.domain.Wishlist.domain.dto.WishlistDestinationRes;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,9 +16,9 @@ public record TeamDetailDto(
         LocalDate startDate,
         LocalDate endDate,
         List<TeamMemberDto> members,
-        List<SimpleDestinationRes> wishlist
+        List<WishlistDestinationRes> wishlist
 ) {
-    public static TeamDetailDto from(Team team, List<TeamMemberDto> members, List<SimpleDestinationRes> wishlist) {
+    public static TeamDetailDto from(Team team, List<TeamMemberDto> members, List<WishlistDestinationRes> wishlist) {
         return new TeamDetailDto(
                 team.getId(),
                 team.getName(),

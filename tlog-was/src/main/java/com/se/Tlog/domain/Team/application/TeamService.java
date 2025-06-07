@@ -16,11 +16,11 @@ import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
 import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
 import com.se.Tlog.domain.Team.repository.jpa.TeamUserRepository;
 import com.se.Tlog.domain.Team.repository.jpa.entity.TeamUserJpaEntity;
-import com.se.Tlog.domain.Travel.controller.dto.SimpleDestinationRes;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.domain.Wishlist.application.ShoppingCartService;
 import com.se.Tlog.domain.Wishlist.domain.OwnerType;
+import com.se.Tlog.domain.Wishlist.domain.dto.WishlistDestinationRes;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 
@@ -140,7 +140,7 @@ public class TeamService {
 				        TeamMemberDto.from(teamUser.getUser(), teamUser.isLeader())
 		        ).toList();
 
-		List<SimpleDestinationRes> wishList = shoppingCartService.getCartData(team.getId(), OwnerType.TEAM);
+		List<WishlistDestinationRes> wishList = shoppingCartService.getCartData(team.getId(), OwnerType.TEAM);
 
 		return TeamDetailDto.from(team, memberDtoList, wishList);
 	}
