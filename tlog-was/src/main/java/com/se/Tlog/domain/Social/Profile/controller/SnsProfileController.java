@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +30,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/api/sns/profile")
+@RequestMapping("/api/sns")
 @RequiredArgsConstructor
 @Tag(name = "SNS 프로필")
 @SecurityRequirement(
@@ -38,7 +39,7 @@ import lombok.RequiredArgsConstructor;
 public class SnsProfileController {
     private final SnsProfileService snsProfileService;
     
-    @PostMapping("/sns-description")
+    @PostMapping("/profile/sns-description")
     @Operation (
             summary = "SNS 프로필의 한 줄 설명글 변경",
             description = "SNS 프로필의 한 줄 설명글을 변경합니다."
@@ -58,22 +59,18 @@ public class SnsProfileController {
         return ResponseEntity.ok(SuccessRes.from(SuccessType.OK));
     }
     
-    @GetMapping
+    @GetMapping("/user/{userId}/profile")
     @Operation (
             summary = "SNS 프로필 조회",
-            description = "사용자의 SNS 프로필을 조회합니다."
-                        + "<br><br><b>인증 토큰이 필요합니다!</b>",
+            description = "사용자의 SNS 프로필을 조회합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "처리 성공."),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류.",
                             content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
     )
     public ResponseEntity<SuccessRes<SnsProfileRes>> getSnsProfile(
-            @AuthenticationPrincipal CustomUserDetails user) {
-        if (user == null)
-            throw new CustomException(ErrorType.UN_AUTHENTICATION);
-        
+            @PathVariable(name = "userId") UUID userId) {
         return ResponseEntity.ok(SuccessRes.from(
-                snsProfileService.getSnsProfile((UUID.fromString(user.getId())))));
+                snsProfileService.getSnsProfile(userId)));
     }
 }
