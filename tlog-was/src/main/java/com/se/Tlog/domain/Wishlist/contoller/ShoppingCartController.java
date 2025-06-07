@@ -3,7 +3,6 @@ package com.se.Tlog.domain.Wishlist.contoller;
 import java.util.List;
 import java.util.UUID;
 
-import com.se.Tlog.domain.Travel.controller.dto.SimpleDestinationRes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.se.Tlog.domain.Wishlist.application.ShoppingCartService;
 import com.se.Tlog.domain.Wishlist.domain.OwnerType;
+import com.se.Tlog.domain.Wishlist.domain.dto.WishlistDestinationRes;
 import com.se.Tlog.global.response.error.ErrorRes;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
@@ -49,7 +49,7 @@ public class ShoppingCartController {
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류.",
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
-	public ResponseEntity<SuccessRes<List<SimpleDestinationRes>>> getCartOfUser(@PathVariable(name = "userId") UUID userId) {
+	public ResponseEntity<SuccessRes<List<WishlistDestinationRes>>> getCartOfUser(@PathVariable(name = "userId") UUID userId) {
 		return ResponseEntity.ok(SuccessRes.from(
 				shoppingCartService.getCartData(userId, OwnerType.USER)));
 	}
@@ -100,7 +100,7 @@ public class ShoppingCartController {
 					@ApiResponse(responseCode = "500", description = "서버 내부 오류.",
 							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
 	)
-	public ResponseEntity<SuccessRes<List<SimpleDestinationRes>>> getCartOfTeam(@PathVariable(name = "teamId") UUID teamId) {
+	public ResponseEntity<SuccessRes<List<WishlistDestinationRes>>> getCartOfTeam(@PathVariable(name = "teamId") UUID teamId) {
 		return ResponseEntity.ok(SuccessRes.from(
 				shoppingCartService.getCartData(teamId, OwnerType.TEAM)));
 	}
