@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.se.Tlog.domain.Search.application.SearchService;
+import com.se.Tlog.domain.Search.application.DescriptionSearchService;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
 import com.se.Tlog.global.response.error.ErrorRes;
 import com.se.Tlog.global.response.success.SuccessRes;
@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
         name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
         scopes = {"scope1", "scope2"})
 public class SearchController {
-	private final SearchService searchService;
+	private final DescriptionSearchService searchService;
 	
 	@GetMapping("/destination/by-name")
 	@Operation (
