@@ -5,6 +5,7 @@ import com.se.Tlog.domain.User.application.UserService;
 
 import com.se.Tlog.domain.User.controller.dto.ProfileImageRequest;
 import com.se.Tlog.domain.User.controller.dto.SnsIdUpdateRequest;
+import com.se.Tlog.domain.User.controller.dto.TlogMyPageRes;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.response.success.SuccessRes;
@@ -145,5 +146,30 @@ public class UserController {
             throw new CustomException(ErrorType.UN_AUTHENTICATION);
         return ResponseEntity.ok(SuccessRes.from(
                 userService.updateUserTbti(UUID.fromString(user.getId()), tbtiValue)));
+    }
+
+    @GetMapping("/my-page")
+    @Operation(
+            summary = "Tlog 기본 마이페이지 조회",
+            description = "사용자의 마이페이지 정보를 조회합니다.<br><b>Authentication 토큰이 필요합니다.</b>",
+            tags = { "User" },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "이미지 업로드 성공"),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 데이터 입니다."),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+            }
+    )
+    
+    public ResponseEntity<SuccessRes<TlogMyPageRes>> getMyPage(@AuthenticationPrincipal CustomUserDetails user) {
+        UUID userId = null;
+        try {
+            userId = UUID.fromString(user.getId());
+        } catch (Exception e) {
+            throw new CustomException(ErrorType.UN_AUTHENTICATION);
+        }
+        
+        return ResponseEntity
+                .status(SuccessType.OK.getStatus())
+                .body(SuccessRes.from(userService.getTlogMyPage(userId)));
     }
 }
