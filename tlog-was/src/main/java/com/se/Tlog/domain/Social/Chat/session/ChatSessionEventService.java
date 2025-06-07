@@ -12,6 +12,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -48,12 +49,19 @@ public class ChatSessionEventService {  // 명령어별 처리 로직
         String sessionId = accessor.getSessionId();
         Principal principal = accessor.getUser();
         UUID userId = UUID.fromString(principal.getName());
-        ConnectedUserSession connectedUserSession = connectedUserSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
-        ChatMessage roomLastMessage = chatMessageRepository.findFirstByChatRoomIdOrderByIdDesc(connectedUserSession.getRoomId());
 
-        //유저별 마지막으로 읽은 메시지 업데이트 ( 유저별 읽지 않은 메시지 수 카운팅 추적 하기 위함)
-        chatReadStatusService.updateReadStatus(userId, connectedUserSession.getRoomId(), roomLastMessage.getId());
+        Optional<ConnectedUserSession> optionalSession = connectedUserSessionRepository.findById(sessionId);
+        if (optionalSession.isEmpty()) {
+            log.warn("DISCONNECT 처리 중 : 이미 세션이 종료되었거나 존재하지 않습니다. sessionId={}", sessionId);
+            return;
+        }
+        ConnectedUserSession connectedUserSession = optionalSession.get();
+        ChatMessage roomLastMessage = chatMessageRepository.findFirstByChatRoomIdOrderByIdDesc(connectedUserSession.getRoomId());
+        if (roomLastMessage != null) {
+            chatReadStatusService.updateReadStatus(userId, connectedUserSession.getRoomId(), roomLastMessage.getId());
+        }else {
+            log.warn("DISCONNECT 처리 중 : 채팅방에 메시지가 없습니다. rooId={}", connectedUserSession.getRoomId());
+        }
         connectedUserSessionService.disconnect(sessionId);
     }
 }
