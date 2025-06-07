@@ -20,4 +20,7 @@ public interface FollowRepository extends JpaRepository<Follow, UUID> {
 
     @Query("select f.fromUserId from Follow f where f.toUserId = :toUserId")
     Page<UUID> findFromUserIdsByToUserId(@Param("toUserId") UUID toUserId, Pageable pageable);
+    
+    int countByFromUserId(UUID fromUserId);
+    int countByToUserId(UUID toUserId);
 }

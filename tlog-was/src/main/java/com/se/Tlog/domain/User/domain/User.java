@@ -25,6 +25,7 @@ public class User {
     private String email;
 
     private String snsId;
+    private String snsDescription;
     
     private int tbti;
     //private String telephoneNumber; 사용자가 동의하지 않은 경우 못받을 수 있음 nullable 하게 관리
@@ -60,6 +61,7 @@ public class User {
 
     public void updateEmail(String email) {this.email = email;}
     public void updateSnsId(String snsId) {this.snsId = snsId;}
+    public void updateSnsDescription(String snsDescription) {this.snsDescription = snsDescription;}
     public void updateProfileImage(String profileImage) {this.profileImage = profileImage;}
     public void updateTbti(Tbti tbti) {this.tbti = tbti.getTbtiCode();}
 }
