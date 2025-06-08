@@ -43,9 +43,9 @@ public class StompHandler implements ChannelInterceptor {
             Principal user = accessor.getUser();
             if (user instanceof CustomPrincipal customPrincipal) {
                 String nickname = customPrincipal.nickname();
-                accessor.addNativeHeader("user-name", nickname != null ? nickname : "null");
+                accessor.addNativeHeader("user-name", nickname != null && !nickname.isBlank() ? nickname : "unknown");
             } else {
-                accessor.addNativeHeader("user-name", "null");
+                accessor.addNativeHeader("user-name", "unknown");
             }
         }
     }
