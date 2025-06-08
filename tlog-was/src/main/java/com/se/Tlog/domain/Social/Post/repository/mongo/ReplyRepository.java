@@ -1,6 +1,10 @@
 package com.se.Tlog.domain.Social.Post.repository.mongo;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -35,6 +39,22 @@ public interface ReplyRepository extends MongoRepository<Reply, String> {
     List<Reply> findAllByPostId(int limit, String lastReplyId, String postId);
     
     @Aggregation(pipeline = {
+            // 결과 쿼리
+            """
+            {
+                $match: {
+                    postId: { $in: ?1 },
+                    parentId: "000000000000000000000000"
+                }
+            }
+            """,
+            """
+            { $limit: ?0 }
+            """
+    })
+    List<Reply> findAllByPostIds(int limit, Set<String> postId);
+    
+    @Aggregation(pipeline = {
             // id 기반 페이징 (-> 성능상 좀 더 우수)
             """
             { $sort: { _id: 1 } }
@@ -54,6 +74,21 @@ public interface ReplyRepository extends MongoRepository<Reply, String> {
             
     })
     List<Reply> findAllByParentId(int limit, String lastReplyId, String parentId);
+    
+    default Map<String, List<Reply>> findAllOfPosts(int size, Set<String> postIds) {
+        List<Reply> replies = findAllByPostIds(size, postIds);
+        Map<String, List<Reply>> result = new HashMap<String, List<Reply>>();
+        for (Reply r : replies) {
+            if (result.containsKey(r.getPostId()))
+                result.get(r.getPostId()).add(r);
+            else {
+                List<Reply> newList = new ArrayList<Reply>();
+                newList.add(r);
+                result.put(r.getPostId(), newList);
+            }
+        }
+        return result;
+    }
 
     default List<Reply> findAllOfPost(int size, String lastRelyId, String postId) {
         return findAllByPostId(
