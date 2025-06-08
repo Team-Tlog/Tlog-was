@@ -6,12 +6,12 @@ import java.util.UUID;
 
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Travel.application.CustomTagService;
-import com.se.Tlog.domain.Travel.controller.dto.SimpleDestinationRes;
 import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.TagCount;
 import com.se.Tlog.domain.Wishlist.domain.OwnerType;
 import com.se.Tlog.domain.Wishlist.domain.WishlistService;
 import com.se.Tlog.domain.Wishlist.domain.WishlistType;
+import com.se.Tlog.domain.Wishlist.domain.dto.WishlistDestinationRes;
 import com.se.Tlog.domain.Wishlist.domain.dto.WishlistOwnerDto;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class ShoppingCartService {
 	private final WishlistService wishlistService;
 	private final CustomTagService customTagService;
 
-	public List<SimpleDestinationRes> getCartData(UUID ownerId, OwnerType ownerType) {
+	public List<WishlistDestinationRes> getCartData(UUID ownerId, OwnerType ownerType) {
 	    List<Destination> destinations = 
                 wishlistService.getWishlistData(
                         new WishlistOwnerDto(
@@ -36,7 +36,7 @@ public class ShoppingCartService {
                 3);
         
         return destinations.stream()
-                .map(destination ->  SimpleDestinationRes.from(
+                .map(destination ->  WishlistDestinationRes.from(
                         destination, 
                         tagCountMap.get(destination.getId())))
                 .toList();
