@@ -2,6 +2,7 @@ package com.se.Tlog.domain.Social.Post.application;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -100,6 +101,41 @@ public class ReplyService {
                         author.getName(),
                         author.getProfileImage());
             }).toList();
+    }
+    
+    public Map<String, List<ReplyRes>> getReplyResOfPosts(int size, Set<String> postIds) {
+        if (size <= 0)
+            throw new CustomException(ErrorType.ILLEGAL_ARGUMENT);
+        
+        Map<String, List<Reply>> replies = replyRepository.findAllOfPosts(size, postIds);
+        Set<UUID> authorIds = replies.values()
+                .stream()
+                .flatMap(list -> list.stream())
+                .map(reply -> reply.getAuthorId())
+                .collect(Collectors.toSet());
+        Map<UUID, User> users = userRepository.findAllById(authorIds)
+                .stream().collect(Collectors.toMap(
+                        u -> u.getId(),
+                        u -> u));
+        if (users.size() != authorIds.size())
+            log.error("댓글 조회 오류 : 게시글 내 댓글 중 탈퇴한 작성자의 댓글이 남아있습니다.");
+        
+        return replies.keySet().stream()
+                .collect(Collectors.toMap(
+                        postId -> postId,
+                        postId -> replies.get(postId).stream()
+                                .filter(reply -> users.containsKey(reply.getAuthorId()))
+                                .map(reply -> {
+                                    User author = users.get(reply.getAuthorId());
+                                    return new ReplyRes(
+                                            reply.getId(),
+                                            reply.getContent(),
+                                            reply.getNestedReplyCount(),
+                                            author.getId(),
+                                            author.getName(),
+                                            author.getProfileImage());
+                                }).toList()
+                        ));
     }
     
     public List<ReplyRes> getReplyResOfReply(int size, String lastReplyId, String replyId) {
