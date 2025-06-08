@@ -52,7 +52,8 @@ public class UserService {
         return accessTokenProvider.generateToken(
                 user.getId().toString(),
                 user.getRole().getValue(),
-                user.getSnsId()
+                user.getSnsId(),
+                user.getName()
         );
     }
     
