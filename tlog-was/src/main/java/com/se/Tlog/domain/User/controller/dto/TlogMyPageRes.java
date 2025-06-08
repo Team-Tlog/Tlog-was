@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Tlog 내 마이페이지 정보입니다.")
 public record TlogMyPageRes(
         String username,
+        String profileImageUrl,
         String snsId,
         String defaultRewardPhrase,
         

@@ -88,6 +88,7 @@ public class UserService {
         
         return new TlogMyPageRes(
                 user.getName(), 
+                user.getProfileImage(),
                 user.getSnsId(),
                 defaultRwardPhrase,
                 rewards,
