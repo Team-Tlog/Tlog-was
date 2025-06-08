@@ -46,7 +46,7 @@ public class SsoAuthService {
     }
     
     private TokenDto loginUser(User user) {
-        String accessToken = accessTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue(),user.getSnsId());
+        String accessToken = accessTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue(), user.getSnsId(), user.getName());
         String refreshToken = refreshTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue());
 
         String jti = refreshTokenProvider.parseToken(refreshToken).get("jti").toString();

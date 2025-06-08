@@ -47,7 +47,8 @@ public class DevChatRoomController {
                 .body(accessTokenProvider.generateToken(
                         userId.toString(),
                         Role.USER.getValue(),
-                        snsId == null ? "" : snsId
+                        snsId == null ? "" : snsId,
+                        user.getName()
                 ));
     }
 }
