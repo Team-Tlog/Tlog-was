@@ -48,5 +48,8 @@ public class StompHandler implements ChannelInterceptor {
                 accessor.addNativeHeader("user-name", "unknown");
             }
         }
+
+        String usernameHeader = accessor.getFirstNativeHeader("user-name");
+        log.info("user-name header: {}", usernameHeader);
     }
 }
