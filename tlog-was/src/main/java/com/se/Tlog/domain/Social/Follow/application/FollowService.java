@@ -9,9 +9,6 @@ import com.se.Tlog.domain.User.controller.dto.UserSummaryDto;
 import com.se.Tlog.domain.User.domain.service.UserDomainService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 
 import java.util.List;
@@ -43,24 +40,24 @@ public class FollowService {
         }
     }
 
-    public Page<UserSummaryDto> getFollowingList(UUID fromUserId, Pageable pageable) {
+    public List<UserSummaryDto> getFollowingList(UUID fromUserId) {
         userDomainService.validateExists(fromUserId);
 
-        Page<UUID> pagedToUserIds = followRepository.findToUserIdsByFromUserId(fromUserId,pageable);
+        List<UUID> pagedToUserIds = followRepository.findToUserIdsByFromUserId(fromUserId);
 
-        List<UserSummaryDto> userSummaryDtoList = userDomainService.getUserByIds(pagedToUserIds.getContent());
+        List<UserSummaryDto> userSummaryDtoList = userDomainService.getUserByIds(pagedToUserIds);
 
-        return new PageImpl<>(userSummaryDtoList, pageable, pagedToUserIds.getTotalElements());
+        return userSummaryDtoList;
     }
 
-    public Page<UserSummaryDto> getFollowerList(UUID toUserId, Pageable pageable) {
+    public List<UserSummaryDto> getFollowerList(UUID toUserId) {
         userDomainService.validateExists(toUserId);
 
-        Page<UUID> pagedFromUserIds = followRepository.findFromUserIdsByToUserId(toUserId,pageable);
+        List<UUID> pagedFromUserIds = followRepository.findFromUserIdsByToUserId(toUserId);
 
-        List<UserSummaryDto> userSummaryDtoList = userDomainService.getUserByIds(pagedFromUserIds.getContent());
+        List<UserSummaryDto> userSummaryDtoList = userDomainService.getUserByIds(pagedFromUserIds);
 
-        return new PageImpl<>(userSummaryDtoList, pageable, pagedFromUserIds.getTotalElements());
+        return userSummaryDtoList;
 
     }
 }

@@ -12,13 +12,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -62,10 +60,8 @@ public class FollowController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<SuccessRes<Page<UserSummaryDto>>> getFollowingList(
-            @PathVariable UUID userId,
-            @PageableDefault(size = 10) Pageable pageable) {
-        return ResponseEntity.ok(SuccessRes.from(followService.getFollowingList(userId,pageable)));
+    public ResponseEntity<SuccessRes<List<UserSummaryDto>>> getFollowingList(@PathVariable UUID userId) {
+        return ResponseEntity.ok(SuccessRes.from(followService.getFollowingList(userId)));
     }
 
     // 나를 팔로우하는 사람들
@@ -79,10 +75,8 @@ public class FollowController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류")
             }
     )
-    public ResponseEntity<SuccessRes<Page<UserSummaryDto>>> getFollowerList(
-            @PathVariable UUID userId,
-            @PageableDefault(size = 10) Pageable pageable) {
-        return ResponseEntity.ok(SuccessRes.from(followService.getFollowerList(userId,pageable)));
+    public ResponseEntity<SuccessRes<List<UserSummaryDto>>> getFollowerList(@PathVariable UUID userId) {
+        return ResponseEntity.ok(SuccessRes.from(followService.getFollowerList(userId)));
     }
 
 }
