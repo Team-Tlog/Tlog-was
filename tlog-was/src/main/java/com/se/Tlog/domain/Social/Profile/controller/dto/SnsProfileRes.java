@@ -8,7 +8,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "SNS 프로필을 조회하는 데이터 형식입니다.")
 public record SnsProfileRes(
-        String username,
+        @Schema(description = "SNS ID값입니다.")
+        String username, // SNS ID(대략 SNS에서의 닉네임)을 나타내는 값입니다. 사용자 기본 별명(nickname)이 아닙니다! 
         String profileImageUrl,
         String snsDescription,
         

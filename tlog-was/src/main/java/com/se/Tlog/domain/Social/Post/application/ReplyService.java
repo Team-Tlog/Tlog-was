@@ -70,7 +70,7 @@ public class ReplyService {
                 reply.getContent(),
                 reply.getNestedReplyCount(),
                 author.getId(),
-                author.getName(),
+                author.getSnsId(),
                 author.getProfileImage());
     }
 
@@ -98,7 +98,7 @@ public class ReplyService {
                         reply.getContent(),
                         reply.getNestedReplyCount(),
                         author.getId(),
-                        author.getName(),
+                        author.getSnsId(),
                         author.getProfileImage());
             }).toList();
     }
@@ -132,7 +132,7 @@ public class ReplyService {
                                             reply.getContent(),
                                             reply.getNestedReplyCount(),
                                             author.getId(),
-                                            author.getName(),
+                                            author.getSnsId(),
                                             author.getProfileImage());
                                 }).toList()
                         ));
@@ -162,7 +162,7 @@ public class ReplyService {
                         reply.getContent(),
                         reply.getNestedReplyCount(),
                         author.getId(),
-                        author.getName(),
+                        author.getSnsId(),
                         author.getProfileImage());
             }).toList();
     }
