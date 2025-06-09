@@ -22,6 +22,7 @@ public enum ErrorType {
     INSUFFICIENT_INFO_FOR_REGISTER(HttpStatus.BAD_REQUEST, "회원가입을 위한 정보가 부족합니다."),
     INVALID_REVIEW_RATING(HttpStatus.BAD_REQUEST, "리뷰 평점은 1점 이상 5점 이하여야 합니다."),
     INVALID_IMAGE_URL(HttpStatus.BAD_REQUEST, "잘못된 이미지 URL 입니다." ),
+    QUERY_TOO_SHORT(HttpStatus.BAD_REQUEST, "검색 문구의 길이가 너무 짧습니다." ),
     // 사용자로부터 소셜 로그인 인증 실패
     SSO_LOGIN_FAIL(HttpStatus.BAD_REQUEST,"외부 소셜 로그인이 취소되거나 실패했습니다."),
     

@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @ApplicationService
 @RequiredArgsConstructor
-public class SearchService {
+public class DescriptionSearchService {
 	private final DestinationSearchRepository searchRepository;
 	private final DestinationService destinationService;
     
