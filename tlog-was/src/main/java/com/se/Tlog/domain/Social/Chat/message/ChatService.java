@@ -8,6 +8,7 @@ import com.se.Tlog.domain.Social.Chat.message.repository.jpa.ChatMessageReposito
 import com.se.Tlog.domain.Social.Chat.read.repository.jpa.ChatReadUsersRepository;
 import com.se.Tlog.domain.Social.Chat.room.repository.jpa.ChatRoomRepository;
 import com.se.Tlog.domain.User.domain.User;
+import com.se.Tlog.domain.User.domain.service.UserDomainService;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
@@ -23,21 +24,17 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatReadUsersRepository chatReadUsersRepository;
     private final RabbitPublisher rabbitPublisher;
+    private final UserDomainService userDomainService;
 
     @Transactional
     public void sendChatMessage(ChatMessageRequestDto chatMessageRequestDto) {
-        User sender = userRepository.findById(chatMessageRequestDto.senderId())
-                .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
+        userDomainService.validateExists(chatMessageRequestDto.senderId());
+
         ChatRoom chatRoom = chatRoomRepository.findById(chatMessageRequestDto.chatRoomId())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
 
-        ChatMessage chatMessage = ChatMessage.create(sender, chatRoom, chatMessageRequestDto.content());
-
-        chatRoom.modifyLastMessage(chatMessage.getId());
-
         String routingKey = "recipient." + chatRoom.getId();
-        rabbitPublisher.publish(routingKey, chatMessage);
-
+        rabbitPublisher.publish(routingKey, chatMessageRequestDto);
     }
 
     @Transactional

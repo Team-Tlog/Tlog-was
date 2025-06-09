@@ -28,12 +28,6 @@ public class StompHandler implements ChannelInterceptor {
         System.out.println("accessor = " + accessor);
         Principal principal = (Principal) accessor.getSessionAttributes().get("userPrincipal");
         accessor.setUser(principal);
-
-        Map<String, List<String>> nativeHeaderMap = accessor.toNativeHeaderMap();
-        nativeHeaderMap.forEach((key,values) ->{
-            System.out.println("헤더 key: " + key + ", value(s): " + values);
-        });
-
         switch (accessor.getCommand()) {
             case CONNECT -> chatSessionEventService.handleConnect(accessor); //STOMP 세션 연결 성공
             case SUBSCRIBE -> chatSessionEventService.handleSubscribe(accessor); //채팅 구독 요청
@@ -57,9 +51,9 @@ public class StompHandler implements ChannelInterceptor {
             System.out.println("user = " + user);
             if (user instanceof CustomPrincipal customPrincipal) {
                 String nickname = customPrincipal.nickname();
-                accessor.setNativeHeader("user-name", nickname != null && !nickname.isBlank() ? nickname : "unknown");
+                accessor.addNativeHeader("user-name", nickname != null ? nickname : "null");
             } else {
-                accessor.setNativeHeader("user-name", "unknown");
+                accessor.addNativeHeader("user-name", "null");
             }
         }
 
