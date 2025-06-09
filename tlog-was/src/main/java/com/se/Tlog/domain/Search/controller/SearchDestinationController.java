@@ -26,16 +26,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/api/search")
+@RequestMapping("/api/search/destination")
 @RequiredArgsConstructor
 @Tag(name = "검색")
 @SecurityRequirement(
         name = "JwtAuthScheme", // OpenApiConfig에 설정된 Security Scheme 이름일 것
         scopes = {"scope1", "scope2"})
-public class SearchController {
+public class SearchDestinationController {
 	private final DescriptionSearchService searchService;
 	
-	@GetMapping("/destination/by-name")
+	@GetMapping("/by-name")
 	@Operation (
 			summary = "여행지 이름 자동완성 검색",
     		description = "여행지 이름에 대한 자동완성 검색 결과를 반환합니다.",
@@ -50,7 +50,7 @@ public class SearchController {
 		        searchService.autoCompleteDestinationByName(name)));
 	}
 	
-	@GetMapping("/destination/by-address")
+	@GetMapping("/by-address")
     @Operation (
             summary = "여행지 주소 자동완성 검색",
             description = "여행지 주소에 대한 자동완성 검색 결과를 반환합니다. (현재 결과에 address가 직접 표시되지는 않음)",
@@ -65,7 +65,7 @@ public class SearchController {
                 searchService.autoCompleteDestinationByAddress(address)));
     }
 	
-	@GetMapping("/destination/by-city")
+	@GetMapping("/by-city")
     @Operation (
             summary = "여행지 도시 필터링 검색",
             description = "도시 필터링한 여행지의 전체 결과를 반환합니다.",
@@ -84,7 +84,7 @@ public class SearchController {
                 searchService.searchDestinationByCity(pageable, city)));
     }
     
-    @GetMapping("/destination/by-city-and-city")
+    @GetMapping("/by-city-and-city")
     @Operation (
             summary = "여행지 도시 필터링 검색",
             description = "도시 필터링한 여행지 이름 검색 결과를 반환합니다.",
