@@ -50,7 +50,7 @@ public class SnsProfileService {
         Page<PostPreviewRes> posts = postService.getPreviewUserPosts(userId, PageRequest.of(0, POST_COUNT_OF_FIRST_PAGE));
         
         return new SnsProfileRes(
-                user.getName(),
+                user.getSnsId(),
                 user.getProfileImage(),
                 snsDescription,
                 posts.getTotalElements(),
