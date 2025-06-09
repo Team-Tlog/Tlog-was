@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.Social.Chat.message;
 
+import com.se.Tlog.domain.Social.Chat.message.dto.ChatMessageDto;
 import com.se.Tlog.domain.Social.Chat.message.dto.ChatMessageRequestDto;
 import com.se.Tlog.domain.Social.Chat.room.ChatRoom;
 import com.se.Tlog.domain.Social.Chat.message.repository.jpa.ChatMessageRepository;
@@ -35,7 +36,7 @@ public class ChatConsumerService {
 
         messagingTemplate.convertAndSend(
                 "/sub/chat/room/" + chatRoom.getId(),
-                savedChatMessage
+                ChatMessageDto.from(sender, chatRoom, savedChatMessage)
         );
     }
 }
