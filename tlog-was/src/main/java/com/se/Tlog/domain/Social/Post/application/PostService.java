@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
@@ -106,10 +105,7 @@ public class PostService {
     public Slice<PostDetailRes> getRecentFollowersPosts(int size, String lastPostId, UUID userId) {
         if (size <= 0) size = 10;
         
-        List<UUID> followings = followRepository.findToUserIdsByFromUserId(
-                userId, 
-                PageRequest.of(0, Integer.MAX_VALUE)
-                ).toList();
+        List<UUID> followings = followRepository.findToUserIdsByFromUserId(userId);
         Slice<Post> posts = postQueryRepository.findAllRecentPosts(size, lastPostId, followings);
         Map<UUID, User> authors = userRepository.findAllById(posts.map(post -> post.getAuthor()).toSet())
                 .stream().collect(Collectors.toMap(
