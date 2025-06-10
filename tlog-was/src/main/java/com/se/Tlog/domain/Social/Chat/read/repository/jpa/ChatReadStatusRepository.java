@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ChatReadStatusRepository extends JpaRepository<ChatReadStatus,Long> {
+public interface ChatReadStatusRepository extends JpaRepository<ChatReadStatus, Long> {
 
 
     @Query("select crs from ChatReadStatus crs join fetch crs.chatRoom " +
@@ -21,4 +21,10 @@ public interface ChatReadStatusRepository extends JpaRepository<ChatReadStatus,L
     @Query("select crs from ChatReadStatus crs where crs.user.id = :userId and crs.chatRoom.id = :chatRoomId")
     ChatReadStatus findByUserIdAndChatRoomId(@Param("userId") UUID userId,
                                              @Param("chatRoomId") Long chatRoomId);
+
+    @Query("select crs.user.id, crs.lastReadMessageId " +
+            " from ChatReadStatus crs " +
+            "where crs.user.id IN :targetUserIds AND crs.chatRoom.id = :roomId")
+    List<Object[]> findLastReadMessageIdsForParticipants(@Param("targetUserIds") List<UUID> targetUserIds,
+                                                         @Param("roomId") Long roomId);
 }
