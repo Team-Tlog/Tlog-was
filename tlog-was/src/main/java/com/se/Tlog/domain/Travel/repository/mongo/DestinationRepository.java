@@ -16,8 +16,12 @@ public interface DestinationRepository extends MongoRepository<Destination, Stri
 
     boolean existsByName(String name);
 
+    // 버그 위험성 : 순서가 보장되지 않을 경우 다음 페이지에 이전 페이지의 항목이 표시될 수 있습니다.
+    // @Query(sort = "{'_id' : 1}") 가 추가될 것!
     @Query("{'tags.isDeleted' :  false}")
     Page<Destination> findAllWithActiveTags(Pageable pageable);
 
+    // 버그 위험성 : 순서가 보장되지 않을 경우 다음 페이지에 이전 페이지의 항목이 표시될 수 있습니다.
+    // @Query(sort = "{'_id' : 1}") 가 추가될 것!
     Page<Destination> findAllByIdIn(List<String> ids, Pageable pageable);
 }
