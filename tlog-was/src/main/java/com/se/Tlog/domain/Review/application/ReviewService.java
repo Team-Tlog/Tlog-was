@@ -49,9 +49,9 @@ public class ReviewService {
             UUID userId = UUID.fromString(review.getUserId());
             UserProfileInfo userProfileInfo = userProfiles.get(userId);
             if (userProfileInfo != null)
-                return DestinationReviewDto.from(review, review.getUsername(), userProfileInfo);
+                return DestinationReviewDto.from(review, userProfileInfo);
             else
-                return DestinationReviewDto.from(review, "탈퇴한 사용자", UserProfileInfo.getNullProfile());
+                return DestinationReviewDto.from(review, UserProfileInfo.getNullProfile());
         }).toList();
         
         Slice<DestinationReviewDto> reviewDtos = new SliceImpl<>(dtoList, sortedPageable, reviews.hasNext());
