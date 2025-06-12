@@ -12,6 +12,7 @@ import com.se.Tlog.domain.Travel.application.CustomTagService;
 import com.se.Tlog.domain.Travel.domain.service.DestinationDomainService;
 import com.se.Tlog.domain.User.controller.dto.UserProfileInfo;
 import com.se.Tlog.domain.User.domain.service.UserDomainService;
+import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class ReviewService {
     private final CustomTagService customTagService;
     private final DestinationDomainService destinationDomainService;
     private final UserDomainService userDomainService;
+    private final UserRepository userRepository;
 
     public ReviewsRes getReviewsByDestinationId(String destinationId, SortType sortType, Pageable pageable) {
         Map<Integer, Integer> distributionMap = destinationDomainService.getRatingDistribution(destinationId);
@@ -60,6 +62,15 @@ public class ReviewService {
     }
 
     public void createReview(ReviewCreateDto reviewCreateDto) {
+        UUID userId = null;
+        try {
+            userId = UUID.fromString(reviewCreateDto.userId());
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorType.USER_NOT_FOUND);
+        }
+        if (!userRepository.existsById(userId))
+            throw new CustomException(ErrorType.USER_NOT_FOUND);
+        
         Review review = Review.create(reviewCreateDto);
         reviewRepository.save(review);
 
