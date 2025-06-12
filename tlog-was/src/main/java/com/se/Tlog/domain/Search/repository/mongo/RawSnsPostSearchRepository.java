@@ -139,6 +139,7 @@ interface RawSnsPostSearchRepository extends MongoRepository<Post, String> {
             QUERY_1_CONVERT_ID,
             QUERY_1_JOIN_WITH_COURSE_RESULTS,
             QUERY_1_FILTER_RESULTS,
+            QUERY_1_SORT_BY_RECENT, // Match 작업 후에는 순서가 다시 변동될 수 있으므로 정렬합니다!
             QUERY_1_LIMIT
     })
     List<Post> searchOfDestinationsAndContent(int size, ObjectId lastPostId, String queryText);
