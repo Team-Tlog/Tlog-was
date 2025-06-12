@@ -72,8 +72,15 @@ public class AuthController {
     @PostMapping("/register/user")
     @Operation(
             summary = "SSO 회원가입 요청 (성공시 즉시 로그인합니다)",
-            description = "카카오 또는 구글 액세스 토큰을 이용하여 사용자 회원가입을 처리합니다."
-                        + "<br/>카카오는 액세스 토큰, 구글은 ID 토큰을 사용합니다."
+            description = "카카오, 구글, 네이버 액세스 토큰을 이용하여 사용자 회원가입을 처리합니다."
+                        + "<ul>"
+                        + "  <li><b>토큰 사용 방침</b> : </li>"
+                        + "  <ul>"
+                        + "    <li>카카오 : 액세스 토큰</li>"
+                        + "    <li>구글  : ID 토큰</li>"
+                        + "    <li>네이버 : 액세스 토큰</li>"
+                        + "  </ul>"
+                        + "</ul>"
                         + "<br/>"
                         + "<br/><b>로그인 성공시 즉시 로그인합니다.</b>",
             tags = {"SSO Authentication"},
@@ -105,8 +112,15 @@ public class AuthController {
 	@PostMapping("/login/user")
 	@Operation(
 			summary = "SSO 로그인 요청",
-			description = "카카오 또는 구글 액세스 토큰을 이용하여 사용자 로그인을 처리합니다."
-			            + "<br/>카카오는 액세스 토큰, 구글은 ID 토큰을 사용합니다.",
+			description = "카카오, 구글, 네이버 액세스 토큰을 이용하여 사용자 회원가입을 처리합니다."
+                        + "<ul>"
+                        + "  <li><b>토큰 사용 방침</b> : </li>"
+                        + "  <ul>"
+                        + "    <li>카카오 : 액세스 토큰</li>"
+                        + "    <li>구글  : ID 토큰</li>"
+                        + "    <li>네이버 : 액세스 토큰</li>"
+                        + "  </ul>"
+                        + "</ul>",
 			tags = {"SSO Authentication"},
 			requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
 					description = "SSO 로그인 요청 데이터",
