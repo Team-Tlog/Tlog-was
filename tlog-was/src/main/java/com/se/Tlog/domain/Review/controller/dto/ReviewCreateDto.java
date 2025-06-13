@@ -6,8 +6,10 @@ import com.se.Tlog.global.response.error.ErrorType;
 import java.util.List;
 
 public record ReviewCreateDto(
+        // 사용자 id를 uuid로 받는 것도 고려!
         String userId,
         String destinationId,
+        @Deprecated(since = "사용자 정보는 더 이상 필요없습니다!")
         String username,
         int rating,
         String content,
