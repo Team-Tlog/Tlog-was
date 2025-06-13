@@ -106,6 +106,7 @@ public class DestinationRepositoryServiceImplement implements DestinationReposit
                 sortStage = Aggregation.sort(Sort.by(Sort.Order.desc("reviewCount")));
             }
         }
+        sortStage = sortStage.and(Sort.by(Sort.Order.desc("_id")));
 
         SkipOperation skipStage = Aggregation.skip((long) pageable.getPageNumber() * pageable.getPageSize());
         LimitOperation limitStage = Aggregation.limit(pageable.getPageSize() + 1);  // 다음 페이지 존재 여부 확인 위해 +1
