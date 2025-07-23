@@ -19,7 +19,6 @@ import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
 import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.TagCount;
 import com.se.Tlog.domain.Travel.domain.UnapprovedDestination;
-import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
 import com.se.Tlog.domain.Travel.repository.mongo.UnapprovedDestinationRepository;
 import com.se.Tlog.global.response.error.ErrorRes;
 import com.se.Tlog.global.response.success.SuccessRes;
@@ -60,7 +59,6 @@ record UnapprovedDestinationsDto(
         scopes = {"scope1", "scope2"})
 public class DevAdminController {
     private final UnapprovedDestinationRepository unapprovedDestinationRepository;
-    private final DestinationRepositoryService destinationRepositoryService;
     
     @PostMapping("/destinations")
     @Operation (
@@ -73,6 +71,7 @@ public class DevAdminController {
     )
     public ResponseEntity<SuccessRes<UnapprovedDestinationDto>> addUnApprovedDestinations(@RequestBody AddUnapprovedDestinationDto request) {
         // DDD 구조와 관련해서, Destination의 생성 로직을 리팩토링할 필요가 있음.
+        // 테스트를 위한 기능이므로 여행지 이름이 중복되는지는 검사하지 않습니다.
         UnapprovedDestination addedDestination = unapprovedDestinationRepository.save(
                 UnapprovedDestination.create(
                         request.submitter(),
@@ -86,8 +85,7 @@ public class DevAdminController {
                                 request.destination().isHasParking(),
                                 request.destination().isPetFriendly(),
                                 request.destination().getDescription(),
-                                request.destination().getImageUrl(),
-                                destinationRepositoryService), // Admin에서 Destination 도메인의 repository를 접근해야만 하는 복잡성 개선 필요.
+                                request.destination().getImageUrl()), // Admin에서 Destination 도메인의 repository를 접근해야만 하는 복잡성 개선 필요.
                         request.customTags()));
         
         return ResponseEntity.ok(SuccessRes.from(

@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface DestinationRepositoryService {
-	boolean exist(String name);
 	void addFixedTags(String id, List<TagInfo> fixedTags);
 	void increaseReviewCountAndRating(String destinationId, int rating, float approximateAverage);
 	void decreaseReviewCountAndRating(String destinationId, Review review);

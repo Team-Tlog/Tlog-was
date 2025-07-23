@@ -31,11 +31,6 @@ public class DestinationRepositoryServiceImplement implements DestinationReposit
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public boolean exist(String name) {
-        return destinationRepository.existsByName(name);
-    }
-
-    @Override
     public void addFixedTags(String id, List<TagInfo> fixedTags) {
         Destination destination = destinationRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorType.DESTINATION_NOT_FOUND));

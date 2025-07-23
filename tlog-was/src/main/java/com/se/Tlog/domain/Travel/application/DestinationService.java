@@ -31,6 +31,9 @@ public class DestinationService {
     private final CustomTagRepositoryExtension customTagRepositoryExtension;
 
     public void generateNewDestination(DestinationDto destinationDto) {
+        if (destinationRepository.existsByName(destinationDto.getName()))
+            throw new CustomException(ErrorType.ALREADY_EXISTS_DESTINATION);
+        
         Destination destinationData = Destination.create(
         		destinationDto.getName(),
                 destinationDto.getLocation(),
@@ -41,8 +44,7 @@ public class DestinationService {
                 destinationDto.isHasParking(),
                 destinationDto.isPetFriendly(),
                 destinationDto.getDescription(),
-                destinationDto.getImageUrl(),
-                destinationRepoService);
+                destinationDto.getImageUrl());
         
         UnapprovedDestination newDestination = UnapprovedDestination.create(
                 destinationDto.getCreater(), destinationData, destinationDto.getCustomTags());
