@@ -16,16 +16,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TagRepositoryServiceImplement implements TagRepositoryService {
 	private final TagRepository tagRepository;
-	
-	@Override
-	public boolean existById(String tagId) {
-		return tagRepository.existsById(tagId);
-	}
-
-	@Override
-	public boolean existByName(String tagName) {
-		return tagRepository.existsByName(tagName);
-	}
 
     @Override
     public Set<String> getExistSet(List<String> tagIds) {

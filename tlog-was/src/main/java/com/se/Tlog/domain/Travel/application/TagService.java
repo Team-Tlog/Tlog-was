@@ -8,7 +8,6 @@ import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Travel.controller.dto.TagDto;
 import com.se.Tlog.domain.Travel.controller.dto.TagRes;
 import com.se.Tlog.domain.Travel.domain.Tag;
-import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
 import com.se.Tlog.domain.Travel.repository.mongo.TagRepository;
 
 
@@ -29,7 +28,6 @@ import java.util.List;
 @Transactional
 public class TagService {
     private final TagRepository tagRepository;
-    private final TagRepositoryService tagRepo;
     private final MongoTemplate mongoTemplate;
 
     @Transactional(readOnly = true)
@@ -43,7 +41,10 @@ public class TagService {
     }
 
     public void createTag(TagDto tagDto) {
-    	Tag newTag = Tag.createTag(tagDto.name(), 0, tagRepo);
+        if(tagRepository.existsByName(tagDto.name()))
+            throw new CustomException(ErrorType.ALREADY_EXISTS_TAG);
+        
+    	Tag newTag = Tag.createTag(tagDto.name(), 0);
         tagRepository.save(newTag);
     }
 

@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 public interface TagRepositoryService {
-	boolean existById(String tagId);
-	boolean existByName(String tagName);
 	/**
 	 * 주어진 id 중 실제 존재하는 id만을 Set으로 반환합니다.
 	 * @param tagIds
