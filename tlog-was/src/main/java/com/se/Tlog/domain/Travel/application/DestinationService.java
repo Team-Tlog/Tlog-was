@@ -5,10 +5,10 @@ import com.se.Tlog.domain.Review.controller.dto.DestinationReviewDto;
 import com.se.Tlog.domain.Review.domain.service.ReviewDomainService;
 import com.se.Tlog.domain.Travel.controller.dto.*;
 import com.se.Tlog.domain.Travel.domain.*;
-import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
 import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
 import com.se.Tlog.domain.Travel.repository.mongo.CustomTagRepositoryExtension;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
+import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepositoryExtension;
 import com.se.Tlog.domain.Travel.repository.mongo.UnapprovedDestinationRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
@@ -22,7 +22,7 @@ import java.util.Map;
 @ApplicationService
 @RequiredArgsConstructor
 public class DestinationService {
-    private final DestinationRepositoryService destinationRepoService;
+    private final DestinationRepositoryExtension destinationRepoExtension;
     private final TagRepositoryService tagRepositoryService;
     private final DestinationRepository destinationRepository;
     private final UnapprovedDestinationRepository unapprovedDestinationRepository;
@@ -65,7 +65,7 @@ public class DestinationService {
 
     public Slice<DestinationSummaryRes> getAllDestinations(Pageable pageable, String city,
                                                           DestinationSortType sortType, String tbti) {
-        List<Destination> destinations = destinationRepoService.getDestinations(pageable, city, sortType);
+        List<Destination> destinations = destinationRepoExtension.getDestinations(pageable, city, sortType);
         boolean hasNext = destinations.size() > pageable.getPageSize();
 
         if (hasNext) {
