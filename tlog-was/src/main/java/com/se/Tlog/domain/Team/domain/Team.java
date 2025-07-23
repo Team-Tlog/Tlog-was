@@ -44,7 +44,7 @@ public class Team {
 		this.tbti = null;
 	}
 	
-	public static Team create(
+	static Team create(
 			String name, 
 			Long inviteCode) {
 		if (name == null || name.isBlank())

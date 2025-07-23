@@ -3,6 +3,7 @@ package com.se.Tlog.domain.Team.domain;
 import org.springframework.stereotype.Service;
 
 import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
+import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.Wishlist.domain.OwnerType;
 import com.se.Tlog.domain.Wishlist.domain.WishlistService;
@@ -18,12 +19,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class TeamDomainService {
+    private final TeamRepository teamRepository;
 	private final TeamRepositoryService repoService;
 	private final WishlistService wishlistService;
 	
-	public void initializeTeam(Team rawTeam, User teamLeader) {
-	    rawTeam.addUser(teamLeader, repoService);
-	    rawTeam.setLeader(teamLeader, repoService);
+	public Team createTeam(String name, User leader) {
+	    Team newTeam = Team.create(name, repoService.makeInviteCode());
+	    teamRepository.save(newTeam);
+	    
+	    newTeam.addUser(leader, repoService);
+	    newTeam.setLeader(leader, repoService);
+	    return newTeam;
 	}
 	
 	public void deleteTeamData(Team team) {

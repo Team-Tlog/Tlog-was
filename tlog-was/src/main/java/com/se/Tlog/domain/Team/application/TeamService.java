@@ -47,15 +47,10 @@ public class TeamService {
 		if (!userRepository.existsById(request.creator()))
 			throw new CustomException(ErrorType.USER_NOT_FOUND);
 
-		Team newTeam = Team.create(request.name(), repoService.makeInviteCode());
-		teamRepository.save(newTeam);
-		
-		// Team의 id가 생성된 후에야 초기화 작업이 가능함.
-		// 그러나 Team.create 후에 별도로 다시 initialize를 해야 하는 구조는 적절하지 않음!
-		// (초기화를 까먹는 휴먼 에러에 취약한 점 등)
-		teamDomainService.initializeTeam(
-		        newTeam, 
+		Team newTeam = teamDomainService.createTeam(
+		        request.name(), 
 		        userRepository.findById(request.creator()).get());
+		
 		Long chatRoomId = chatRoomService.create(request.creator(), newTeam.getId());
 		return TeamCreateRes.of(newTeam.getId(),chatRoomId);
 	}
