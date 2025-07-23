@@ -9,7 +9,6 @@ import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
 import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
 import com.se.Tlog.domain.Team.repository.jpa.TeamUserRepository;
 import com.se.Tlog.domain.Team.repository.jpa.entity.TeamUserJpaEntity;
-import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 
@@ -20,28 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 public class TeamRepositoryServiceImplement implements TeamRepositoryService {
-	private final UserRepository userRepository;
 	private final TeamRepository teamRepository;
 	private final TeamUserRepository teamUserRepository;
-	
-	@Override
-	public boolean isExistInTeam(UUID teamId, UUID userId) {
-		return teamUserRepository.existsByTeam_IdAndUser_Id(teamId, userId);
-	}
-
-	@Override
-	public long countMemberInTeam(UUID teamId) {
-		return teamUserRepository.countByTeam_Id(teamId);
-	}
-
-	@Override
-	public void addUserToTeam(UUID teamId, UUID userId) {
-		TeamUserJpaEntity teamUser = TeamUserJpaEntity.builder()
-				.team(teamRepository.getReferenceById(teamId))
-				.user(userRepository.getReferenceById(userId))
-				.build();
-		teamUserRepository.save(teamUser);
-	}
 	
 	@Override
 	public void setLeader(UUID teamId, UUID userId) {
@@ -57,23 +36,6 @@ public class TeamRepositoryServiceImplement implements TeamRepositoryService {
 	    }
         newLeader.setLeader(true);
         teamUserRepository.save(newLeader);
-	}
-
-    @Override
-    public boolean isLeader(UUID teamId, UUID userId) {
-        TeamUserJpaEntity teamUser = teamUserRepository.findByTeam_IdAndUser_Id(teamId, userId)
-                .orElseThrow(() -> new CustomException(ErrorType.TEAM_USER_NOT_FOUND));
-        return teamUser.isLeader();
-    }
-
-	@Override
-	public void deleteUserInTeam(UUID teamId, UUID userId) {
-		teamUserRepository.deleteByTeam_IdAndUser_Id(teamId, userId);
-	}
-
-	@Override
-	public void deleteTeamUsers(UUID teamId) {
-		teamUserRepository.deleteByTeam_Id(teamId);
 	}
 
 	@Override
