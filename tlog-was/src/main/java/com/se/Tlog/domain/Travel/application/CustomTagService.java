@@ -3,7 +3,7 @@ package com.se.Tlog.domain.Travel.application;
 import com.se.Tlog.domain.Travel.domain.CustomTagDocument;
 import com.se.Tlog.domain.Travel.domain.TagCount;
 import com.se.Tlog.domain.Travel.domain.repository.CustomTagRepositoryService;
-import com.se.Tlog.domain.Travel.repository.mongo.CustomTagDocumentRepository;
+import com.se.Tlog.domain.Travel.repository.mongo.CustomTagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CustomTagService {
-    private final CustomTagDocumentRepository customTagDocumentRepository;
+    private final CustomTagRepository customTagDocumentRepository;
     private final CustomTagRepositoryService customTagRepositoryService;
 
     public void addCustomTag(String destinationId, List<String> tagNameList) {
