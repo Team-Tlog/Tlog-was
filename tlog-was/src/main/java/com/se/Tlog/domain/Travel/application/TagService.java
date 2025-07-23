@@ -5,9 +5,11 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Travel.controller.dto.AddFixedTagDto;
 import com.se.Tlog.domain.Travel.controller.dto.TagDto;
 import com.se.Tlog.domain.Travel.controller.dto.TagRes;
 import com.se.Tlog.domain.Travel.domain.Tag;
+import com.se.Tlog.domain.Travel.domain.TagInfo;
 import com.se.Tlog.domain.Travel.repository.mongo.TagRepository;
 
 
@@ -22,6 +24,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @ApplicationService
 @RequiredArgsConstructor
@@ -68,5 +72,26 @@ public class TagService {
 
         collection.updateMany(filter, update, options);
 
+    }
+
+    /**
+     * 태그 생성 요청 중 유효한 요청에 대해서만 생성해 반환합니다.
+     * <br>실패 상황 1. 주어진 id의 태그가 없을 경우
+     * @param createTagRequests
+     * @return
+     */
+    public List<TagInfo> createAll(List<AddFixedTagDto> createTagRequests) {
+        List<String> allTagIds = createTagRequests.stream()
+                .map(AddFixedTagDto::tagId)
+                .toList();
+        
+        Set<String> validTagIds = tagRepository.findAllById(allTagIds).stream()
+                .map(Tag::getId)
+                .collect(Collectors.toSet());
+        
+        return createTagRequests.stream()
+                .filter(dto -> validTagIds.contains(dto.tagId()))
+                .map(dto -> TagInfo.create(dto.tagId(), dto.tagWeight()))
+                .collect(Collectors.toList());
     }
 }

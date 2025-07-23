@@ -1,11 +1,5 @@
 package com.se.Tlog.domain.Travel.domain;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.se.Tlog.domain.Travel.controller.dto.AddFixedTagDto;
-import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,22 +20,5 @@ public class TagInfo { // 여행지가 갖고 있는 태그 정보
 		* // 해당 태그가 존재하는지 여부를 검사하는 일은 여기가 아닌, 응용 계층에서 이미 완료되어야 할 것임.
 		*/
         return new TagInfo(tagId, tagWeight, false);
-    }
-    
-    /**
-     * 태그 생성 요청 중 유효한 요청에 대해서만 생성해 반환합니다.
-     * <br>실패 상황 1. 주어진 id의 태그가 없을 경우
-     * @param createTagRequests
-     * @param tagRepositoryService
-     * @return
-     */
-    public static List<TagInfo> createAll(List<AddFixedTagDto> createTagRequests, TagRepositoryService tagRepositoryService) {
-        Set<String> validTagIds = tagRepositoryService.getExistSet(
-                createTagRequests.stream().map(AddFixedTagDto::tagId).toList());
-        
-        return createTagRequests.stream()
-            .filter(dto -> validTagIds.contains(dto.tagId()))
-            .map(dto -> new TagInfo(dto.tagId(), dto.tagWeight(), false))
-            .collect(Collectors.toList());
     }
 }

@@ -5,7 +5,6 @@ import com.se.Tlog.domain.Review.controller.dto.DestinationReviewDto;
 import com.se.Tlog.domain.Review.domain.service.ReviewDomainService;
 import com.se.Tlog.domain.Travel.controller.dto.*;
 import com.se.Tlog.domain.Travel.domain.*;
-import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
 import com.se.Tlog.domain.Travel.repository.mongo.CustomTagRepositoryExtension;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepositoryExtension;
@@ -23,10 +22,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DestinationService {
     private final DestinationRepositoryExtension destinationRepoExtension;
-    private final TagRepositoryService tagRepositoryService;
     private final DestinationRepository destinationRepository;
     private final UnapprovedDestinationRepository unapprovedDestinationRepository;
     private final CustomTagService customTagService;
+    private final TagService tagService;
     private final ReviewDomainService reviewDomainService;
     private final CustomTagRepositoryExtension customTagRepositoryExtension;
 
@@ -58,7 +57,7 @@ public class DestinationService {
         unapprovedDestinationRepository.deleteById(unapprovedDestinationId);
         
         Destination destination = unapprovedDestination.getDestination();
-        destination.addFixedTags(TagInfo.createAll(fixedTags, tagRepositoryService));
+        destination.addFixedTags(tagService.createAll(fixedTags));
         destinationRepository.save(destination);
         customTagService.addCustomTag(destination.getId(), unapprovedDestination.getCustomTags());
     }
