@@ -2,8 +2,8 @@ package com.se.Tlog.domain.Team.domain;
 
 import org.springframework.stereotype.Service;
 
-import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
 import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
+import com.se.Tlog.domain.Team.repository.jpa.TeamRepositoryExtension;
 import com.se.Tlog.domain.Team.repository.jpa.TeamUserRepository;
 import com.se.Tlog.domain.Team.repository.jpa.entity.TeamUserJpaEntity;
 import com.se.Tlog.domain.User.domain.User;
@@ -22,12 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class TeamDomainService {
     private final TeamRepository teamRepository;
-    private final TeamUserRepository teamUserRepository;
-	private final TeamRepositoryService repoService;
+	private final TeamRepositoryExtension teamRepositoryExtension;
+	private final TeamUserRepository teamUserRepository;
 	private final WishlistService wishlistService;
 	
 	public Team createTeam(String name, User leader) {
-	    Team newTeam = Team.create(name, repoService.makeInviteCode());
+	    Team newTeam = Team.create(name, teamRepositoryExtension.makeInviteCode());
 	    teamRepository.save(newTeam);
 	    
 	    addUser(newTeam, leader);
@@ -67,7 +67,7 @@ public class TeamDomainService {
         if (!teamUserRepository.existsByTeam_IdAndUser_Id(team.getId(), user.getId()))
             throw new CustomException(ErrorType.TEAM_USER_NOT_FOUND);
         
-        repoService.setLeader(team.getId(), user.getId());
+        teamRepositoryExtension.setLeader(team.getId(), user.getId());
     }
     
     public void deleteUser(Team team, User user) {
