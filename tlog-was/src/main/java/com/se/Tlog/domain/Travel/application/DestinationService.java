@@ -5,9 +5,9 @@ import com.se.Tlog.domain.Review.controller.dto.DestinationReviewDto;
 import com.se.Tlog.domain.Review.domain.service.ReviewDomainService;
 import com.se.Tlog.domain.Travel.controller.dto.*;
 import com.se.Tlog.domain.Travel.domain.*;
-import com.se.Tlog.domain.Travel.domain.repository.CustomTagRepositoryService;
 import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
 import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
+import com.se.Tlog.domain.Travel.repository.mongo.CustomTagRepositoryExtension;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 import com.se.Tlog.domain.Travel.repository.mongo.UnapprovedDestinationRepository;
 import com.se.Tlog.global.exception.CustomException;
@@ -28,7 +28,7 @@ public class DestinationService {
     private final UnapprovedDestinationRepository unapprovedDestinationRepository;
     private final CustomTagService customTagService;
     private final ReviewDomainService reviewDomainService;
-    private final CustomTagRepositoryService customTagRepositoryService;
+    private final CustomTagRepositoryExtension customTagRepositoryExtension;
 
     public void generateNewDestination(DestinationDto destinationDto) {
         Destination destinationData = Destination.create(
@@ -108,7 +108,7 @@ public class DestinationService {
         List<TagCount> topTags = customTagService.getTopTags(destination.getId(), 3);
         List<DestinationReviewDto> top2Reviews = reviewDomainService.getTop2Reviews(destination.getId());
 
-        List<DestinationSimilarDto> relatedDestinations = customTagRepositoryService.findRelatedDestinations(destination.getId(), topTags);
+        List<DestinationSimilarDto> relatedDestinations = customTagRepositoryExtension.findRelatedDestinations(destination.getId(), topTags);
         return DestinationDetailsRes.from(destination, topTags, top2Reviews, relatedDestinations);
     }
 }

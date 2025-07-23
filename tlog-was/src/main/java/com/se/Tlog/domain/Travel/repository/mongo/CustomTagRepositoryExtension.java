@@ -1,31 +1,40 @@
-package com.se.Tlog.domain.Travel.repository;
+package com.se.Tlog.domain.Travel.repository.mongo;
 
-import com.mongodb.DuplicateKeyException;
-import com.se.Tlog.domain.Travel.controller.dto.DestinationSimilarDto;
-import com.se.Tlog.domain.Travel.domain.CustomTagDocument;
-import com.se.Tlog.domain.Travel.domain.TagCount;
-import com.se.Tlog.domain.Travel.domain.repository.CustomTagRepositoryService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bson.Document;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.aggregation.AddFieldsOperation;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.LimitOperation;
+import org.springframework.data.mongodb.core.aggregation.LookupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
+import org.springframework.data.mongodb.core.aggregation.SortOperation;
+import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.mongodb.DuplicateKeyException;
+import com.se.Tlog.domain.Travel.controller.dto.DestinationSimilarDto;
+import com.se.Tlog.domain.Travel.domain.CustomTagDocument;
+import com.se.Tlog.domain.Travel.domain.TagCount;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CustomTagRepositoryServiceImplement implements CustomTagRepositoryService {
+public class CustomTagRepositoryExtension {
     private final MongoTemplate mongoTemplate;
 
-    @Override
     public void addCustomTag(String destinationId, List<String> tagNameList) {
         try {
             mongoTemplate.upsert(
@@ -47,7 +56,7 @@ public class CustomTagRepositoryServiceImplement implements CustomTagRepositoryS
             );
         }
     }
-    @Override
+    
     public List<DestinationSimilarDto> findRelatedDestinations(String destinationId, List<TagCount> topTags) {
         // ne : 자기자신 제외 not equal
         MatchOperation match = Aggregation.match(Criteria.where("destinationId").ne(destinationId));
