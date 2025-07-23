@@ -12,7 +12,6 @@ import com.se.Tlog.domain.Team.controller.dto.*;
 import com.se.Tlog.domain.Team.domain.InviteCodeUtil;
 import com.se.Tlog.domain.Team.domain.Team;
 import com.se.Tlog.domain.Team.domain.TeamDomainService;
-import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
 import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
 import com.se.Tlog.domain.Team.repository.jpa.TeamUserRepository;
 import com.se.Tlog.domain.Team.repository.jpa.entity.TeamUserJpaEntity;
@@ -35,7 +34,6 @@ public class TeamService {
 	private final TeamUserRepository teamUserRepository;
 	
 	private final TeamDomainService teamDomainService;
-	private final TeamRepositoryService repoService;
 
 	private final ShoppingCartService shoppingCartService;
 	private final ChatRoomService chatRoomService;
@@ -114,7 +112,7 @@ public class TeamService {
 		User user = userRepository.findById(request.userId())
 				.orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
 
-		team.addUser(user, repoService);
+		teamDomainService.addUser(team, user);
 		chatRoomService.joinChatRoom(user, team.getId());
 	}
 	
@@ -124,7 +122,7 @@ public class TeamService {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
 
-		team.deleteUser(user, repoService);
+		teamDomainService.deleteUser(team, user);
 	}
 
 	public TeamDetailDto getTeamDetails(UUID teamId) {

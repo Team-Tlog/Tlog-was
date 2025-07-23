@@ -27,8 +27,8 @@ public class TeamDomainService {
 	    Team newTeam = Team.create(name, repoService.makeInviteCode());
 	    teamRepository.save(newTeam);
 	    
-	    newTeam.addUser(leader, repoService);
-	    newTeam.setLeader(leader, repoService);
+	    addUser(newTeam, leader);
+	    setLeader(newTeam, leader);
 	    return newTeam;
 	}
 	
@@ -46,4 +46,35 @@ public class TeamDomainService {
 		// 알람 처리
 		log.info("팀원을 팀 " + team.getName() + "에 초대합니다. : " + invitedUser.getName());
 	}
+    
+    public void addUser(Team team, User user) {
+        if (repoService.isExistInTeam(team.getId(), user.getId()))
+            throw new CustomException(ErrorType.ALREADY_EXIST_IN_TEAM);
+        
+        repoService.addUserToTeam(team.getId(), user.getId());
+        // 기타 팀원 추가시 처리내용
+        
+        log.info("팀원을 팀 " + team.getName() + "에 추가합니다. : " + user.getName());
+    }
+    
+    public void setLeader(Team team, User user) {
+        if (!repoService.isExistInTeam(team.getId(), user.getId()))
+            throw new CustomException(ErrorType.TEAM_USER_NOT_FOUND);
+        
+        repoService.setLeader(team.getId(), user.getId());
+    }
+    
+    public void deleteUser(Team team, User user) {
+        if (!repoService.isExistInTeam(team.getId(), user.getId()))
+            throw new CustomException(ErrorType.TEAM_USER_NOT_FOUND);
+        if (repoService.countMemberInTeam(team.getId()) == 1)
+            throw new CustomException(ErrorType.TEAM_CANNOT_BE_ORPHAN);
+        if (repoService.isLeader(team.getId(), user.getId()))
+            throw new CustomException(ErrorType.CANNOT_REMOVE_TEAM_LEADER);
+        
+        repoService.deleteUserInTeam(team.getId(), user.getId());
+        // 기타 팀원 삭제 후 처리내용
+        
+        log.info("팀원을 팀 " + team.getName() + "에서 제거합니다. : " + user.getName());
+    }
 }
