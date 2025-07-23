@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DestinationDomainService {
     private final DestinationRepository destinationRepository;
-    private final MongoTemplate mongoTemplate;
     private final DestinationRepositoryExtension destinationRepositoryExtension;
 
     public Map<Integer, Integer> getRatingDistribution(String destinationId) {
@@ -41,10 +39,8 @@ public class DestinationDomainService {
     }
 
     public void increaseReviewCountAndRating(String destinationId, int rating) {
-        Destination destination = mongoTemplate.findById(destinationId, Destination.class);
-        if (destination == null) {
-            throw new CustomException(ErrorType.DESTINATION_NOT_FOUND);
-        }
+        Destination destination = destinationRepository.findById(destinationId)
+                .orElseThrow(() -> new CustomException(ErrorType.DESTINATION_NOT_FOUND));
         float approximateAverage = (float) (destination.getRatingSum() + rating) / (destination.getReviewCount() + 1);
 
         destinationRepositoryExtension.increaseReviewCountAndRating(destinationId, rating, approximateAverage);
