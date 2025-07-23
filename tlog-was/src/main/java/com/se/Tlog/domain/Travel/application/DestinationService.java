@@ -57,11 +57,10 @@ public class DestinationService {
                 .orElseThrow(() -> new CustomException(ErrorType.ALREADY_APPROVED_DESTINATION));
         unapprovedDestinationRepository.deleteById(unapprovedDestinationId);
         
-        String destinationId = destinationRepository.save(unapprovedDestination.getDestination()).getId();
-        customTagService.addCustomTag(destinationId, unapprovedDestination.getCustomTags());
-        destinationRepoService.addFixedTags(
-                destinationId, 
-                TagInfo.createAll(fixedTags, tagRepositoryService));
+        Destination destination = unapprovedDestination.getDestination();
+        destination.addFixedTags(TagInfo.createAll(fixedTags, tagRepositoryService));
+        destinationRepository.save(destination);
+        customTagService.addCustomTag(destination.getId(), unapprovedDestination.getCustomTags());
     }
 
     public Slice<DestinationSummaryRes> getAllDestinations(Pageable pageable, String city,
