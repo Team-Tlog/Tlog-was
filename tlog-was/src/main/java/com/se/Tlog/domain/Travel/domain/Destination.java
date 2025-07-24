@@ -11,10 +11,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
-import com.se.Tlog.global.exception.CustomException;
-import com.se.Tlog.global.response.error.ErrorType;
-
 @Document(collection = "destinations")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -42,11 +38,6 @@ public class Destination {
 	private int[] ratingCount = new int[5];
 
 	private String description;
-
-	public static void assertValidity(String name, DestinationRepositoryService destinationRepo) {
-		if (destinationRepo.exist(name))
-			throw new CustomException(ErrorType.ALREADY_EXISTS_DESTINATION);
-	}
 	
 	public static Destination create(
 			String name, 
@@ -58,9 +49,7 @@ public class Destination {
 			boolean hasParking,
 			boolean petFriendly,
 			String imageUrl,
-			String description,
-			DestinationRepositoryService validator) {
-		assertValidity(name, validator);
+			String description) {
 		return new Destination(name, location,address, tags, false, city, district, hasParking, petFriendly, imageUrl, description);
 	}
 

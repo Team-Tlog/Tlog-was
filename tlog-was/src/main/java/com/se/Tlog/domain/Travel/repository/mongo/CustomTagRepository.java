@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CustomTagDocumentRepository extends MongoRepository<CustomTagDocument,String> {
+public interface CustomTagRepository extends MongoRepository<CustomTagDocument,String> {
     Optional<CustomTagDocument> findByDestinationId(String destinationId);
     List<CustomTagDocument> findAllByDestinationIdIn(List<String> destinationIds);
 }

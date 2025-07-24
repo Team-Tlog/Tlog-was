@@ -5,10 +5,9 @@ import com.se.Tlog.domain.Review.controller.dto.DestinationReviewDto;
 import com.se.Tlog.domain.Review.domain.service.ReviewDomainService;
 import com.se.Tlog.domain.Travel.controller.dto.*;
 import com.se.Tlog.domain.Travel.domain.*;
-import com.se.Tlog.domain.Travel.domain.repository.CustomTagRepositoryService;
-import com.se.Tlog.domain.Travel.domain.repository.DestinationRepositoryService;
-import com.se.Tlog.domain.Travel.domain.repository.TagRepositoryService;
+import com.se.Tlog.domain.Travel.repository.mongo.CustomTagRepositoryExtension;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
+import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepositoryExtension;
 import com.se.Tlog.domain.Travel.repository.mongo.UnapprovedDestinationRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
@@ -22,15 +21,18 @@ import java.util.Map;
 @ApplicationService
 @RequiredArgsConstructor
 public class DestinationService {
-    private final DestinationRepositoryService destinationRepoService;
-    private final TagRepositoryService tagRepositoryService;
+    private final DestinationRepositoryExtension destinationRepoExtension;
     private final DestinationRepository destinationRepository;
     private final UnapprovedDestinationRepository unapprovedDestinationRepository;
     private final CustomTagService customTagService;
+    private final TagService tagService;
     private final ReviewDomainService reviewDomainService;
-    private final CustomTagRepositoryService customTagRepositoryService;
+    private final CustomTagRepositoryExtension customTagRepositoryExtension;
 
     public void generateNewDestination(DestinationDto destinationDto) {
+        if (destinationRepository.existsByName(destinationDto.getName()))
+            throw new CustomException(ErrorType.ALREADY_EXISTS_DESTINATION);
+        
         Destination destinationData = Destination.create(
         		destinationDto.getName(),
                 destinationDto.getLocation(),
@@ -41,8 +43,7 @@ public class DestinationService {
                 destinationDto.isHasParking(),
                 destinationDto.isPetFriendly(),
                 destinationDto.getDescription(),
-                destinationDto.getImageUrl(),
-                destinationRepoService);
+                destinationDto.getImageUrl());
         
         UnapprovedDestination newDestination = UnapprovedDestination.create(
                 destinationDto.getCreater(), destinationData, destinationDto.getCustomTags());
@@ -55,16 +56,15 @@ public class DestinationService {
                 .orElseThrow(() -> new CustomException(ErrorType.ALREADY_APPROVED_DESTINATION));
         unapprovedDestinationRepository.deleteById(unapprovedDestinationId);
         
-        String destinationId = destinationRepository.save(unapprovedDestination.getDestination()).getId();
-        customTagService.addCustomTag(destinationId, unapprovedDestination.getCustomTags());
-        destinationRepoService.addFixedTags(
-                destinationId, 
-                TagInfo.createAll(fixedTags, tagRepositoryService));
+        Destination destination = unapprovedDestination.getDestination();
+        destination.addFixedTags(tagService.createAll(fixedTags));
+        destinationRepository.save(destination);
+        customTagService.addCustomTag(destination.getId(), unapprovedDestination.getCustomTags());
     }
 
     public Slice<DestinationSummaryRes> getAllDestinations(Pageable pageable, String city,
                                                           DestinationSortType sortType, String tbti) {
-        List<Destination> destinations = destinationRepoService.getDestinations(pageable, city, sortType);
+        List<Destination> destinations = destinationRepoExtension.getDestinations(pageable, city, sortType);
         boolean hasNext = destinations.size() > pageable.getPageSize();
 
         if (hasNext) {
@@ -108,7 +108,7 @@ public class DestinationService {
         List<TagCount> topTags = customTagService.getTopTags(destination.getId(), 3);
         List<DestinationReviewDto> top2Reviews = reviewDomainService.getTop2Reviews(destination.getId());
 
-        List<DestinationSimilarDto> relatedDestinations = customTagRepositoryService.findRelatedDestinations(destination.getId(), topTags);
+        List<DestinationSimilarDto> relatedDestinations = customTagRepositoryExtension.findRelatedDestinations(destination.getId(), topTags);
         return DestinationDetailsRes.from(destination, topTags, top2Reviews, relatedDestinations);
     }
 }

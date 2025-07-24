@@ -12,7 +12,6 @@ import com.se.Tlog.domain.Team.controller.dto.*;
 import com.se.Tlog.domain.Team.domain.InviteCodeUtil;
 import com.se.Tlog.domain.Team.domain.Team;
 import com.se.Tlog.domain.Team.domain.TeamDomainService;
-import com.se.Tlog.domain.Team.domain.repository.TeamRepositoryService;
 import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
 import com.se.Tlog.domain.Team.repository.jpa.TeamUserRepository;
 import com.se.Tlog.domain.Team.repository.jpa.entity.TeamUserJpaEntity;
@@ -35,7 +34,6 @@ public class TeamService {
 	private final TeamUserRepository teamUserRepository;
 	
 	private final TeamDomainService teamDomainService;
-	private final TeamRepositoryService repoService;
 
 	private final ShoppingCartService shoppingCartService;
 	private final ChatRoomService chatRoomService;
@@ -47,15 +45,10 @@ public class TeamService {
 		if (!userRepository.existsById(request.creator()))
 			throw new CustomException(ErrorType.USER_NOT_FOUND);
 
-		Team newTeam = Team.create(request.name(), repoService.makeInviteCode());
-		teamRepository.save(newTeam);
-		
-		// Team의 id가 생성된 후에야 초기화 작업이 가능함.
-		// 그러나 Team.create 후에 별도로 다시 initialize를 해야 하는 구조는 적절하지 않음!
-		// (초기화를 까먹는 휴먼 에러에 취약한 점 등)
-		teamDomainService.initializeTeam(
-		        newTeam, 
+		Team newTeam = teamDomainService.createTeam(
+		        request.name(), 
 		        userRepository.findById(request.creator()).get());
+		
 		Long chatRoomId = chatRoomService.create(request.creator(), newTeam.getId());
 		return TeamCreateRes.of(newTeam.getId(),chatRoomId);
 	}
@@ -119,7 +112,7 @@ public class TeamService {
 		User user = userRepository.findById(request.userId())
 				.orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
 
-		team.addUser(user, repoService);
+		teamDomainService.addUser(team, user);
 		chatRoomService.joinChatRoom(user, team.getId());
 	}
 	
@@ -129,7 +122,7 @@ public class TeamService {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
 
-		team.deleteUser(user, repoService);
+		teamDomainService.deleteUser(team, user);
 	}
 
 	public TeamDetailDto getTeamDetails(UUID teamId) {
