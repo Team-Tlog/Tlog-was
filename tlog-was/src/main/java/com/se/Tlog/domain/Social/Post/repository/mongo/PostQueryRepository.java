@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class PostQueryRepository {
-    private final RawPostQueryRepository postQueryRepository;
+    private final PostRepository postRepository;
     
     private static final String NULL_LAST_POST_ID = "ffffffffffffffffffffffff";
     
@@ -27,7 +27,7 @@ public class PostQueryRepository {
         if (followingList == null) followingList = new ArrayList<UUID>();
         
         List<Post> results = new ArrayList<Post>(
-                postQueryRepository.findAllFollowersRecentPosts(size + 1, lastPostId, followingList));
+                postRepository.findAllFollowersRecentPosts(size + 1, lastPostId, followingList));
         boolean hasNext = (size + 1 == results.size());
         if (hasNext) results.remove(size);
         return new SliceImpl<Post>(results, PageRequest.ofSize(size), hasNext);
