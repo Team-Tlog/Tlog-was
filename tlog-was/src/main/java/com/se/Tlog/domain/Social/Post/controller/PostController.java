@@ -109,6 +109,6 @@ public class PostController {
             throw new CustomException(ErrorType.UN_AUTHENTICATION);
             
         return ResponseEntity.ok(SuccessRes.from(
-                postService.getRecentFollowersPosts(size, lastPostId, UUID.fromString(user.getId()))));
+                postService.getSuggestedPosts(size, lastPostId, UUID.fromString(user.getId()))));
     }
 }

@@ -102,7 +102,7 @@ public class PostService {
                 replies);
     }
     
-    public Slice<PostDetailRes> getRecentFollowersPosts(int size, String lastPostId, UUID userId) {
+    public Slice<PostDetailRes> getSuggestedPosts(int size, String lastPostId, UUID userId) {
         if (size <= 0) size = 10;
         
         List<UUID> followings = followRepository.findToUserIdsByFromUserId(userId);
