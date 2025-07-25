@@ -106,7 +106,7 @@ public class PostService {
         if (size <= 0) size = 10;
         
         List<UUID> followings = followRepository.findToUserIdsByFromUserId(userId);
-        Slice<Post> posts = postRepositoryExtension.findAllRecentPosts(size, lastPostId, followings);
+        Slice<Post> posts = postRepositoryExtension.findAllFollowersRecentPosts(size, lastPostId, followings);
         Map<UUID, User> authors = userRepository.findAllById(posts.map(post -> post.getAuthor()).toSet())
                 .stream().collect(Collectors.toMap(
                         user -> user.getId(),

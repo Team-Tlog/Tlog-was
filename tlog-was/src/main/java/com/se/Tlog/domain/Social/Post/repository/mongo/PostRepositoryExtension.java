@@ -21,7 +21,7 @@ public class PostRepositoryExtension {
     
     private static final String NULL_LAST_POST_ID = "ffffffffffffffffffffffff";
     
-    public Slice<Post> findAllRecentPosts(int size, String lastPostId, List<UUID> followingList) {
+    public Slice<Post> findAllFollowersRecentPosts(int size, String lastPostId, List<UUID> followingList) {
         if (size <= 0) size = 10;
         if (lastPostId == null || !ObjectId.isValid(lastPostId)) lastPostId = NULL_LAST_POST_ID;
         if (followingList == null) followingList = new ArrayList<UUID>();
