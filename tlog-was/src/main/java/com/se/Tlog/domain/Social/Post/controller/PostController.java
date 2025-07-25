@@ -89,8 +89,10 @@ public class PostController {
     
     @GetMapping("/posts")
     @Operation (
-            summary = "팔로잉 사용자들의 최근 게시물",
-            description = "현재 팔로우중인 사용자들의 게시물의 상세 정보를 조회합니다."
+            summary = "추천 게시물",
+            description = "추천 게시물을 표시합니다."
+                        + "<br>현재 팔로우중인 사용자들의 게시물의 상세 정보를 조회합니다."
+                        + "<br>만약 더 이상 팔로워들의 표시할 게시물이 없으면 사용자에게 추천할 게시물이 표시됩니다."
                         + "<br><br><b>인증 토큰이 필요합니다!</b>",
             parameters = {
                     @Parameter(name = "lastPostId", description = "이 게시글 이후부터 조회합니다. 없으면 null 또는 0으로 기입합니다."),
