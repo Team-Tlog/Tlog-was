@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class PostQueryRepository {
+public class PostRepositoryExtension {
     private final PostRepository postRepository;
     
     private static final String NULL_LAST_POST_ID = "ffffffffffffffffffffffff";
