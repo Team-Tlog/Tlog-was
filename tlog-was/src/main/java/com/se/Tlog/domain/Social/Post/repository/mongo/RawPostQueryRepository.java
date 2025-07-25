@@ -17,5 +17,5 @@ interface RawPostQueryRepository extends MongoRepository<Post, String> {
             "{ $match: { author: { $in: ?2 } } }",
             "{ $limit: ?0 }"
     })
-    List<Post> findAllRecentPosts(int size, String lastPostId, List<UUID> followingList);
+    List<Post> findAllFollowersRecentPosts(int size, String lastPostId, List<UUID> followingList);
 }

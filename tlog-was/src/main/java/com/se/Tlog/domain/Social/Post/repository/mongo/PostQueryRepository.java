@@ -27,7 +27,7 @@ public class PostQueryRepository {
         if (followingList == null) followingList = new ArrayList<UUID>();
         
         List<Post> results = new ArrayList<Post>(
-                postQueryRepository.findAllRecentPosts(size + 1, lastPostId, followingList));
+                postQueryRepository.findAllFollowersRecentPosts(size + 1, lastPostId, followingList));
         boolean hasNext = (size + 1 == results.size());
         if (hasNext) results.remove(size);
         return new SliceImpl<Post>(results, PageRequest.ofSize(size), hasNext);
