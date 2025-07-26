@@ -28,7 +28,7 @@ public class UserRepositoryExtension {
         List<UserTbtiProjection> users = userRepository.findAllOfIdAndTbti();
         
         return users.stream()
-                .filter(u -> (u.getId() != user.getId()
+                .filter(u -> (!u.getId().equals(user.getId())
                         && 2 <= Tbti.getSameFeatureCount(u.getTbti(), user.getTbti())))
                 .map(u -> u.getId())
                 .toList();
