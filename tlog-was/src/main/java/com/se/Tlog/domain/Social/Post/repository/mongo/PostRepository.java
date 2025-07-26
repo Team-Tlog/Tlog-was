@@ -24,7 +24,7 @@ public interface PostRepository extends MongoRepository<Post, String> {
     Page<Post> findAllPreviewByAuthor(UUID author, Pageable pageable);
     
     /**
-     * 팔로워들의 최근 게시물을 모두 조회합니다.
+     * 특정 사용자들의 최근 게시물을 모두 조회합니다.
      * @param size
      * @param lastPostId
      * @param followingList
@@ -36,5 +36,5 @@ public interface PostRepository extends MongoRepository<Post, String> {
             "{ $match: { author: { $in: ?2 } } }",
             "{ $limit: ?0 }"
     })
-    List<Post> findAllFollowersRecentPosts(int size, String lastPostId, List<UUID> followingList);
+    List<Post> findAllRecentPostsByUsers(int size, String lastPostId, List<UUID> userIds);
 }
