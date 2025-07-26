@@ -21,7 +21,7 @@ import com.se.Tlog.domain.Social.Post.controller.dto.PostDetailRes;
 import com.se.Tlog.domain.Social.Post.controller.dto.PostPreviewRes;
 import com.se.Tlog.domain.Social.Post.controller.dto.ReplyRes;
 import com.se.Tlog.domain.Social.Post.domain.Post;
-import com.se.Tlog.domain.Social.Post.repository.mongo.PostQueryRepository;
+import com.se.Tlog.domain.Social.Post.repository.mongo.PostRepositoryExtension;
 import com.se.Tlog.domain.Social.Post.repository.mongo.PostRepository;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
-    private final PostQueryRepository postQueryRepository;
+    private final PostRepositoryExtension postRepositoryExtension;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
     private final FollowRepository followRepository;
@@ -102,11 +102,15 @@ public class PostService {
                 replies);
     }
     
-    public Slice<PostDetailRes> getRecentFollowersPosts(int size, String lastPostId, UUID userId) {
+    public Slice<PostDetailRes> getSuggestedPosts(int size, String lastPostId, UUID userId) {
         if (size <= 0) size = 10;
         
         List<UUID> followings = followRepository.findToUserIdsByFromUserId(userId);
-        Slice<Post> posts = postQueryRepository.findAllRecentPosts(size, lastPostId, followings);
+        Slice<Post> posts = 
+                (0 < followings.size()
+                ? postRepositoryExtension.findAllFollowersRecentPosts(size, lastPostId, followings)
+                : postRepositoryExtension.findAllRecentSuggestedPosts(size, lastPostId, userId));
+        
         Map<UUID, User> authors = userRepository.findAllById(posts.map(post -> post.getAuthor()).toSet())
                 .stream().collect(Collectors.toMap(
                         user -> user.getId(),
