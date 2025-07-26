@@ -19,8 +19,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsBySnsId(String snsId); // 또는 snsId
     List<User> findByIdIn(Set<UUID> userIds);
     
-    @Query("select u.id, u.tbti from User u where u.id = :id")
+    @Query("select u.id as id, u.tbti as tbti from User u where u.id = :id")
     UserTbtiProjection findOfTbtiById(@Param("id") UUID id);
-    @Query("select u.id, u.tbti from User u")
+    @Query("select u.id as id, u.tbti as tbti from User u")
     List<UserTbtiProjection> findAllOfIdAndTbti();
 }
