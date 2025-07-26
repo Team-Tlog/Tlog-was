@@ -3,8 +3,6 @@ package com.se.Tlog.global.util.jwt;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 @Component
 public interface JwtTokenProvider {
 
