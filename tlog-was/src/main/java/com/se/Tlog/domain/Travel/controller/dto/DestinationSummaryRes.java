@@ -14,6 +14,7 @@ public record DestinationSummaryRes(
         int reviewCount,
         float averageRating,
         String imageUrl,
+        String description,
         List<TagCount> tagCountList
         ) {
 
@@ -26,6 +27,7 @@ public record DestinationSummaryRes(
                 destination.getReviewCount(),
                 Math.round(destination.getAverageRating() * 10) / 10.0f,
                 destination.getImageUrl(),
+                destination.getDescription(),
                 topTags
         );
     }
