@@ -92,7 +92,7 @@ public class SsoAuthService {
         Claims accessClaims = accessTokenProvider.parseToken(accessToken);
         String accessJti = accessClaims.get("jti").toString();
 
-        long remainingTime = accessTokenProvider.getExpiration(accessToken).getTime() - System.currentTimeMillis();
+        long remainingTime = accessClaims.getExpiration().getTime() - System.currentTimeMillis();
 
         Claims refreshClaims = refreshTokenProvider.parseToken(refreshToken);
         String refreshJti = refreshClaims.get("jti").toString();

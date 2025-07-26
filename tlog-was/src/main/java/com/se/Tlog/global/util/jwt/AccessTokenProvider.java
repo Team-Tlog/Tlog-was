@@ -61,8 +61,5 @@ public class AccessTokenProvider implements JwtTokenProvider {
         return claims;
     }
 
-    @Override
-    public Date getExpiration(String token) {
-        return parseToken(token).getExpiration();
-    }
+
 }

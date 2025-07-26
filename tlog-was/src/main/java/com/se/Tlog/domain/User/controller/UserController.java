@@ -161,13 +161,10 @@ public class UserController {
     )
     
     public ResponseEntity<SuccessRes<TlogMyPageRes>> getMyPage(@AuthenticationPrincipal CustomUserDetails user) {
-        UUID userId = null;
-        try {
-            userId = UUID.fromString(user.getId());
-        } catch (Exception e) {
-            throw new CustomException(ErrorType.UN_AUTHENTICATION);
-        }
-        
+
+        if(user == null) throw new CustomException(ErrorType.UN_AUTHENTICATION);
+        UUID userId = UUID.fromString(user.getId());
+
         return ResponseEntity
                 .status(SuccessType.OK.getStatus())
                 .body(SuccessRes.from(userService.getTlogMyPage(userId)));

@@ -23,26 +23,26 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        ErrorType error = null;
+
 
         try {
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             log.error("token expired");
-            error = ErrorType.TOKEN_EXPIRED;
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(ErrorRes.of(error.getStatusCode(), e.getMessage())));
+            writeErrorResponse(response, ErrorType.TOKEN_EXPIRED, e.getMessage());
 
         } catch (JwtException e) {
             log.error("token authentication failed : " + e.getMessage());
-            error = ErrorType.UN_AUTHENTICATION;
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(ErrorRes.of(error.getStatusCode(), e.getMessage())));
+            writeErrorResponse(response, ErrorType.UN_AUTHENTICATION, e.getMessage());
 
         }
+    }
+
+    private void writeErrorResponse(HttpServletResponse response, ErrorType errorType, String message) throws IOException {
+        response.setStatus(errorType.getStatusCode());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        ErrorRes errorRes = ErrorRes.of(errorType.getStatusCode(), message);
+        response.getWriter().write(objectMapper.writeValueAsString(errorRes));
     }
 }

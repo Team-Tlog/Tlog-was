@@ -53,12 +53,6 @@ public class RefreshTokenProvider implements JwtTokenProvider{
         return claims;
     }
 
-    @Override
-    public Date getExpiration(String token) {
-
-        return parseToken(token).getExpiration();
-    }
-
     public long getRefreshTokenDuration() {
         return refreshTokenDuration.toMillis();
     }
