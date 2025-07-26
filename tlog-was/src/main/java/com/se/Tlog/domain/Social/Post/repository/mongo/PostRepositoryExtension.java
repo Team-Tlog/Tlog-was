@@ -25,7 +25,7 @@ public class PostRepositoryExtension {
     
     private Slice<Post> queryPostsFromUserIds(int size, String lastPostId, List<UUID> userIds) {
         if (0 == userIds.size())
-            return new SliceImpl<Post>(new ArrayList<>(), PageRequest.ofSize(0), false);
+            return new SliceImpl<Post>(new ArrayList<>(), PageRequest.ofSize(size), false);
         
         List<Post> results = new ArrayList<Post>(
                 postRepository.findAllRecentPostsByUsers(size + 1, lastPostId, userIds));
