@@ -4,6 +4,8 @@ import com.se.Tlog.domain.Review.application.ReviewService;
 import com.se.Tlog.domain.Review.controller.dto.ReviewCreateDto;
 import com.se.Tlog.domain.Review.controller.dto.ReviewsRes;
 import com.se.Tlog.domain.Review.domain.SortType;
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
 import com.se.Tlog.global.security.dto.CustomUserDetails;
@@ -86,8 +88,11 @@ public class ReviewController {
     )
     public ResponseEntity<SuccessRes<?>> deleteReview(
             @PathVariable String reviewId,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        String userId = userDetails.getId();
+            @AuthenticationPrincipal CustomUserDetails user) {
+
+        if(user == null) throw new CustomException(ErrorType.UN_AUTHENTICATION);
+
+        String userId = user.getId();
         reviewService.deleteReview(userId, reviewId);
 
         return ResponseEntity.ok().body(SuccessRes.from(SuccessType.OK));
