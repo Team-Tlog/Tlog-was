@@ -2,6 +2,7 @@ package com.se.Tlog.domain.Social.Post.controller;
 
 import java.util.UUID;
 
+import com.se.Tlog.domain.Social.Post.like.service.LikeService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -43,6 +44,7 @@ import lombok.RequiredArgsConstructor;
         scopes = {"scope1", "scope2"})
 public class PostController {
     private final PostService postService;
+    private final LikeService likeService;
     
     @PostMapping("/post")
     @Operation (
@@ -110,5 +112,27 @@ public class PostController {
             
         return ResponseEntity.ok(SuccessRes.from(
                 postService.getRecentFollowersPosts(size, lastPostId, UUID.fromString(user.getId()))));
+    }
+
+    @PostMapping("/post/{postId}/like")
+    @Operation(
+            summary = "코스 리뷰(게시물) 좋아요 토글",
+            description = "특정 게시물에 대해 현재 로그인 사용자의 좋아요 상태를 토글합니다.<br>"
+                    + "이미 좋아요를 누른 상태면 취소(unlike), 누르지 않은 상태면 좋아요(like) 처리됩니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "처리 성공."),
+                    @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자.",
+                            content = @Content(schema = @Schema(implementation = ErrorRes.class))),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류.",
+                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))
+            }
+    )
+    public ResponseEntity<?> likePost(
+            @PathVariable(name = "postId") String postId,
+            @AuthenticationPrincipal CustomUserDetails user) {
+
+
+        return ResponseEntity.ok(SuccessRes.from(
+                likeService.toggle(postId, UUID.fromString(user.getId()))));
     }
 }
