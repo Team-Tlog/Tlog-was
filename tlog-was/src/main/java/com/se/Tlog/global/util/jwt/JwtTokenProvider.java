@@ -14,5 +14,4 @@ public interface JwtTokenProvider {
 
     Claims parseAndValidate(String token);
 
-    Date getExpiration(String token);
 }
