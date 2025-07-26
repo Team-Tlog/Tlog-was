@@ -53,4 +53,12 @@ public class Tbti {
                     : c.getMaxCategoryInitial()));
         return tbtiStr.toString();
     }
+    
+    public static int getSameFeatureCount(int code1, int code2) {
+        int cnt = 0;
+        for (int m = 1; m <= 1_00_00_00; m *= 100)
+            if ((code1 / m % 100) == (code2 / m % 100))
+                cnt++;
+        return cnt;
+    }
 }
