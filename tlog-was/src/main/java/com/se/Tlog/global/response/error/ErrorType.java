@@ -23,6 +23,7 @@ public enum ErrorType {
     INVALID_REVIEW_RATING(HttpStatus.BAD_REQUEST, "리뷰 평점은 1점 이상 5점 이하여야 합니다."),
     INVALID_IMAGE_URL(HttpStatus.BAD_REQUEST, "잘못된 이미지 URL 입니다." ),
     QUERY_TOO_SHORT(HttpStatus.BAD_REQUEST, "검색 문구의 길이가 너무 짧습니다." ),
+    TRAVEL_PLAN_INVALID_DATE(HttpStatus.BAD_REQUEST, "여행 시작일은 종료일보다 이후일 수 없습니다."),
     // 사용자로부터 소셜 로그인 인증 실패
     SSO_LOGIN_FAIL(HttpStatus.BAD_REQUEST,"외부 소셜 로그인이 취소되거나 실패했습니다."),
     
@@ -84,6 +85,7 @@ public enum ErrorType {
     COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 여행 코스입니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 코스 리뷰(게시글)입니다."),
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
+    TRAVEL_PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "여행 일정이 존재하지 않습니다."),
     //데이터 충돌
     ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 회원가입된 사용자입니다."),
     ALREADY_EXISTS_SNSId(HttpStatus.CONFLICT, "이미 존재하는 Id 입니다."),
