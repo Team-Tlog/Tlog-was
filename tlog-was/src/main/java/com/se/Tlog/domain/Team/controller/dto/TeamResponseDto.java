@@ -11,14 +11,16 @@ public record TeamResponseDto(
 		UUID teamId,
 		String teamName,
 		String teamLeaderName,
-		List<UUID> memberIdList //유저들 id + profile 예정
+		List<TeamMemberSimpleDto> memberSimpleDtoList, //유저들 id + profile 예정
+		TravelPlanDto travelPlanDto
 		) {
-	public static TeamResponseDto from(Team team, String teamLeaderName, List<UUID> memberIdList) {
+	public static TeamResponseDto from(Team team, String teamLeaderName, List<TeamMemberSimpleDto> memberSimpleDtoList,TravelPlanDto travelPlanDto) {
 		return new TeamResponseDto(
 				team.getId(),
 				team.getName(),
 				teamLeaderName,
-				memberIdList
+				memberSimpleDtoList,
+				travelPlanDto
 		);
 	}
 }
