@@ -56,6 +56,10 @@ public class UserDomainService {
     	
     	userRepository.deleteById(userId);
     }
+    public User findByIdOrThrow(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_FOUND));
+    }
 
     public void validateExists(UUID userId) {
         if (!userRepository.existsById(userId)) {
