@@ -8,12 +8,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record CreateTeamRequestDto(
 		@Schema(description = "팀 이름")
 		String name,
-		
+
 		@Schema(description = "팀 생성자")
-		UUID creator //,
-		
+		UUID creator,
+
+		@Schema(description = "여행 계획 정보")
+		TravelPlanDto travelPlan
+
 		//@Schema(description = "팀 TBTI")
 		//String teamTbti
 		) {
-
 }
