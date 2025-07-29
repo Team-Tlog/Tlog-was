@@ -41,7 +41,7 @@ class RewardServiceTest {
 		User testUser = User.create(
 		        new UserRegisterInfo(
 		                new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"),
-		                new RegisterUserProfileDto("00000000")));
+		                new RegisterUserProfileDto("00000000", new ArrayList<>())));
 		RewardInfo testReward = RewardInfo.create("", "보상 1", "테스트 보상 1", RewardCriteria.create(RewardCriteriaType.IS_DEVELOPER, ""));
 
 		userRepository.save(testUser);
@@ -57,7 +57,7 @@ class RewardServiceTest {
 		User testUser = User.create(
 		        new UserRegisterInfo(
 		                new SsoUserInfo("TEST_PROVIDER_ID", "TEST_EMAIL", "dev.DEVELOPER_NAME", "NULL"), 
-		                new RegisterUserProfileDto("00000000")));
+		                new RegisterUserProfileDto("00000000", new ArrayList<>())));
 		
 		List<RewardInfo> added = new ArrayList<RewardInfo>();
 		added.add(rewardInfoRepository.save(RewardInfo.create("", "보상 1", "테스트 보상 1", RewardCriteria.create(RewardCriteriaType.TEST_NULL_CRITERIA, ""))));
