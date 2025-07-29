@@ -8,6 +8,7 @@ import com.se.Tlog.domain.Travel.domain.*;
 import com.se.Tlog.domain.Travel.repository.mongo.CustomTagRepositoryExtension;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepositoryExtension;
+import com.se.Tlog.domain.Travel.repository.mongo.TagRepository;
 import com.se.Tlog.domain.Travel.repository.mongo.UnapprovedDestinationRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
@@ -17,17 +18,20 @@ import org.springframework.data.domain.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @ApplicationService
 @RequiredArgsConstructor
 public class DestinationService {
+    private final CustomTagRepositoryExtension customTagRepositoryExtension;
     private final DestinationRepositoryExtension destinationRepoExtension;
     private final DestinationRepository destinationRepository;
     private final UnapprovedDestinationRepository unapprovedDestinationRepository;
+    private final TagRepository tagRepository;
+    
     private final CustomTagService customTagService;
     private final TagService tagService;
     private final ReviewDomainService reviewDomainService;
-    private final CustomTagRepositoryExtension customTagRepositoryExtension;
 
     public void generateNewDestination(DestinationDto destinationDto) {
         if (destinationRepository.existsByName(destinationDto.getName()))
@@ -110,5 +114,49 @@ public class DestinationService {
 
         List<DestinationSimilarDto> relatedDestinations = customTagRepositoryExtension.findRelatedDestinations(destination.getId(), topTags);
         return DestinationDetailsRes.from(destination, topTags, top2Reviews, relatedDestinations);
+    }
+    
+    public List<DestinationByTagDto> getDestinationOfEachTag(int tbtiCode) {
+        /* 25.7.28
+         *   tbtiCode 값은
+         *   나중에 TBTI 성향에 따라 태그 범위를 조정하는 기능에 사용될 예정입니다.
+         *   ex) TBTI가 자연 성향 -> 산, 바다, 계곡과 같은 자연 태그를 더 많이 표시  
+         */
+        // Tbti tbti = new Tbti(tbtiCode);
+        
+        final int SAMPLE_SIZE = 10;
+        
+        // 전체 태그를 사용하지 않고 일부(최대 10개)만 무작위로 추출해 사용
+        List<Tag> tags = tagRepository.findAll();
+        List<Tag> sampleTags = null;
+        if (tags.size() <= SAMPLE_SIZE)
+            sampleTags = tags;
+        else {
+            sampleTags = new ArrayList<>(SAMPLE_SIZE);
+            Random random = new Random(System.nanoTime());
+            boolean[] select = new boolean[tags.size()];
+            while (sampleTags.size() < SAMPLE_SIZE) {
+                int idx = random.nextInt(tags.size());
+                if (!select[idx]) {
+                    select[idx] = true;
+                    sampleTags.add(tags.get(idx));
+                }
+            }
+        }
+        
+        Map<String, Destination> destinationMap = destinationRepoExtension.findAllByEachTags(
+                sampleTags.stream().map(Tag::getId).toList());
+        
+        return sampleTags.stream()
+                .filter(tag -> destinationMap.containsKey(tag.getId()))
+                .map(tag -> {
+                    Destination dest = destinationMap.get(tag.getId());
+                    return new DestinationByTagDto(
+                        dest.getName(),
+                        dest.getImageUrl(),
+                        tag.getName(), 
+                        tag.getId());
+                    })
+                .toList();
     }
 }
