@@ -1,6 +1,7 @@
 package com.se.Tlog.domain.Travel.controller;
 
 import com.se.Tlog.domain.Travel.application.DestinationService;
+import com.se.Tlog.domain.Travel.controller.dto.DestinationByTagDto;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDetailsRes;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDto;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
@@ -12,6 +13,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
@@ -87,5 +91,26 @@ public class DestinationController {
         return ResponseEntity
                 .status(SuccessType.DESTINATION_GET_SUCCESS.getStatus())
                 .body(SuccessRes.from(destinationService.getDestinationById(id)));
+    }
+
+    @GetMapping("/of-each-tag")
+    @Operation(
+            summary = "사용자 성향 파악용 여행지 조회",
+            description = "사용자 성향을 파악하기 위한 여행지 미리보기를 불러옵니다."
+                        + "<br> 최대 10개까지의 태그가 제시되며,"
+                        + "<br> 각 태그에는 하나의 여행지가 제시됩니다.",
+            tags = {"Travel 도메인"},
+            security = @SecurityRequirement(
+                    name = "JwtAuthScheme",
+                    scopes = {"scope1", "scope2"}),
+            parameters = {@Parameter(name = "tbtiCode", description = "사용자의 TBTI 코드입니다.")},
+            responses = {
+                    @ApiResponse( responseCode = "200", description = "성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+            }
+    )
+    public ResponseEntity<SuccessRes<List<DestinationByTagDto>>> getDestinationOfEachTag(@RequestParam int tbtiCode) {
+        return ResponseEntity.ok(SuccessRes.from(
+                destinationService.getDestinationOfEachTag(tbtiCode)));
     }
 }
