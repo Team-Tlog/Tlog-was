@@ -1,10 +1,8 @@
 package com.se.Tlog.domain.Team.application;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Social.Chat.room.ChatRoomService;
@@ -15,7 +13,11 @@ import com.se.Tlog.domain.Team.domain.TeamDomainService;
 import com.se.Tlog.domain.Team.repository.jpa.TeamRepository;
 import com.se.Tlog.domain.Team.repository.jpa.TeamUserRepository;
 import com.se.Tlog.domain.Team.repository.jpa.entity.TeamUserJpaEntity;
+import com.se.Tlog.domain.Team.travelplan.TravelPlan;
+import com.se.Tlog.domain.Team.travelplan.repository.mongo.TravelPlanRepository;
+import com.se.Tlog.domain.Team.travelplan.service.TravelPlanService;
 import com.se.Tlog.domain.User.domain.User;
+import com.se.Tlog.domain.User.domain.service.UserDomainService;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.domain.Wishlist.application.ShoppingCartService;
 import com.se.Tlog.domain.Wishlist.domain.OwnerType;
@@ -32,24 +34,26 @@ public class TeamService {
 	private final UserRepository userRepository;
 	private final TeamRepository teamRepository;
 	private final TeamUserRepository teamUserRepository;
+	private final TravelPlanRepository travelPlanRepository;
 	
 	private final TeamDomainService teamDomainService;
+	private final UserDomainService userDomainService;
 
 	private final ShoppingCartService shoppingCartService;
 	private final ChatRoomService chatRoomService;
+	private final TravelPlanService travelPlanService;
 
 	@Transactional
 	public TeamCreateRes createTeam(CreateTeamRequestDto request) {
 		if (request.name() == null)
 			throw new CustomException(ErrorType.TEAM_NAME_NOT_FOUND);
-		if (!userRepository.existsById(request.creator()))
-			throw new CustomException(ErrorType.USER_NOT_FOUND);
 
-		Team newTeam = teamDomainService.createTeam(
-		        request.name(), 
-		        userRepository.findById(request.creator()).get());
-		
-		Long chatRoomId = chatRoomService.create(request.creator(), newTeam.getId());
+		User user = userDomainService.findByIdOrThrow(request.creator());
+
+		Team newTeam = teamDomainService.createTeam(request.name(), user);
+		travelPlanService.saveTravelPlan(newTeam.getId(), request.travelPlan());
+
+		Long chatRoomId = chatRoomService.create(user, newTeam.getId());
 		return TeamCreateRes.of(newTeam.getId(),chatRoomId);
 	}
 	
@@ -68,19 +72,40 @@ public class TeamService {
 	                teamUser.getTeam().getId(), 
 	                members);
 		}
-		
+		Set<UUID> teamIds = membersOfTeam.keySet();
+		List<TravelPlan> travelPlans = travelPlanRepository.findAllByTeamIdIn(teamIds.stream().map(UUID::toString).toList());
+
+		Map<String, TravelPlan> travelPlanMap = travelPlans.stream()
+				.collect(Collectors.toMap(TravelPlan::getTeamId, Function.identity()));
+
 		// DTO 변환
-		return membersOfTeam.values().stream().map(teamMembers -> {
-		    String teamLeaderName = null;
-		    List<UUID> members = new ArrayList<UUID>();
-		    for (TeamUserJpaEntity teamUserInTeam : teamMembers) {
-		        if (teamUserInTeam.isLeader())
-		            teamLeaderName = teamUserInTeam.getUser().getName();
-                members.add(teamUserInTeam.getUser().getId());
-		    }
-			return TeamResponseDto.from(teamMembers.get(0).getTeam(), teamLeaderName, members);
-		})
-		.toList();
+		return membersOfTeam.entrySet().stream()
+				.map(entry -> toTeamResponseDto(entry, travelPlanMap))
+				.toList();
+	}
+	private TeamResponseDto toTeamResponseDto(
+			Map.Entry<UUID, List<TeamUserJpaEntity>> entry,
+			Map<String, TravelPlan> travelPlanMap
+	) {
+		List<TeamUserJpaEntity> teamMembers = entry.getValue();
+		Team team = teamMembers.get(0).getTeam();
+		String teamLeaderName = null;
+		List<TeamMemberSimpleDto> memberSimpleDtoList = new ArrayList<>();
+
+		TravelPlan travelPlan = travelPlanMap.get(entry.getKey().toString());
+		TravelPlanDto travelPlanDto = travelPlan != null ? TravelPlanDto.from(travelPlan) : null;
+
+		for (TeamUserJpaEntity teamUserInTeam : teamMembers) {
+			User user = teamUserInTeam.getUser();
+			if (teamUserInTeam.isLeader())
+				teamLeaderName = user.getName();
+
+			memberSimpleDtoList.add(
+					TeamMemberSimpleDto.from(user.getId(), user.getTbtiString())
+			);
+		}
+
+		return TeamResponseDto.from(team, teamLeaderName, memberSimpleDtoList, travelPlanDto);
 	}
 	
 	public void deleteTeam(UUID requesterId, UUID teamId) {
@@ -135,6 +160,10 @@ public class TeamService {
 
 		List<WishlistDestinationRes> wishList = shoppingCartService.getCartData(team.getId(), OwnerType.TEAM);
 
-		return TeamDetailDto.from(team, memberDtoList, wishList);
+		TravelPlan travelPlan = travelPlanRepository.findByTeamId(teamId.toString())
+				.orElseThrow(() -> new CustomException(ErrorType.TRAVEL_PLAN_NOT_FOUND));
+
+		TravelPlanDto travelPlanDto = TravelPlanDto.from(travelPlan);
+		return TeamDetailDto.from(team, memberDtoList, wishList, travelPlanDto);
 	}
 }

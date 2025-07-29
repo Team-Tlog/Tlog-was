@@ -16,9 +16,11 @@ public record TeamDetailDto(
         LocalDate startDate,
         LocalDate endDate,
         List<TeamMemberDto> members,
-        List<WishlistDestinationRes> wishlist
+        List<WishlistDestinationRes> wishlist,
+        TravelPlanDto travelPlanDto
 ) {
-    public static TeamDetailDto from(Team team, List<TeamMemberDto> members, List<WishlistDestinationRes> wishlist) {
+    public static TeamDetailDto from(Team team, List<TeamMemberDto> members,
+                                     List<WishlistDestinationRes> wishlist, TravelPlanDto travelPlanDto) {
         return new TeamDetailDto(
                 team.getId(),
                 team.getName(),
@@ -27,7 +29,8 @@ public record TeamDetailDto(
                 team.getCreatedAt().toLocalDate(),
                 LocalDate.now(),
                 members,
-                wishlist
+                wishlist,
+                travelPlanDto
         );
     }
 }

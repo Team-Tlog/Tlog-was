@@ -8,7 +8,6 @@ import com.se.Tlog.domain.Social.Chat.room.repository.jpa.ChatRoomUserRepository
 import com.se.Tlog.domain.Social.Chat.read.ChatReadStatusService;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.domain.service.UserDomainService;
-import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +20,15 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
-    private final UserRepository userRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
     private final UserDomainService userDomainService;
     private final ChatMessageRepository chatMessageRepository;
     private final ChatReadStatusService chatReadStatusService;
 
-    public Long create(UUID hostId,UUID teamId) {
-        ChatRoom chatRoom = ChatRoom.create(hostId, teamId);
+    public Long create(User user,UUID teamId) {
+        ChatRoom chatRoom = ChatRoom.create(user.getId(), teamId);
         chatRoomRepository.save(chatRoom);
 
-        User user = userRepository.findById(hostId).get();
         ChatRoomUser chatRoomUser = ChatRoomUser.join(chatRoom, user);
 
         chatRoomUserRepository.save(chatRoomUser);
