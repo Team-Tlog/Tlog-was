@@ -4,7 +4,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.se.Tlog.domain.User.repository.api.SsoService;
 import com.se.Tlog.domain.User.repository.jpa.UserRepository;
+import com.se.Tlog.domain.User.repository.jpa.UserTagRepository;
 import com.se.Tlog.domain.ApplicationService;
+import com.se.Tlog.domain.Travel.domain.Tag;
+import com.se.Tlog.domain.Travel.repository.mongo.TagRepository;
 import com.se.Tlog.domain.User.controller.dto.LoginRequest;
 import com.se.Tlog.domain.User.controller.dto.RegisterRequest;
 import com.se.Tlog.domain.User.controller.dto.RegisterUserProfileDto;
@@ -13,6 +16,7 @@ import com.se.Tlog.domain.User.controller.dto.TokenDto;
 import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.domain.UserRegisterInfo;
+import com.se.Tlog.domain.User.domain.UserTagInfo;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
@@ -23,6 +27,7 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,6 +37,8 @@ import java.util.Optional;
 public class SsoAuthService {
     private final Map<SsoType, SsoService> ssoServiceMap;
     private final UserRepository userRepository;
+    private final UserTagRepository userTagRepository;
+    private final TagRepository tagRepository;
     private final AccessTokenProvider accessTokenProvider;
     private final RefreshTokenProvider refreshTokenProvider;
     private final RedisUtil redisUtil;
@@ -69,8 +76,12 @@ public class SsoAuthService {
     }
     
     private User registerNewUser(SsoUserInfo ssoUserInfo, RegisterUserProfileDto userProfiles) {
-        return userRepository.save(
+        User newUser = userRepository.save(
                 User.create(new UserRegisterInfo(ssoUserInfo, userProfiles)));
+        List<Tag> tags = tagRepository.findAllById(userProfiles.preferTagIds());
+        if (0 < tags.size())
+            userTagRepository.saveAll(UserTagInfo.of(newUser, tags));
+        return newUser;
     }
     
     public TokenDto login(LoginRequest loginRequest) {

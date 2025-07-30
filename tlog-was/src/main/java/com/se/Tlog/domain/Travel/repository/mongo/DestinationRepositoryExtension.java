@@ -4,12 +4,19 @@ import com.mongodb.client.result.UpdateResult;
 import com.se.Tlog.domain.Review.domain.Review;
 import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.DestinationSortType;
+import com.se.Tlog.domain.Travel.repository.mongo.dto.DestinationOfTagProjection;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
+
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Floor;
+import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Multiply;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators.ArrayElemAt;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators.Size;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -19,6 +26,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 
 @Component
 @RequiredArgsConstructor
@@ -98,5 +108,67 @@ public class DestinationRepositoryExtension {
 
         return new ArrayList<>(mongoTemplate.aggregate(aggregation, "destinations", Destination.class)
                 .getMappedResults());
+    }
+    
+    public Map<String, Destination> findAllByEachTags(List<String> tagsId) {
+        /*      // 25.7.29
+                // 쿼리 테스트를 위한 동일기능의 JSON형태 쿼리
+                [
+                    { $unwind: '$tags' },
+                    { $match: { 'tags._id': { $in: [  ] } } },
+                    { $group: { _id: '$tags._id', dests: { $push: '$_id' } } },
+                    { 
+                        $project: {
+                            selectedDestId: {
+                                $arrayElemAt: [
+                                    // 여행지
+                                    '$dests',
+                                    // 랜덤 인덱스 추출
+                                    { $floor: { $multiply: [ { $rand: {} }, { $size: '$dests' } ] } }
+                                ]
+                            }
+                        }
+                    },
+                    { 
+                        $lookup: { 
+                            from: 'destinations', 
+                            localField: 'selectedDestId',
+                            foreignField: '_id',
+                            as: 'selectedDest' 
+                        } 
+                    },
+                    { $project: { _id:1, selectedDest: { $arrayElemAt: [ "$selectedDest" , 0 ] } } }
+                ]
+        */
+        UnwindOperation pipe_unwind = Aggregation.unwind("tags");
+        MatchOperation pipe_match = Aggregation.match(Criteria.where("tags._id").in(tagsId.stream().map(ObjectId::new).toList()));
+        GroupOperation pipe_group = Aggregation.group("tags._id")
+                                    .push("_id").as("dests");
+        ProjectionOperation pipe_project1 = Aggregation.project()
+                                    .and(ArrayElemAt.arrayOf("dests")
+                                                    .elementAt(
+                                                            Floor.floorValueOf(
+                                                                Multiply
+                                                                    .valueOf(ArithmeticOperators.rand())
+                                                                    .multiplyBy(Size.lengthOfArray("dests")))))
+                                    .as("selectedDestId");
+        LookupOperation pipe_lookup = Aggregation.lookup("destinations", "selectedDestId", "_id", "selectedDest");
+        ProjectionOperation pipe_project2 = Aggregation.project()
+                                    .andInclude("_id")
+                                    .and("selectedDest").arrayElementAt(0).as("selectedDest");
+        
+        Aggregation aggregation = Aggregation.newAggregation(
+                pipe_unwind, 
+                pipe_match, 
+                pipe_group, 
+                pipe_project1,
+                pipe_lookup,
+                pipe_project2);
+        
+        AggregationResults<DestinationOfTagProjection> results = mongoTemplate.aggregate(aggregation, "destinations", DestinationOfTagProjection.class);
+        return results.getMappedResults().stream()
+                .collect(Collectors.toMap(
+                        dto -> dto.getId(),
+                        dto -> dto.getSelectedDest()));
     }
 }
