@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -128,20 +129,10 @@ public class DestinationService {
         
         // 전체 태그를 사용하지 않고 일부(최대 10개)만 무작위로 추출해 사용
         List<Tag> tags = tagRepository.findAll();
-        List<Tag> sampleTags = null;
-        if (tags.size() <= SAMPLE_SIZE)
-            sampleTags = tags;
-        else {
-            sampleTags = new ArrayList<>(SAMPLE_SIZE);
-            Random random = new Random(System.nanoTime());
-            boolean[] select = new boolean[tags.size()];
-            while (sampleTags.size() < SAMPLE_SIZE) {
-                int idx = random.nextInt(tags.size());
-                if (!select[idx]) {
-                    select[idx] = true;
-                    sampleTags.add(tags.get(idx));
-                }
-            }
+        List<Tag> sampleTags = tags;
+        if (SAMPLE_SIZE < tags.size()) {
+            Collections.shuffle(sampleTags, new Random(System.nanoTime()));
+            sampleTags = sampleTags.subList(0, SAMPLE_SIZE);
         }
         
         Map<String, Destination> destinationMap = destinationRepoExtension.findAllByEachTags(
