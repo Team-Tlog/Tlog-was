@@ -25,26 +25,30 @@ public class TbtiInfo {
     
     private String tbtiString;
     
-    private String imageUrl;
-    
     private String secondName;
     
     private String description;
+
+    private String preferred;
+
+    private String notPreferred;
     
-    private TbtiInfo(String tbtiString, String imageUrl, String secondName, String description) {
+    private TbtiInfo(String tbtiString, String secondName, String description, String preferred, String notPreferred) {
         this.tbtiString = tbtiString;
-        this.imageUrl = imageUrl;
         this.secondName = secondName;
         this.description = description;
+        this.preferred = preferred;
+        this.notPreferred = notPreferred;
     }
     
-    public static TbtiInfo create(Tbti tbti, String imageUrl, String secondName, String description) {
+    public static TbtiInfo create(Tbti tbti, String secondName, String description, Tbti preferred, Tbti notPreferred) {
         if (tbti == null
-                || imageUrl == null
                 || secondName == null
-                || description == null)
+                || description == null
+                || preferred == null
+                || notPreferred == null)
             throw new CustomException(ErrorType.ILLEGAL_ARGUMENT);
         
-        return new TbtiInfo(tbti.toString(), imageUrl, secondName, description);
+        return new TbtiInfo(tbti.toString(), secondName, description, preferred.toString(), notPreferred.toString());
     }
 }
