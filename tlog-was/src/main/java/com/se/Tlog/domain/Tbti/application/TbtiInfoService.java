@@ -22,10 +22,11 @@ public class TbtiInfoService {
         
         tbtiInfoRepository.save(
                 TbtiInfo.create(
-                        new Tbti(request.tbtiString()), 
-                        request.imageUrl(), 
+                        new Tbti(request.tbtiString()),
                         request.secondName(), 
-                        request.description()));
+                        request.description(),
+                        new Tbti(request.preferredtbtiString()),
+                        new Tbti(request.notPreferredtbtiString())));
     }
     
     public TbtiInfoRes getTbtiInfo(Tbti tbti) {
@@ -35,9 +36,10 @@ public class TbtiInfoService {
         else
             return new TbtiInfoRes(
                     tbti.toString(),
-                    tbtiInfo.getImageUrl(),
                     tbtiInfo.getSecondName(),
-                    tbtiInfo.getDescription());
+                    tbtiInfo.getDescription(),
+                    tbtiInfo.getPreferred(),
+                    tbtiInfo.getNotPreferred());
     }
     
     public TbtiInfoRes getTbtiInfo(String tbtiString) {
