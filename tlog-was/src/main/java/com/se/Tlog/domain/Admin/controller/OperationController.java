@@ -2,6 +2,7 @@ package com.se.Tlog.domain.Admin.controller;
 
 import com.se.Tlog.domain.Admin.application.OperationService;
 import com.se.Tlog.domain.Admin.controller.dto.CreateFeedbackReq;
+import com.se.Tlog.domain.Admin.controller.dto.CreateReportToPostReq;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorRes;
 import com.se.Tlog.global.response.error.ErrorType;
@@ -50,6 +51,25 @@ public class OperationController {
         if (user == null)
             throw new CustomException(ErrorType.UN_AUTHENTICATION);
         operationService.makeFeedback(UUID.fromString(user.getId()), request);
+        return ResponseEntity.ok(SuccessRes.from(SuccessType.OK));
+    }
+
+    @PostMapping("/report/post")
+    @Operation(
+            summary = "게시물 신고",
+            description = "SNS 게시물을 신고합니다."
+                    + "<br><br><b>인증 토큰이 필요합니다!</b>",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "처리 성공. 별도로 반환되는 정보는 없습니다."),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류.",
+                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
+    )
+    public ResponseEntity<SuccessRes<?>> reportPost(
+            @AuthenticationPrincipal CustomUserDetails user,
+            @RequestBody CreateReportToPostReq request) {
+        if (user == null)
+            throw new CustomException(ErrorType.UN_AUTHENTICATION);
+        operationService.makeReportToPost(UUID.fromString(user.getId()), request);
         return ResponseEntity.ok(SuccessRes.from(SuccessType.OK));
     }
 }
