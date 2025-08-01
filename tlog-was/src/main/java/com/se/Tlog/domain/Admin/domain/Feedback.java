@@ -16,7 +16,6 @@ import java.util.UUID;
 @Getter
 public class Feedback {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private UUID sender;
