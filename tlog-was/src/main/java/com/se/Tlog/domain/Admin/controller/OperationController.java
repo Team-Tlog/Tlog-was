@@ -34,7 +34,7 @@ import java.util.UUID;
 public class OperationController {
     private final OperationService operationService;
 
-    @PostMapping("/destinations")
+    @PostMapping("/feedback")
     @Operation(
             summary = "개발자에게 피드백",
             description = "피드백을 전달합니다."
@@ -44,7 +44,7 @@ public class OperationController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류.",
                             content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
     )
-    public ResponseEntity<SuccessRes<?>> approvedDestination(
+    public ResponseEntity<SuccessRes<?>> makeFeedback(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody CreateFeedbackReq request) {
         if (user == null)
