@@ -33,9 +33,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/tlog-docker
+            
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker system prune -a -f
-            docker-compose down
+            docker-compose -f docker-compose-prod.yml down
             docker rmi ${{ secrets.DOCKER_USERNAME }}/tlog:latest
             docker pull ${{ secrets.DOCKER_USERNAME }}/tlog:latest
-            docker-compose up -d
+            docker-compose -f docker-compose-prod.yml up -d
