@@ -7,9 +7,7 @@ secrets:
 services:
   spring:
     container_name: tlog-spring
-    build:
-      context: ..
-      dockerfile: Dockerfile
+    image: ${{secrets.DOCKER_USERNAME}}/tlog:latest
     ports:
       - "8080:8080"
     depends_on:
