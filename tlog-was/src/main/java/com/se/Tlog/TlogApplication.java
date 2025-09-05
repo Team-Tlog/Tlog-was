@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 
+
 @SpringBootApplication
 @EnableConfigurationProperties(RabbitMqChatProperties.class)
 @EnableMongoAuditing
