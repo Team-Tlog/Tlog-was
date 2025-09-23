@@ -93,6 +93,8 @@ public class DestinationController {
                 .body(SuccessRes.from(destinationService.getDestinationById(id)));
     }
 
+    /*
+     * 25.9.23 이 API는 사용자 성향 파악용 정보의 표시 방식이 변경됨에 따라 삭제되었습니다.
     @GetMapping("/of-each-tag")
     @Operation(
             summary = "사용자 성향 파악용 여행지 조회",
@@ -113,4 +115,5 @@ public class DestinationController {
         return ResponseEntity.ok(SuccessRes.from(
                 destinationService.getDestinationOfEachTag(tbtiCode)));
     }
+     */
 }

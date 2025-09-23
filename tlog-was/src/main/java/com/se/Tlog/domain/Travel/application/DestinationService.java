@@ -116,7 +116,8 @@ public class DestinationService {
         List<DestinationSimilarDto> relatedDestinations = customTagRepositoryExtension.findRelatedDestinations(destination.getId(), topTags);
         return DestinationDetailsRes.from(destination, topTags, top2Reviews, relatedDestinations);
     }
-    
+
+    @Deprecated(since = "사용자 선호 여행지의 관리 방식이 변경되었습니다.", forRemoval = true)
     public List<DestinationByTagDto> getDestinationOfEachTag(int tbtiCode) {
         /* 25.7.28
          *   tbtiCode 값은
