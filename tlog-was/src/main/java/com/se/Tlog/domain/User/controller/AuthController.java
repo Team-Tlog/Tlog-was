@@ -98,6 +98,7 @@ public class AuthController {
             }
     )
     public ResponseEntity<?> register(@RequestBody RegisterRequest request){
+		RegisterRequest.validate(request); // 추후 Spring Validation을 도입하여 대체 가능
 
         TokenDto tokenDto = ssoAuthService.register(request);
 

@@ -1,6 +1,8 @@
 package com.se.Tlog.domain.User.controller.dto;
 
 import com.se.Tlog.domain.User.domain.SsoType;
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "SSO 인증을 통한 회원가입 요청 DTO")
@@ -14,4 +16,10 @@ public record RegisterRequest(
         @Schema(description = "회원가입시 입력해야하는 사용자 기본 정보입니다.")
         RegisterUserProfileDto userProfile
 ) {
+        public static void validate(RegisterRequest value) {
+                if (value == null
+                        || value.type == null || value.accessToken == null || value.userProfile == null)
+                        throw new CustomException(ErrorType.ILLEGAL_ARGUMENT);
+                RegisterUserProfileDto.validate(value.userProfile);
+        }
 }
