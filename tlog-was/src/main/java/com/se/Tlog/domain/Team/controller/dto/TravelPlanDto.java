@@ -10,10 +10,10 @@ import java.util.Map;
 @Schema(description = "여행 계획 정보 DTO")
 public record TravelPlanDto(
 
-        @Schema(description = "여행 도시")
+        @Schema(description = "여행 도시", example = "서울")
         String city,
 
-        @Schema(description = "여행 지역")
+        @Schema(description = "여행 지역", example = "[\"서울 강서구\", \"서울 은평구\"]")
         List<String> regionList,
 
         @Schema(description = "반려견 동반 여부")
@@ -28,7 +28,7 @@ public record TravelPlanDto(
         @Schema(description = "여행 종료일")
         LocalDate endDate,
 
-        @Schema(description = "일자별 방문 여행지 수 설정")
+        @Schema(description = "일자별 방문 여행지 수 설정", example = "{\"1\" : 3, \"2\" : 2, \"3\" : 5}")
         Map<Integer, Integer> visitCountPerDay
 ) {
         public static TravelPlanDto from(TravelPlan travelPlan) {

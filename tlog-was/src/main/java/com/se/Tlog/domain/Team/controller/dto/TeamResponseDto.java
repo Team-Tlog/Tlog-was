@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.Team.controller.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,7 +13,8 @@ public record TeamResponseDto(
 		String teamName,
 		String teamLeaderName,
 		List<TeamMemberSimpleDto> memberSimpleDtoList, //유저들 id + profile 예정
-		TravelPlanDto travelPlanDto
+		TravelPlanDto travelPlanDto,
+		LocalDate createAt
 		) {
 	public static TeamResponseDto from(Team team, String teamLeaderName, List<TeamMemberSimpleDto> memberSimpleDtoList,TravelPlanDto travelPlanDto) {
 		return new TeamResponseDto(
@@ -20,7 +22,8 @@ public record TeamResponseDto(
 				team.getName(),
 				teamLeaderName,
 				memberSimpleDtoList,
-				travelPlanDto
+				travelPlanDto,
+				team.getCreatedAt().toLocalDate()
 		);
 	}
 }
