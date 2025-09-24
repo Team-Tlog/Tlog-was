@@ -13,10 +13,12 @@ import com.se.Tlog.domain.User.controller.dto.RegisterRequest;
 import com.se.Tlog.domain.User.controller.dto.RegisterUserProfileDto;
 import com.se.Tlog.domain.User.controller.dto.SsoUserInfo;
 import com.se.Tlog.domain.User.controller.dto.TokenDto;
+import com.se.Tlog.domain.User.domain.PreferPhoto;
 import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.domain.User;
 import com.se.Tlog.domain.User.domain.UserRegisterInfo;
 import com.se.Tlog.domain.User.domain.UserTagInfo;
+import com.se.Tlog.domain.User.repository.mongo.PreferPhotoRepository;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
@@ -39,6 +41,7 @@ public class SsoAuthService {
     private final UserRepository userRepository;
     private final UserTagRepository userTagRepository;
     private final TagRepository tagRepository;
+    private final PreferPhotoRepository preferPhotoRepository;
     private final AccessTokenProvider accessTokenProvider;
     private final RefreshTokenProvider refreshTokenProvider;
     private final RedisUtil redisUtil;
@@ -78,9 +81,17 @@ public class SsoAuthService {
     private User registerNewUser(SsoUserInfo ssoUserInfo, RegisterUserProfileDto userProfiles) {
         User newUser = userRepository.save(
                 User.create(new UserRegisterInfo(ssoUserInfo, userProfiles)));
-        List<Tag> tags = tagRepository.findAllById(userProfiles.preferTagIds());
-        if (0 < tags.size())
-            userTagRepository.saveAll(UserTagInfo.of(newUser, tags));
+
+        List<Integer> photoIds = userProfiles.preferPhotoIds();
+        if (photoIds != null && !photoIds.isEmpty()) {
+            List<PreferPhoto> photos = preferPhotoRepository.findAllById(photoIds);
+            List<String> tagIds = photos.stream()
+                    .flatMap(photo -> photo.getTagIds().stream())
+                    .toList(); // 25.9.23 추후 겹치는 태그를 더 강하게 표시하는 등의 목적을 위해 중복값을 허용합니다.
+            List<Tag> tags = tagRepository.findAllById(tagIds);
+            if (!tags.isEmpty())
+                userTagRepository.saveAll(UserTagInfo.of(newUser, tags));
+        }
         return newUser;
     }
     
