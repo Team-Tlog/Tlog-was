@@ -13,8 +13,8 @@ public record TeamDetailDto(
         String teamName,
         String tbtiString,
         String inviteCode,
-        LocalDate startDate,
-        LocalDate endDate,
+        LocalDate createdAt,
+        LocalDate expiredAt,
         List<TeamMemberDto> members,
         List<WishlistDestinationRes> wishlist,
         TravelPlanDto travelPlanDto
