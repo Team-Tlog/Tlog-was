@@ -3,7 +3,9 @@ package com.se.Tlog.global.exception;
 import com.se.Tlog.global.response.error.ErrorRes;
 import com.se.Tlog.global.response.error.ErrorType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -29,6 +31,15 @@ public class GlobalExceptionHandler {
     	ErrorRes error = ErrorRes.of(INTERNAL_SERVER_ERROR.getStatusCode(), INTERNAL_SERVER_ERROR.getMessage());
     	log.error("Error occurred : Task rejected - Server Thread Overflow!!");
     	log.error("\t\t : [errorCode={}, message={}]", e.getClass(), e.getMessage(), e);
+        return ResponseEntity.status(error.status()).body(error);
+    }
+
+    // 클라이언트 요청을 파싱하는 중 발생한 에러
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        log.error("Error occurred : There is a problem with the HTTP Request Body");
+        log.error("Exception occurred", e);  // stacktrace 출력!
+        ErrorRes error = ErrorRes.of(HttpStatus.BAD_REQUEST.value(), "[Parse Error] HTTP Request Body가 잘못되었습니다.");
         return ResponseEntity.status(error.status()).body(error);
     }
 
