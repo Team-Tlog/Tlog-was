@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "팀 생성에 요구되는 DTO 형식입니다.")
 public record CreateTeamRequestDto(
-		@Schema(description = "팀 이름")
+		@Schema(description = "팀 이름", example = "my team 1")
 		String name,
 
 		@Schema(description = "팀 생성자")
