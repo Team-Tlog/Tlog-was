@@ -101,7 +101,7 @@ public class TeamService {
 				teamLeaderName = user.getName();
 
 			memberSimpleDtoList.add(
-					TeamMemberSimpleDto.from(user.getId(), user.getTbtiString())
+					TeamMemberSimpleDto.from(user)
 			);
 		}
 
