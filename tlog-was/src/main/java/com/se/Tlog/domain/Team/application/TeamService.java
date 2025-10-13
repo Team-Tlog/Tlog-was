@@ -89,23 +89,23 @@ public class TeamService {
 	) {
 		List<TeamUserJpaEntity> teamMembers = entry.getValue();
 		Team team = teamMembers.get(0).getTeam();
-		String teamLeaderName = null;
 		List<TeamMemberSimpleDto> memberSimpleDtoList = new ArrayList<>();
 
 		TravelPlan travelPlan = travelPlanMap.get(entry.getKey().toString());
 		TravelPlanDto travelPlanDto = travelPlan != null ? TravelPlanDto.from(travelPlan) : null;
 
+		User teamLeader = null;
 		for (TeamUserJpaEntity teamUserInTeam : teamMembers) {
 			User user = teamUserInTeam.getUser();
 			if (teamUserInTeam.isLeader())
-				teamLeaderName = user.getName();
+				teamLeader = user;
 
 			memberSimpleDtoList.add(
 					TeamMemberSimpleDto.from(user)
 			);
 		}
 
-		return TeamResponseDto.from(team, teamLeaderName, memberSimpleDtoList, travelPlanDto);
+		return TeamResponseDto.from(team, teamLeader, memberSimpleDtoList, travelPlanDto);
 	}
 	
 	public void deleteTeam(UUID requesterId, UUID teamId) {
