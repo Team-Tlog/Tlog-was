@@ -3,15 +3,20 @@ package com.se.Tlog.domain.Team.controller.dto;
 import com.se.Tlog.domain.Team.domain.InviteCodeUtil;
 import com.se.Tlog.domain.Team.domain.Team;
 import com.se.Tlog.domain.Wishlist.domain.dto.WishlistDestinationRes;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+@Schema
 public record TeamDetailDto(
         UUID teamId,
+        @Schema(example = "나의 팀")
         String teamName,
+        @Schema(example = "RENA")
         String tbtiString,
+        @Schema(example = "aBcdEF")
         String inviteCode,
         Long chatRoomId,
         LocalDate createdAt,
