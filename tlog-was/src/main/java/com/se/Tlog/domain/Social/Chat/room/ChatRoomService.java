@@ -65,4 +65,10 @@ public class ChatRoomService {
 
         return ChatRoomListResponseDto.from(room.getId(), content, lastMessageSentAt,countChatRoomJoinUsers,unreadCount);
     }
+
+    public Long getRoomIdByTeam(UUID teamId) {
+        return chatRoomRepository.findByTeamId(teamId)
+                .orElseThrow(() -> new CustomException(ErrorType.CHATROOM_NOT_FOUND))
+                .getId();
+    }
 }

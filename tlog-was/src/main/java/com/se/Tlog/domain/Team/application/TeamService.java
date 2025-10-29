@@ -164,6 +164,11 @@ public class TeamService {
 				.orElseThrow(() -> new CustomException(ErrorType.TRAVEL_PLAN_NOT_FOUND));
 
 		TravelPlanDto travelPlanDto = TravelPlanDto.from(travelPlan);
-		return TeamDetailDto.from(team, memberDtoList, wishList, travelPlanDto);
+		return TeamDetailDto.from(
+				team,
+				chatRoomService.getRoomIdByTeam(team.getId()),
+				memberDtoList,
+				wishList,
+				travelPlanDto);
 	}
 }

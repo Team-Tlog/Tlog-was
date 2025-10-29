@@ -3,7 +3,7 @@ package com.se.Tlog.domain.Team.controller;
 import java.util.List;
 import java.util.UUID;
 
-import com.se.Tlog.domain.Team.controller.dto.TeamCreateRes;
+import com.se.Tlog.domain.Team.controller.dto.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.se.Tlog.domain.Team.application.TeamService;
-import com.se.Tlog.domain.Team.controller.dto.CreateTeamRequestDto;
-import com.se.Tlog.domain.Team.controller.dto.TeamResponseDto;
-import com.se.Tlog.domain.Team.controller.dto.TeamUserRequestDto;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorRes;
 import com.se.Tlog.global.response.error.ErrorType;
@@ -84,11 +81,13 @@ public class TeamController {
 			},
 			responses = {
 					@ApiResponse(responseCode = "200", description = "팀 상세 정보 반환 성공"),
-					@ApiResponse(responseCode = "404", description = "존재하지 않는 팀입니다."),
-					@ApiResponse(responseCode = "500", description = "서버 내부 오류")
+					@ApiResponse(responseCode = "404", description = "존재하지 않는 팀입니다.",
+							content = @Content(schema = @Schema(implementation = ErrorRes.class))),
+					@ApiResponse(responseCode = "500", description = "서버 내부 오류",
+							content = @Content(schema = @Schema(implementation = ErrorRes.class)))
 			}
 	)
-	public ResponseEntity<?> getTeamDetails(@PathVariable UUID teamId) {
+	public ResponseEntity<SuccessRes<TeamDetailDto>> getTeamDetails(@PathVariable UUID teamId) {
 	    // 추후 인증 토큰을 사용해, 타 사용자의 팀을 함부로 조회하지 못하도록 변경 예정
 		return ResponseEntity.
 				ok(SuccessRes.from(teamService.getTeamDetails(teamId)));
