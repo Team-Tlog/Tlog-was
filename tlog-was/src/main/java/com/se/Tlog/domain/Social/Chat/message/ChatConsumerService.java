@@ -50,9 +50,12 @@ public class ChatConsumerService {
         ChatReadUsers chatReadUsers = ChatReadUsers.create(sender, chatMessage);
         chatReadUsersRepository.save(chatReadUsers);
 
+        int totalParticipants = chatRoomUserRepository.countChatRoomJoinUsers(chatRoom.getId());
+        int initialReadCount = 1;
+
         messagingTemplate.convertAndSend(
                 "/sub/chat/room/" + chatRoom.getId(),
-                ChatMessageDto.from(sender, chatRoom, savedChatMessage)
+                ChatMessageDto.from(savedChatMessage, initialReadCount, totalParticipants)
         );
 
         // connectedUserIds = 현재 채팅방 구독중인 유저
