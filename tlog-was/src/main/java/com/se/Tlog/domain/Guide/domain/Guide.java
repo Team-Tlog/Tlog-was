@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Guide {
     @Id
@@ -28,4 +30,28 @@ public class Guide {
     private double maxLongitude;
 
     private String infoUrl;
+
+    public static Guide create(
+            String imageUrl,
+            String title,
+            String description,
+            String property,
+            double minLatitude,
+            double minLongitude,
+            double maxLatitude,
+            double maxLongitude,
+            String infoUrl
+    ) {
+        Guide guide = new Guide();
+        guide.imageUrl = imageUrl;
+        guide.title = title;
+        guide.description = description;
+        guide.property = property;
+        guide.minLatitude = minLatitude;
+        guide.minLongitude = minLongitude;
+        guide.maxLatitude = maxLatitude;
+        guide.maxLongitude = maxLongitude;
+        guide.infoUrl = infoUrl;
+        return guide;
+    }
 }
