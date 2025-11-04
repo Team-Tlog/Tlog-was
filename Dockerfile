@@ -8,7 +8,7 @@ WORKDIR /app/tlog-was
 RUN ./gradlew build -x test
 
 
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre
 
 LABEL authors="gojungsu"
 
