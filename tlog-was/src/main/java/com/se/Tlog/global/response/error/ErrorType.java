@@ -86,6 +86,7 @@ public enum ErrorType {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 코스 리뷰(게시글)입니다."),
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
     TRAVEL_PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "여행 일정이 존재하지 않습니다."),
+    GUIDE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 id의 지역 행사가 존재하지 않습니다."),
     //데이터 충돌
     ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 회원가입된 사용자입니다."),
     ALREADY_EXISTS_SNSId(HttpStatus.CONFLICT, "이미 존재하는 Id 입니다."),
