@@ -1,5 +1,6 @@
 package com.se.Tlog.domain.Social.Chat.room;
 
+import com.se.Tlog.domain.Social.Chat.message.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
+    private final ChatService chatService;
 
     @GetMapping("/room/{hostId}")
     @Operation(
@@ -37,4 +39,26 @@ public class ChatRoomController {
     public ResponseEntity<?> getRoomList(@PathVariable(name = "hostId") UUID hostId) {
         return ResponseEntity.ok().body(SuccessRes.from(chatRoomService.getRoomList(hostId)));
     }
+
+    @GetMapping("/room/{roomId}/messages")
+    @Operation(
+            summary = "채팅방 메시지 히스토리 조회",
+            description = "채팅방 입장 시 과거 메시지를 페이지네이션으로 조회합니다.",
+            tags = {"ChatRoom 관리"},
+            parameters = {
+                    @Parameter(name = "roomId", description = "채팅방 ID"),
+                    @Parameter(name = "size", description = "한 페이지당 메시지 수 (기본값: 50)")
+            }
+    )
+    public ResponseEntity<?> getChatHistory(
+            @PathVariable Long roomId,
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(required = false) Long beforeMessageId
+    ) {
+        return ResponseEntity.ok()
+                .body(SuccessRes.from(
+                        chatService.getChatHistory(roomId, beforeMessageId, size)
+                ));
+    }
+
 }
