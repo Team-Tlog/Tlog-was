@@ -8,6 +8,6 @@ public record AddFixedTagDto(
         String tagId,
         
         @Schema(description = "태그 가중치")
-        int tagWeight) {
+        double tagWeight) {
 
 }
