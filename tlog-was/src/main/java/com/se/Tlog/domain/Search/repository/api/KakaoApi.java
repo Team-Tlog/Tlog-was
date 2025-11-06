@@ -35,7 +35,7 @@ public class KakaoApi {
                         .queryParam("category_group_code", categoryType)
                         .queryParam("x", longitude)
                         .queryParam("y", latitude)
-                        .queryParam("radius", 50000) // 5km로 고정
+                        .queryParam("radius", 5000) // 5km로 고정 (최대 20000까지)
                         .queryParam("page", page) // 1~45, 기본값 1
                         .queryParam("size", size) // 1~15, 기본값 15
                         .build())
