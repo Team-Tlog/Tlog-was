@@ -107,6 +107,7 @@ public enum ErrorType {
     // 외부 소셜 로그인 처리 중 에러
     SSO_ACCESSTOKEN_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "외부 인증 서버로부터 인증을 받는데 실패했습니다."),
     FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
+    RESTAURANT_FETCH_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "서버 통신 에러. 음식점 조회에 실패했습니다."),
     // 501 구현되지 않은 기능
     UNSUPPORTED_SSO_LOGIN(HttpStatus.NOT_IMPLEMENTED, "현재 해당 소셜 로그인 방식은 아직 지원되지 않습니다."),
   	UNSUPPORTED_REWARD_CRITERIA(HttpStatus.NOT_IMPLEMENTED, "현재 해당 보상 기준은 아직 지원되지 않습니다.");

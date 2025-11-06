@@ -126,11 +126,13 @@ sso:
   clientId:
     kakao: ${SSO_KAKAO_CLIENT_ID}
     google: ${SSO_GOOGLE_CLIENT_ID}
+    naver: ${SSO_NAVER_CLIENT_ID}
   callback:
     kakao: ${SSO_CALLBACK_URL}/kakao
     google: ${SSO_CALLBACK_URL}/google
   clientSecret:
     google: ${SSO_GOOGLE_SECRET}
+    naver: ${SSO_NAVER_SECRET}
 
 firebase-env:
   key-path: ${FIREBASE_SERVICE_ACCOUNT_KEY_PATH}
