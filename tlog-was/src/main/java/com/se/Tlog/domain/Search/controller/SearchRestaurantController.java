@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/restaurant")
 @RequiredArgsConstructor
@@ -41,7 +43,7 @@ public class SearchRestaurantController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류. 조회에 실패했습니다.",
                             content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
     )
-    public ResponseEntity<SuccessRes<RestaurantResultDto>> searchEatery(
+    public ResponseEntity<SuccessRes<List<RestaurantResultDto>>> searchEatery(
             @RequestParam double longitude,
             @RequestParam double latitude) {
         return ResponseEntity.ok(SuccessRes.from(
@@ -61,7 +63,7 @@ public class SearchRestaurantController {
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류. 조회에 실패했습니다.",
                             content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
     )
-    public ResponseEntity<SuccessRes<RestaurantResultDto>> searchCafe(
+    public ResponseEntity<SuccessRes<List<RestaurantResultDto>>> searchCafe(
             @RequestParam double longitude,
             @RequestParam double latitude) {
         return ResponseEntity.ok(SuccessRes.from(

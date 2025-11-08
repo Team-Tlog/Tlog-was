@@ -20,10 +20,10 @@ public class NaverBlog {
     }
 
     public void setTitle(String title) {
-        this.title = HtmlUtils.htmlUnescape(title).replace("<b>", "").replace("<b/>", "");
+        this.title = HtmlUtils.htmlUnescape(title).replace("<b>", "").replace("</b>", "");
     }
 
     public void setDescription(String description) {
-        this.description = HtmlUtils.htmlUnescape(description).replace("<b>", "").replace("<b/>", "");
+        this.description = HtmlUtils.htmlUnescape(description).replace("<b>", "").replace("</b>", "");
     }
 }
