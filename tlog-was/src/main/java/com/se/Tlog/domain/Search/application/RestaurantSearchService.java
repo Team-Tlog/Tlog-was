@@ -7,7 +7,8 @@ import com.se.Tlog.domain.Search.repository.api.NaverApi;
 import com.se.Tlog.domain.Search.repository.dto.*;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Random;
+import java.util.Arrays;
+import java.util.List;
 
 @ApplicationService
 @RequiredArgsConstructor
@@ -21,17 +22,17 @@ public class RestaurantSearchService {
         return RestaurantResultDto.from(restaurant, images.getItems(), blogs.getItems());
     }
 
-    public RestaurantResultDto searchEatery(double latitude, double longitude) {
+    public List<RestaurantResultDto> searchEatery(double latitude, double longitude) {
         KakaoLocalSearchRes rawRes = kakaoApi.searchEatery(latitude, longitude);
-        int idx = new Random().nextInt(0, Math.min(5, rawRes.getDocuments().length));
-        return makeResultByRestaurant(
-                rawRes.getDocuments()[idx]);
+        return Arrays.stream(rawRes.getDocuments())
+                .map(this::makeResultByRestaurant)
+                .toList();
     }
 
-    public RestaurantResultDto searchCafe(double latitude, double longitude) {
+    public List<RestaurantResultDto> searchCafe(double latitude, double longitude) {
         KakaoLocalSearchRes results = kakaoApi.searchCafe(latitude, longitude);
-        int idx = new Random().nextInt(0, Math.min(5, results.getDocuments().length));
-        return makeResultByRestaurant(
-                results.getDocuments()[idx]);
+        return Arrays.stream(results.getDocuments())
+                .map(this::makeResultByRestaurant)
+                .toList();
     }
 }
