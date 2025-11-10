@@ -17,30 +17,12 @@ public class TbtiQuestionService {
 
     public List<TbtiQuestionRes> getAllTbtiQuestion() {
         List<TbtiQuestion> questions = tbtiQuestionRepository.findAllFetch();
-        return questions.stream().map(question -> new TbtiQuestionRes(
-                question.getId(),
-                question.getContent(),
-                question.getAnswerWeight(),
-                question.getTraitCategory(),
-                question.getTraitCategory().getCategoryInitial(),
-                question.getTbtiAnswers().stream()
-                        .map(answer -> new TbtiAnswerDto(answer.getContent(), answer.getPercentage()))
-                        .toList())
-                ).toList();
+        return questions.stream().map(TbtiQuestionRes::from).toList();
     }
 
     public List<TbtiQuestionRes> getAllTbtiQuestionByTraitCategory(String traitCategory) {
         TraitCategory traitCategoryEnum = TraitCategory.fromString(traitCategory);
         List<TbtiQuestion> questions = tbtiQuestionRepository.findByTraitCategoryFetch(traitCategoryEnum);
-        return questions.stream().map(question -> new TbtiQuestionRes(
-                question.getId(),
-                question.getContent(),
-                question.getAnswerWeight(),
-                question.getTraitCategory(),
-                question.getTraitCategory().getCategoryInitial(),
-                question.getTbtiAnswers().stream()
-                        .map(answer -> new TbtiAnswerDto(answer.getContent(), answer.getPercentage()))
-                        .toList())
-                ).toList();
+        return questions.stream().map(TbtiQuestionRes::from).toList();
     }
 }
