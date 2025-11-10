@@ -5,6 +5,7 @@ import com.se.Tlog.global.response.error.ErrorType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = PROTECTED)
 public class TbtiQuestion {
     @Id
@@ -35,7 +37,7 @@ public class TbtiQuestion {
         this.content = content;
         this.traitCategory = traitCategory;
         this.tbtiAnswers = new ArrayList<TbtiAnswer>(tbtiAnswers);
-        this.tbtiAnswers.forEach(answer -> answer.setQuestion(this));
+        this.tbtiAnswers.forEach(answer -> answer.setTbtiQuestion(this));
         this.answerWeight = answerWeight;
     }
 
