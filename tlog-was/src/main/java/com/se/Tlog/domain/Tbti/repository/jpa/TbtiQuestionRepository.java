@@ -18,4 +18,7 @@ public interface TbtiQuestionRepository extends JpaRepository<TbtiQuestion, UUID
     
     @Query(value = "SELECT q FROM TbtiQuestion q JOIN FETCH q.tbtiAnswers WHERE q.traitCategory = :traitCategory")
     List<TbtiQuestion> findByTraitCategoryFetch(TraitCategory traitCategory);
+
+    @Query(value = "SELECT q FROM TbtiQuestion q JOIN FETCH q.tbtiAnswers a WHERE a.id = :id")
+    List<TbtiQuestion> findByAnswerId(long id);
 }
