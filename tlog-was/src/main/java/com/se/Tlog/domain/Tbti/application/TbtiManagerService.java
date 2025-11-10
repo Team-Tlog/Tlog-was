@@ -52,9 +52,8 @@ public class TbtiManagerService {
                 dto.getContent(),
                 dto.getTraitCategory(),
                 dto.getWeight());
-        TbtiQuestion savedEntity = tbtiQuestionRepository.save(tbtiQuestion);
 
-        return RawTbtiQuestionRes.from(savedEntity);
+        return RawTbtiQuestionRes.from(tbtiQuestion);
     }
 
     @Transactional
@@ -90,7 +89,6 @@ public class TbtiManagerService {
     public void deleteAnswer(long id) {
         List<TbtiQuestion> tbtiQuestions = tbtiQuestionRepository.findByAnswerId(id);
 
-        boolean isRemoved = false;
         for (TbtiQuestion question : tbtiQuestions) {
             TbtiAnswer answer = null;
             for (TbtiAnswer a : question.getTbtiAnswers())
@@ -99,14 +97,9 @@ public class TbtiManagerService {
                     break;
                 }
 
-            if (answer != null) {
+            if (answer != null)
                 question.getTbtiAnswers().remove(answer);
-                isRemoved = true;
-            }
         }
-
-        if (isRemoved)
-            tbtiQuestionRepository.saveAll(tbtiQuestions);
     }
 
     @Transactional
