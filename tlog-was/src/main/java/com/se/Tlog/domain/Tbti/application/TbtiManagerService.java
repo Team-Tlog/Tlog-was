@@ -48,9 +48,10 @@ public class TbtiManagerService {
         TbtiQuestion tbtiQuestion = tbtiQuestionRepository.findById(dto.getId())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND));
 
-        tbtiQuestion.setContent(dto.getContent());
-        tbtiQuestion.setTraitCategory(dto.getTraitCategory());
-        tbtiQuestion.setAnswerWeight(dto.getWeight());
+        tbtiQuestion.updateQuestion(
+                dto.getContent(),
+                dto.getTraitCategory(),
+                dto.getWeight());
         TbtiQuestion savedEntity = tbtiQuestionRepository.save(tbtiQuestion);
 
         return RawTbtiQuestionRes.from(savedEntity);
@@ -71,13 +72,14 @@ public class TbtiManagerService {
         if (answer == null) {
             answer = TbtiAnswer.createAnswer(
                     dto.getContent(),
-                    dto.getPercentage());
-            answer.setTbtiQuestion(tbtiQuestion);
+                    dto.getPercentage(),
+                    tbtiQuestion);
             tbtiQuestion.getTbtiAnswers().add(answer);
         }
         else {
-            answer.setContent(dto.getContent());
-            answer.setPercentage(dto.getPercentage());
+            answer.updateAnswer(
+                    dto.getContent(),
+                    dto.getPercentage());
         }
 
         TbtiQuestion savedEntity = tbtiQuestionRepository.save(tbtiQuestion);

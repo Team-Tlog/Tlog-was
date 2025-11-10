@@ -1,7 +1,6 @@
 package com.se.Tlog.domain.Tbti.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,11 +8,9 @@ import static lombok.AccessLevel.*;
 
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = PROTECTED)
 public class TbtiAnswer {
     @Id
@@ -28,22 +25,30 @@ public class TbtiAnswer {
 
     private int percentage;
 
-    @Builder
-    private TbtiAnswer(String content, int percentage) {
+    public void setQuestion(TbtiQuestion question) {
+        this.tbtiQuestion = question;
+    }
+
+    public void updateAnswer(String content, int percentage) {
+        if (content == null)
+            throw new CustomException(ErrorType.CONTENT_NOT_FOUND);
+        if (percentage < 0 || percentage > 99)
+            throw new CustomException(ErrorType.INVALID_ANSWER_PERCENTAGE);
+
         this.content = content;
         this.percentage = percentage;
     }
 
     //응답 생성 메서드
     public static TbtiAnswer createAnswer(String content, int percentage) {
-        if (content == null)
-            throw new CustomException(ErrorType.CONTENT_NOT_FOUND);
-        if (percentage < 0 || percentage > 99)
-            throw new CustomException(ErrorType.INVALID_ANSWER_PERCENTAGE);
-        
-        return TbtiAnswer.builder()
-                .content(content)
-                .percentage(percentage)
-                .build();
+        TbtiAnswer answer = new TbtiAnswer();
+        answer.updateAnswer(content, percentage);
+        return answer;
+    }
+
+    public static TbtiAnswer createAnswer(String content, int percentage, TbtiQuestion question) {
+        TbtiAnswer answer = createAnswer(content, percentage);
+        answer.setQuestion(question);
+        return answer;
     }
 }
