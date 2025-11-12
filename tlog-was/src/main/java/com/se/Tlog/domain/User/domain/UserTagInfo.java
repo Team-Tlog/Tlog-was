@@ -45,17 +45,21 @@ public class UserTagInfo {
     private String tagId;
 
     private double weight;
-    
-    // 25.7.28
-    //   특별히 복잡한 로직이 요구되지 않는 부분이라
-    //   static으로 분리하지 않고 그대로 생성자를 사용하도록 구성했습니다.
-    public UserTagInfo(User user, String tagId) {
+
+    private UserTagInfo(User user, String tagId, double weight) {
         this.user = user;
         this.tagId = tagId;
+        this.weight = weight;
     }
-    
-    public static List<UserTagInfo> of(User user, List<Tag> tags) {
-        return tags.stream().map(tag -> new UserTagInfo(user, tag.getId())).toList();
+
+    public static List<UserTagInfo> of(User user, Map<TagType, Tag> allTags, Map<TagType, Long> preferTagCount) {
+        Map<TagType, Double> tagWeightMap = getTagWeightMap(new Tbti(user.getTbti()), allTags, preferTagCount);
+        return tagWeightMap.keySet().stream()
+                .map(type -> new UserTagInfo(
+                        user,
+                        allTags.get(type).getId(),
+                        tagWeightMap.get(type)))
+                .toList();
     }
 
     public static Map<TagType, Double> getTagWeightMap(Tbti tbti, Map<TagType, Tag> allTags, Map<TagType, Long> preferTagCount) {
