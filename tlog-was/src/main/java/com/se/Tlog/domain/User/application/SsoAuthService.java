@@ -15,6 +15,7 @@ import com.se.Tlog.domain.User.controller.dto.RegisterRequest;
 import com.se.Tlog.domain.User.controller.dto.RegisterUserProfileDto;
 import com.se.Tlog.domain.User.controller.dto.SsoUserInfo;
 import com.se.Tlog.domain.User.controller.dto.TokenDto;
+import com.se.Tlog.domain.User.controller.dto.UserTagRes;
 import com.se.Tlog.domain.User.domain.PreferPhoto;
 import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.domain.User;
@@ -148,4 +149,19 @@ public class SsoAuthService {
         }
     }
 
+    @Deprecated(since = "테스트 환경 전용입니다.")
+    public List<UserTagRes> getUserTags(RegisterUserProfileDto request) {
+        Map<TagType, Tag> tags = tagRepository.findAll().stream()
+                .filter(tag -> tag.getTagType() != null)
+                .collect(Collectors.toMap(Tag::getTagType, Function.identity()));
+        Map<TagType, Double> tagWeightMap = UserTagInfo.getTagWeightMap(
+                new Tbti(Integer.parseInt(request.tbtiValue())),
+                tags,
+                getPreferTagCount(tags, request.preferPhotoIds()));
+        return tagWeightMap.keySet().stream()
+                .map(type -> new UserTagRes(
+                        tags.get(type).getName(),
+                        tagWeightMap.get(type)))
+                .toList();
+    }
 }
