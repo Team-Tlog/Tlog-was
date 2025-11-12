@@ -36,6 +36,8 @@ public class UserTagInfo {
     
     @NonNull
     private String tagId;
+
+    private double weight;
     
     // 25.7.28
     //   특별히 복잡한 로직이 요구되지 않는 부분이라
