@@ -1,11 +1,14 @@
 package com.se.Tlog.domain.Social.Chat.message;
 
+import com.se.Tlog.domain.Social.Chat.message.dto.ChatMessageReadDto;
 import com.se.Tlog.domain.Social.Chat.message.dto.ChatMessageRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -20,5 +23,11 @@ public class ChatStompController {  // WebSocket 전용
             throw new IllegalArgumentException("senderId와 chatRoomId는 필수입니다.");
         }
         chatService.sendChatMessage(chatMessageRequestDto);
+    }
+
+    @MessageMapping("/chat/read")
+    @Transactional
+    public void handleReadMessage(ChatMessageReadDto readDto) {
+        chatService.checkMessage(readDto);
     }
 }
