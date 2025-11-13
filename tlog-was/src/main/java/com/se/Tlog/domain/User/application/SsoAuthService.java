@@ -7,12 +7,15 @@ import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.domain.User.repository.jpa.UserTagRepository;
 import com.se.Tlog.domain.ApplicationService;
 import com.se.Tlog.domain.Travel.domain.Tag;
+import com.se.Tlog.domain.Tbti.domain.Tbti;
+import com.se.Tlog.domain.Travel.domain.TagType;
 import com.se.Tlog.domain.Travel.repository.mongo.TagRepository;
 import com.se.Tlog.domain.User.controller.dto.LoginRequest;
 import com.se.Tlog.domain.User.controller.dto.RegisterRequest;
 import com.se.Tlog.domain.User.controller.dto.RegisterUserProfileDto;
 import com.se.Tlog.domain.User.controller.dto.SsoUserInfo;
 import com.se.Tlog.domain.User.controller.dto.TokenDto;
+import com.se.Tlog.domain.User.controller.dto.UserTagRes;
 import com.se.Tlog.domain.User.domain.PreferPhoto;
 import com.se.Tlog.domain.User.domain.SsoType;
 import com.se.Tlog.domain.User.domain.User;
@@ -32,6 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @ApplicationService
 @RequiredArgsConstructor
@@ -77,23 +82,34 @@ public class SsoAuthService {
                 .firebaseCustomToken(customToken)
                 .build();
     }
-    
-    private User registerNewUser(SsoUserInfo ssoUserInfo, RegisterUserProfileDto userProfiles) {
-        User newUser = userRepository.save(
-                User.create(new UserRegisterInfo(ssoUserInfo, userProfiles)));
 
-        List<Integer> photoIds = userProfiles.preferPhotoIds();
+    private Map<TagType, Long> getPreferTagCount(Map<TagType, Tag> allTags, List<Integer> photoIds) {
         if (photoIds != null && !photoIds.isEmpty()) {
             List<PreferPhoto> photos = preferPhotoRepository.findAllById(photoIds);
             List<String> tagIds = photos.stream()
                     .flatMap(photo -> photo.getTagIds().stream())
                     .toList(); // 25.9.23 추후 겹치는 태그를 더 강하게 표시하는 등의 목적을 위해 중복값을 허용합니다.
-            List<Tag> tags = tagRepository.findAllById(tagIds);
-            if (!tags.isEmpty())
-                userTagRepository.saveAll(UserTagInfo.of(newUser, tags));
+
+            Map<String, Tag> tags = allTags.values().stream().collect(Collectors.toMap(Tag::getId, Function.identity()));
+            return tagIds.stream()
+                    .collect(Collectors.groupingBy(id -> tags.get(id).getTagType(), Collectors.counting()));
         }
+        return Map.of();
+    }
+    
+    private User registerNewUser(SsoUserInfo ssoUserInfo, RegisterUserProfileDto userProfiles) {
+        User newUser = userRepository.save(
+                User.create(new UserRegisterInfo(ssoUserInfo, userProfiles)));
+
+        Map<TagType, Tag> tags = tagRepository.findAll().stream()
+                .filter(tag -> tag.getTagType() != null)
+                .collect(Collectors.toMap(Tag::getTagType, Function.identity()));
+        Map<TagType, Long> preferTagCount = getPreferTagCount(tags, userProfiles.preferPhotoIds());
+        userTagRepository.saveAll(UserTagInfo.of(newUser, tags, preferTagCount));
         return newUser;
     }
+
+
     
     public TokenDto login(LoginRequest loginRequest) {
         SsoUserInfo ssoUserInfo = getSsoUserInfo(loginRequest.type(), loginRequest.accessToken());
@@ -133,4 +149,19 @@ public class SsoAuthService {
         }
     }
 
+    @Deprecated(since = "테스트 환경 전용입니다.")
+    public List<UserTagRes> getUserTags(RegisterUserProfileDto request) {
+        Map<TagType, Tag> tags = tagRepository.findAll().stream()
+                .filter(tag -> tag.getTagType() != null)
+                .collect(Collectors.toMap(Tag::getTagType, Function.identity()));
+        Map<TagType, Double> tagWeightMap = UserTagInfo.getTagWeightMap(
+                new Tbti(Integer.parseInt(request.tbtiValue())),
+                tags,
+                getPreferTagCount(tags, request.preferPhotoIds()));
+        return tagWeightMap.keySet().stream()
+                .map(type -> new UserTagRes(
+                        tags.get(type).getName(),
+                        tagWeightMap.get(type)))
+                .toList();
+    }
 }

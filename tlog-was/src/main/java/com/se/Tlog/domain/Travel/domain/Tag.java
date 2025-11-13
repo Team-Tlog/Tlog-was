@@ -17,6 +17,8 @@ public class Tag {
 
 	private boolean isDeleted = false;
 
+	private TagType tagType = null;
+
 	private Tag(String name, int weight) {
 		this.name = name;
 	}
