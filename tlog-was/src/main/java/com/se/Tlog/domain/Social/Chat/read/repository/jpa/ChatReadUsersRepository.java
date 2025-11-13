@@ -21,9 +21,6 @@ public interface ChatReadUsersRepository extends JpaRepository<ChatReadUsers,Lon
             "GROUP BY cr.message.id")
     List<Object[]> countReadsByMessageIds(@Param("messageIds") List<Long> messageIds);
 
-    // 특정 메시지의 읽음 수
-    int countByMessage(ChatMessage message);
-
     // 메시지 ID로 읽음 수 조회
     @Query("SELECT COUNT(cr) FROM ChatReadUsers cr WHERE cr.message.id = :messageId")
     int countByMessageId(@Param("messageId") Long messageId);
