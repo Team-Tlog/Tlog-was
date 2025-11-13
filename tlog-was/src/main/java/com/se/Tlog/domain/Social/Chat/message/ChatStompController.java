@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatStompController {  // WebSocket 전용
     private final ChatService chatService;
 
-    // size = 1000 자 넘길시 400 에러 반환
     @MessageMapping("/chat/message")
     public void message(@Payload @Valid ChatMessageRequestDto chatMessageRequestDto) {
         if (chatMessageRequestDto.senderId() == null || chatMessageRequestDto.chatRoomId() == null) {
