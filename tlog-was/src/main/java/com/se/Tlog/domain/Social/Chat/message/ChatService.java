@@ -1,9 +1,6 @@
 package com.se.Tlog.domain.Social.Chat.message;
 
-import com.se.Tlog.domain.Social.Chat.message.dto.ChatHistoryResponse;
-import com.se.Tlog.domain.Social.Chat.message.dto.ChatMessageDto;
-import com.se.Tlog.domain.Social.Chat.message.dto.ChatMessageReadDto;
-import com.se.Tlog.domain.Social.Chat.message.dto.ChatMessageRequestDto;
+import com.se.Tlog.domain.Social.Chat.message.dto.*;
 import com.se.Tlog.domain.Social.Chat.read.ChatReadUsers;
 import com.se.Tlog.domain.Social.Chat.room.ChatRoom;
 import com.se.Tlog.domain.Social.Chat.message.repository.jpa.ChatMessageRepository;
@@ -17,6 +14,7 @@ import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +32,7 @@ public class ChatService {
     private final RabbitPublisher rabbitPublisher;
     private final UserDomainService userDomainService;
     private final ChatRoomUserRepository chatRoomUserRepository;
+    private final SimpMessageSendingOperations messagingTemplate;
 
     @Transactional
     public void sendChatMessage(ChatMessageRequestDto chatMessageRequestDto) {
@@ -56,8 +55,20 @@ public class ChatService {
         Boolean alreadyRead = chatReadUsersRepository.existsByUserAndMessage(user, chatMessage);
         if(!alreadyRead){
             ChatReadUsers chatReadUsers = ChatReadUsers.create(user, chatMessage);
-            chatReadUsersRepository.save(chatReadUsers);
+            chatReadUsersRepository.saveAndFlush(chatReadUsers);
         }
+        
+        // 갱신된 unreadCount 게산 및 브로드캐스트
+        ChatRoom chatRoom = chatMessage.getChatRoom();
+        int totalParticipants = chatRoomUserRepository.countChatRoomJoinUsers(chatRoom.getId());
+
+        int currentReadCount = chatReadUsersRepository.countByMessageId(chatMessage.getId());
+        int newUnreadCount = totalParticipants - currentReadCount;
+
+        messagingTemplate.convertAndSend(
+                "/sub/chat/room/" + chatRoom.getId(),
+                MessageReadUpdateDto.from(chatMessage.getId(), newUnreadCount)
+        );
     }
 
     @Transactional(readOnly = true)
