@@ -24,10 +24,6 @@ public class BannerDto {
     private List<String> destinationIds;
     */
 
-    public static BannerDto create(RecBanner banner) {
-        return create(banner, banner.getTitle());
-    }
-
     public static BannerDto create(RecBanner banner, String title) {
         return new BannerDto(
                 banner.getId(),
