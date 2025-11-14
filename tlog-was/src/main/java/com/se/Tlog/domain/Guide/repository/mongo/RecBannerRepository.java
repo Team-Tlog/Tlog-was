@@ -24,6 +24,10 @@ public class RecBannerRepository {
     private final MongoTemplate mongoTemplate;
     private final String COLLECTION_NAME = "recommend_banner";
 
+    public RecBanner findById(String id) {
+        return mongoTemplate.findById(id, RecBanner.class);
+    }
+
     public List<RecBanner> findAll() {
         return mongoTemplate.findAll(RecBanner.class, COLLECTION_NAME);
     }
