@@ -15,11 +15,7 @@ import com.se.Tlog.global.response.error.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @ApplicationService
 @RequiredArgsConstructor
@@ -68,8 +64,8 @@ public class DestinationService {
     }
 
     public Slice<DestinationSummaryRes> getAllDestinations(Pageable pageable, String city,
-                                                          DestinationSortType sortType, String tbti) {
-        List<Destination> destinations = destinationRepoExtension.getDestinations(pageable, city, sortType);
+                                                          DestinationSortType sortType, UUID userId) {
+        List<Destination> destinations = destinationRepoExtension.getDestinations(pageable, city, sortType, userId);
         boolean hasNext = destinations.size() > pageable.getPageSize();
 
         if (hasNext) {
