@@ -133,6 +133,9 @@ sso:
   clientSecret:
     google: ${SSO_GOOGLE_SECRET}
     naver: ${SSO_NAVER_SECRET}
+external:
+  url:
+    tlog-ai: ${TLOG_AI_URL}
 
 firebase-env:
   key-path: ${FIREBASE_SERVICE_ACCOUNT_KEY_PATH}
