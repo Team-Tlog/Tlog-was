@@ -1,25 +1,28 @@
 package com.se.Tlog.domain.Travel.controller;
 
 import com.se.Tlog.domain.Travel.application.DestinationService;
-import com.se.Tlog.domain.Travel.controller.dto.DestinationByTagDto;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDetailsRes;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationDto;
 import com.se.Tlog.domain.Travel.controller.dto.DestinationSummaryRes;
 import com.se.Tlog.domain.Travel.domain.DestinationSortType;
+import com.se.Tlog.global.exception.CustomException;
+import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.response.success.SuccessRes;
 import com.se.Tlog.global.response.success.SuccessType;
+import com.se.Tlog.global.security.dto.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -52,8 +55,10 @@ public class DestinationController {
 
     @GetMapping
     @Operation(
-            summary = "전체 여행지 리스트 조회",
-            description = "전체 여행지 정보를 페이지네이션하여 반환합니다.",
+            summary = "전체 여행지 리스트 조회 (인증 토큰 필요)",
+            description = "전체 여행지 정보를 페이지네이션하여 반환합니다."
+                        + "<br>RECOMMEND 정렬을 사용할 경우, city에 <b>지역코드</b>가 입력되어야 합니다!"
+                        + "<br><br><b>인증 토큰이 필요합니다!</b>",
             tags = {"Travel 도메인"},
             security = @SecurityRequirement(name = "JwtAuthScheme"),
             responses = {
@@ -62,13 +67,16 @@ public class DestinationController {
             }
     )
     public ResponseEntity<SuccessRes<Slice<DestinationSummaryRes>>> getAllDestinations(
+            @AuthenticationPrincipal CustomUserDetails user,
             @PageableDefault(size = 10) Pageable pageable,
             @RequestParam String city,
-            @RequestParam(defaultValue = "RECOMMAND") DestinationSortType sortType,
-            @RequestParam(required = false) String tbti) {
+            @RequestParam(defaultValue = "RECOMMAND") DestinationSortType sortType) {
+        if (user == null)
+            throw new CustomException(ErrorType.UN_AUTHENTICATION);
+
         return ResponseEntity
                 .status(SuccessType.DESTINATION_GET_SUCCESS.getStatus())
-                .body(SuccessRes.from(destinationService.getAllDestinations(pageable,city,sortType,tbti)));
+                .body(SuccessRes.from(destinationService.getAllDestinations(pageable,city,sortType, UUID.fromString(user.getId()))));
     }
 
     @GetMapping("/{id}")
