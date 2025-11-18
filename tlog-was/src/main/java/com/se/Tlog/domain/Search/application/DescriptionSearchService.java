@@ -1,7 +1,11 @@
 package com.se.Tlog.domain.Search.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.se.Tlog.domain.Search.controller.dto.PopularDestinationDto;
+import com.se.Tlog.domain.Search.repository.mongo.PopularityRepository;
+import com.se.Tlog.domain.Travel.domain.Destination;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class DescriptionSearchService {
 	private final DestinationSearchRepository searchRepository;
 	private final DestinationService destinationService;
+	private final PopularityRepository popularityRepository;
     
     public List<DestinationSummaryRes> autoCompleteDestinationByAddress(String address) {
         return destinationService.convertToDto(
@@ -37,4 +42,14 @@ public class DescriptionSearchService {
         return destinationService.convertToDto(
                 searchRepository.searchByNameAndCity(name, city, pageable));
     }
+
+	public List<PopularDestinationDto> getPopularDestinations() {List<Destination> popDests = popularityRepository.findPopularDestinations(10);
+		List<PopularDestinationDto> result = popDests.stream()
+				.skip(1)
+				.map(PopularDestinationDto::create)
+				.collect(Collectors.toList());
+		if (!popDests.isEmpty())
+			result.add(0, PopularDestinationDto.create(popDests.get(0), "전국"));
+		return result;
+	}
 }
