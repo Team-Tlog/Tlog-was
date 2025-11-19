@@ -2,6 +2,7 @@ package com.se.Tlog.domain.Search.controller;
 
 import java.util.List;
 
+import com.se.Tlog.domain.Search.controller.dto.PopularDestinationDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -104,4 +105,18 @@ public class SearchDestinationController {
         return ResponseEntity.ok(SuccessRes.from(
                 searchService.searchDestinationByCityAndName(pageable, city, name)));
     }
+
+	@GetMapping("/popular-destination")
+	@Operation (
+			summary = "현재 인기 여행지 조회",
+			description = "현재 인기 여행지 정보를 반환합니다.",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "처리 성공, 인기 여행지 리스트를 반환합니다."),
+					@ApiResponse(responseCode = "500", description = "서버 내부 오류. 조회에 실패했습니다.",
+							content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
+	)
+	public ResponseEntity<SuccessRes<List<PopularDestinationDto>>> getPopularDestinations() {
+		return ResponseEntity.ok(SuccessRes.from(
+				searchService.getPopularDestinations()));
+	}
 }
