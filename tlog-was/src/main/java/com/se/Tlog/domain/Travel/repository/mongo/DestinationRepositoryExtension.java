@@ -2,6 +2,7 @@ package com.se.Tlog.domain.Travel.repository.mongo;
 
 import com.mongodb.client.result.UpdateResult;
 import com.se.Tlog.domain.Review.domain.Review;
+import com.se.Tlog.domain.Search.repository.api.AiRecApi;
 import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.DestinationSortType;
 import com.se.Tlog.domain.Travel.repository.mongo.dto.DestinationOfTagProjection;
@@ -27,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -34,6 +37,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DestinationRepositoryExtension {
     private final MongoTemplate mongoTemplate;
+    private final AiRecApi aiRecApi;
 
     public void increaseReviewCountAndRating(String destinationId, int rating, float approximateAverage) {
         Update update = new Update()
@@ -82,7 +86,7 @@ public class DestinationRepositoryExtension {
         }
     }
 
-    public List<Destination> getDestinations(Pageable pageable, String city, DestinationSortType sortType) {
+    private List<Destination> getDestinationsBySortType(Pageable pageable, String city, DestinationSortType sortType) {
         MatchOperation matchStage = Aggregation.match(Criteria.where("city").is(city));
 
         SortOperation sortStage = null;
@@ -108,6 +112,36 @@ public class DestinationRepositoryExtension {
 
         return new ArrayList<>(mongoTemplate.aggregate(aggregation, "destinations", Destination.class)
                 .getMappedResults());
+    }
+
+    private List<Destination> getDestinationsByRecommendType(UUID userId, String regionCode, Pageable pageable) {
+        final int MAX_SIZE = 50;
+
+        int region_code = -1;
+        try {
+            region_code = Integer.parseInt(regionCode);
+        } catch (Exception e) {
+            throw new CustomException(ErrorType.INVALID_REGION_CODE);
+        }
+
+        int last = Math.min(MAX_SIZE, (int)(pageable.getOffset() + pageable.getPageSize()) + 1); // 다음 페이지 존재 여부 확인 위해 +1
+        List<String> ids = aiRecApi.getDestinationIds(userId, region_code, last);
+        if (ids.size() <= pageable.getOffset())
+            return List.of();
+
+        List<String> pagedIds = ids.subList((int)pageable.getOffset(), ids.size());
+
+        Query q = Query.query(Criteria.where("_id").in(pagedIds));
+        Map<String, Destination> destinations = mongoTemplate.find(q, Destination.class)
+                .stream().collect(Collectors.toMap(Destination::getId, Function.identity()));
+        return pagedIds.stream().map(destinations::get).collect(Collectors.toList());
+    }
+
+    public List<Destination> getDestinations(Pageable pageable, String city, DestinationSortType sortType, UUID userId) {
+        if (sortType == DestinationSortType.RECOMMEND)
+            return getDestinationsByRecommendType(userId, city, pageable);
+        else
+            return getDestinationsBySortType(pageable, city, sortType);
     }
     
     public Map<String, Destination> findAllByEachTags(List<String> tagsId) {

@@ -1,5 +1,6 @@
 package com.se.Tlog.global.response.error;
 
+import com.se.Tlog.domain.Travel.domain.DestinationSortType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,9 @@ public enum ErrorType {
     INVALID_ANSWER_PERCENTAGE(HttpStatus.BAD_REQUEST, "TBTI 응답의 값은 0~99사이여야 합니다."),
     QUESTION_HAS_NO_ANSWER(HttpStatus.BAD_REQUEST, "TBTI 질문에는 응답이 1개 이상 존재해야 합니다."),
     INVALID_QUESTION_WEIGHT(HttpStatus.BAD_REQUEST, "TBTI 질문의 가중치는 1~5사이여야 합니다."),
+
+    // 여행지 추천 관련
+    INVALID_REGION_CODE(HttpStatus.BAD_REQUEST, DestinationSortType.RECOMMEND.name() + "타입 조회를 위해서는 city에 지역코드가 필요합니다."),
 
     // 인증
     // 401
