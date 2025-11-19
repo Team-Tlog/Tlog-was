@@ -1,12 +1,12 @@
 package com.se.Tlog.domain.Course.domain;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.se.Tlog.global.exception.CustomException;
@@ -28,24 +28,29 @@ public class Course {
     
     private LocalDate startDate;
     private LocalDate endDate;
-    @Transient
-    private int duration;
     
     private List<CourseDate> dates;
-    
-    /**
-     * 특정 날짜(day일차)에 여행지를 추가합니다.
-     * <br/>day는 1부터 시작하는 날짜 값입니다.
-     * @param day 1부터 시작하는 날짜 값
-     * @param destinationId
-     */
+
+    public int getDuration() {
+        if(startDate == null || endDate == null || startDate.isAfter(endDate)) return 0;
+
+        return (int) ChronoUnit.DAYS.between(startDate, endDate) + 1;
+    }
+
     public void addDestination(int day, String destinationId) {
-        if (day < 1 || duration < day)
+        if (day < 1 || getDuration() < day)
             throw new CustomException(ErrorType.INVALID_COURSE_DATE);
-        
-        while (dates.size() < day)
-            dates.add(CourseDate.create());
-        dates.get(day - 1).getDestinations().add(destinationId);
+
+        if (this.dates == null) {
+            this.dates = new ArrayList<>();
+        }
+
+        while (dates.size() < day) {
+            int newDayNumber = dates.size() + 1;
+            dates.add(CourseDate.create(newDayNumber, new ArrayList<String>()));
+        }
+
+        dates.get(day - 1).getDestinationsIds().add(destinationId);
     }
     
     private Course(
@@ -58,7 +63,6 @@ public class Course {
         this.ownerType = ownerType;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.duration = startDate.until(endDate).getDays() + 1;
         if (dates == null)
             dates = new ArrayList<CourseDate>();
         this.dates = dates;

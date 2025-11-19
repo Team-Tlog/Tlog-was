@@ -1,3 +1,4 @@
+/*
 package com.se.Tlog.domain.Course.application;
 
 import java.util.ArrayList;
@@ -44,11 +45,13 @@ public class CourseService {
                 throw new CustomException(ErrorType.TEAM_NOT_FOUND);
     }
     
-    /**
+    */
+/**
      * 코스와 관련된 모든 여행지 정보를 <여행지id, dto> 맵으로 반환합니다.
      * @param courses
      * @return
-     */
+     *//*
+
     private Map<String, DestinationSummaryRes> getAllDestinationByCourse(List<Course> courses) {
         // DTO 변환을 위한 DB 로딩
         List<Destination> destinations = destinationRepository.findAllById(
@@ -70,12 +73,14 @@ public class CourseService {
                 .collect(Collectors.toMap(DestinationSummaryRes::id, d -> d));
     }
     
-    /**
+    */
+/**
      * 여행 코스 정보를 조회합니다.
      * @param ownerId
      * @param ownerType
      * @return
-     */
+     *//*
+
     public List<CourseResponseDto> getCourseList(UUID ownerId, OwnerType ownerType) {
         validateOwner(ownerId, ownerType);
         
@@ -125,3 +130,4 @@ public class CourseService {
         return newCourse.getId();
     }
 }
+*/

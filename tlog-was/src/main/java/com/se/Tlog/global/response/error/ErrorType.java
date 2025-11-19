@@ -87,6 +87,7 @@ public enum ErrorType {
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
     TRAVEL_PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "여행 일정이 존재하지 않습니다."),
     GUIDE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 id의 지역 행사가 존재하지 않습니다."),
+    TEAM_LEADER_NOT_FOUND(HttpStatus.NOT_FOUND, "리더가 존재하지 않습니다."),
     //데이터 충돌
     ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 회원가입된 사용자입니다."),
     ALREADY_EXISTS_SNSId(HttpStatus.CONFLICT, "이미 존재하는 Id 입니다."),
@@ -104,6 +105,7 @@ public enum ErrorType {
     FIREBASE_INITIALIZE_FAIL_KEY_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러. Firebase Key 파일을 찾지 못했습니다."),
     BLACKLIST_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"블랙리스트 등록에 실패했습니다."),
     FIREBASE_CUSTOM_TOKEN_ISSUE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "Firebase 커스텀 토큰 발급 실패"),
+    AI_RECOMMENDATION_FAILD(HttpStatus.INTERNAL_SERVER_ERROR, "AI 여행지 추천을 실패했습니다."),
     // 외부 소셜 로그인 처리 중 에러
     SSO_ACCESSTOKEN_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "외부 인증 서버로부터 인증을 받는데 실패했습니다."),
     FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다."),
@@ -111,7 +113,7 @@ public enum ErrorType {
     AI_DESTINATION_FETCH_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "서버 통신 에러. AI 추천 요청에 실패했습니다."),
     // 501 구현되지 않은 기능
     UNSUPPORTED_SSO_LOGIN(HttpStatus.NOT_IMPLEMENTED, "현재 해당 소셜 로그인 방식은 아직 지원되지 않습니다."),
-  	UNSUPPORTED_REWARD_CRITERIA(HttpStatus.NOT_IMPLEMENTED, "현재 해당 보상 기준은 아직 지원되지 않습니다.");
+  	UNSUPPORTED_REWARD_CRITERIA(HttpStatus.NOT_IMPLEMENTED, "현재 해당 보상 기준은 아직 지원되지 않습니다."),;
 
 
     private final HttpStatus status;
