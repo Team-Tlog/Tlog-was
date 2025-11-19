@@ -13,7 +13,9 @@ public record WishlistDestinationRes(
         Location location,
         String imageUrl,
         String description,
-        List<TagCount> tagCountList
+        List<TagCount> tagCountList,
+        String city,
+        String district
 ) {
     public static WishlistDestinationRes from(Destination destination, List<TagCount> topTags) {
         return new WishlistDestinationRes(
@@ -22,7 +24,9 @@ public record WishlistDestinationRes(
                 destination.getLocation(),
                 destination.getImageUrl(),
                 destination.getDescription(),
-                topTags
+                topTags,
+                destination.getCity(),
+                destination.getDistrict()
         );
     }
 }

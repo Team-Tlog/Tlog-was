@@ -10,21 +10,27 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CourseDate {
-    // private int day;
-    
-    private List<String> destinations;
-    
+
+
+    private int dayNumber;
+    private List<String> destinationsIds;
+
+    private CourseDate(int dayNumber, List<String> destinations) {
+        this.dayNumber = dayNumber;
+        this.destinationsIds = destinations;
+    }
+
     private CourseDate(List<String> destinations) {
-        this.destinations = destinations;
+        this.destinationsIds = destinations;
     }
     
     public static CourseDate create() {
-        return create(null);
+        return new CourseDate(0, new ArrayList<String>());
     }
-    
-    public static CourseDate create(List<String> destinations) {
+
+    public static CourseDate create(int dayNumber, List<String> destinations) {
         if (destinations == null)
             destinations = new ArrayList<String>();
-        return new CourseDate(destinations);
+        return new CourseDate(dayNumber, destinations);
     }
 }

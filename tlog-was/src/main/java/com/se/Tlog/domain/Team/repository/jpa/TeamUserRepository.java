@@ -39,4 +39,7 @@ public interface TeamUserRepository extends JpaRepository<TeamUserJpaEntity, Lon
 	    + "from TeamUserJpaEntity tu "
 	    + "where tu.user.id = :userId)")
     List<TeamUserJpaEntity> findAllMembersByUserIds(@Param("userId") UUID userId);
+
+	@Query("SELECT tu.user.id FROM TeamUserJpaEntity tu WHERE tu.team.id = :teamId AND tu.isLeader = true")
+	Optional<UUID> findLeaderUuidByTeamId(@Param("teamId") UUID teamId);
 }
