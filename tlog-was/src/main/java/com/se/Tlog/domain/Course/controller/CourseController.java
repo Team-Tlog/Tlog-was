@@ -84,7 +84,7 @@ public class CourseController {
                 .body(SuccessRes.from(courseId));
     }
 
-    @GetMapping("/{courseId}")
+    /*@GetMapping("/{courseId}")
     @Operation(
             summary = "코스 상세 조회",
             description = "저장된 특정 코스 ID에 해당하는 상세 정보를 조회하고 지역별로 그룹화하여 반환합니다.",
@@ -100,70 +100,27 @@ public class CourseController {
         return ResponseEntity
                 .status(SuccessType.OK.getStatus())
                 .body(SuccessRes.from(courseOrchestrationService.getCourseDetail(courseId)));
-    }
-
-
-    /*@GetMapping("/user/{userId}")
-    @Operation (
-            summary = "유저 코스 리스트 조회",
-            description = "사용자가 보유한 코스들의 간략한 정보를 조회합니다.",
-            parameters = { @Parameter(name = "userId", description = "조회할 사용자의 id") },
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "처리 성공. 사용자의 코스 리스트를 반환합니다."),
-                    @ApiResponse(responseCode = "500", description = "서버 내부 오류. 조회에 실패했습니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
-    )
-    public ResponseEntity<SuccessRes<List<CourseResponseDto>>> getCourseOfUser(@PathVariable(name = "userId") UUID userId) {
-        return ResponseEntity.ok(SuccessRes.from(
-                courseOrchestrationService.getCourseList(userId, OwnerType.USER)));
-    }
-    
-    @PostMapping("/user/{userId}")
-    @Operation (
-            summary = "유저 코스 생성",
-            description = "사용자의 새로운 코스를 생성합니다.",
-            parameters = { @Parameter(name = "userId", description = "코스를 생성할 사용자의 id") },
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "처리 성공. 생성된 여행 코스 id를 반환합니다."),
-                    @ApiResponse(responseCode = "500", description = "서버 내부 오류. 생성에 실패했습니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
-    )
-    public ResponseEntity<SuccessRes<String>> createCourseOfUser(
-            @PathVariable(name = "userId") UUID userId,
-            @RequestBody CreateCourseRequestDto request) {
-        return ResponseEntity.ok(SuccessRes.from(
-                courseService.createCourse(userId, OwnerType.USER, request)));
-    }
-    
-    @GetMapping("/team/{teamId}")
-    @Operation (
-            summary = "팀 코스 리스트 조회",
-            description = "팀이 보유한 코스들의 간략한 정보를 조회합니다.",
-            parameters = { @Parameter(name = "teamId", description = "조회할 팀의 id") },
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "처리 성공. 팀의 코스 리스트를 반환합니다."),
-                    @ApiResponse(responseCode = "500", description = "서버 내부 오류. 조회에 실패했습니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
-    )
-    public ResponseEntity<SuccessRes<List<CourseResponseDto>>> getCourseOfTeam(@PathVariable(name = "teamId") UUID teamId) {
-        return ResponseEntity.ok(SuccessRes.from(
-                courseService.getCourseList(teamId, OwnerType.TEAM)));
     }*/
-    
-    /*@PostMapping("/team/{teamId}")
-    @Operation (
-            summary = "팀 코스 생성",
-            description = "팀에 새로운 코스를 생성합니다.",
-            parameters = { @Parameter(name = "teamId", description = "코스를 생성할 팀의 id") },
+
+    @GetMapping("/closest") // 엔드포인트 변경
+    @Operation(
+            summary = "현재 시점과 가장 가까운 코스 상세 조회",
+            description = "ownerId를 기반으로 현재 날짜와 시작일이 가장 가까운 코스를 찾아 상세 정보를 반환합니다.",
+            parameters = {
+                    @Parameter(name = "ownerId", description = "소유자 ID (User 또는 Team)", required = true, example = "8a0e05ee-49f3-4d7a-8f83-e023190d655f"),
+                    @Parameter(name = "ownerType", description = "소유자 타입 (USER 또는 TEAM)", required = true, example = "USER")
+            },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "처리 성공. 생성된 여행 코스 id를 반환합니다."),
-                    @ApiResponse(responseCode = "500", description = "서버 내부 오류. 생성에 실패했습니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
-    )
-    public ResponseEntity<SuccessRes<?>> createCourseOfTeam(
-            @PathVariable(name = "teamId") UUID teamId,
-            @RequestBody CourseRecommendationReq request) {
-        return ResponseEntity.ok(SuccessRes.from(
-                courseOrchestrationService.saveCourse(teamId, OwnerType.TEAM, request)));
-    }*/
+                    @ApiResponse(responseCode = "200", description = "처리 성공. 코스 상세 정보(지역별 그룹화)를 반환합니다.",
+                            content = @Content(schema = @Schema(implementation = SuccessRes.class))),
+                    @ApiResponse(responseCode = "404", description = "해당 소유자의 코스를 찾을 수 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))})
+    public ResponseEntity<?> getClosestCourseDetail(
+            @RequestParam("ownerId") UUID ownerId,
+            @RequestParam("ownerType") OwnerType ownerType) {
+
+        return ResponseEntity
+                .status(SuccessType.OK.getStatus())
+                .body(SuccessRes.from(courseOrchestrationService.getClosestCourseDetail(ownerId, ownerType)));
+    }
 }

@@ -1,6 +1,8 @@
 package com.se.Tlog.domain.Course.repository.mongo;
 
 import com.se.Tlog.domain.Course.domain.Course;
+import com.se.Tlog.domain.Course.domain.OwnerType;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +17,6 @@ public interface CourseMongoRepository extends MongoRepository<Course, String> {
      * 소유자 ID (User 또는 Team)로 코스 목록을 조회합니다.
      */
     List<Course> findByOwnerId(UUID ownerId);
+    List<Course> findByOwnerIdAndOwnerType(UUID ownerId, OwnerType ownerType, Sort sort);
+
 }

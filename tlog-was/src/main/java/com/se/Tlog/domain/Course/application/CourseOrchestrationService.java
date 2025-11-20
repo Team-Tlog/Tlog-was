@@ -15,12 +15,16 @@ import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
 import com.se.Tlog.domain.Wishlist.domain.dto.WishlistDestinationRes;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
+import com.se.Tlog.global.response.success.SuccessType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,6 +39,7 @@ public class CourseOrchestrationService {
     private final int TAG_LIMIT = 3;
     private final CustomTagService customTagService;
 
+
     /**
      * 내부 데이터 전달용 Record
      */
@@ -44,59 +49,27 @@ public class CourseOrchestrationService {
     ) {}
 
     @Transactional(readOnly = true)
-    public CourseDailyGroupedRes getCourseDetail(String courseId) {
+    public CourseDailyGroupedRes getClosestCourseDetail(UUID ownerId, OwnerType ownerType) {
 
-        Course course = courseMongoRepository.findById(courseId)
-                .orElseThrow(() -> new CustomException(ErrorType.COURSE_NOT_FOUND));
+        List<Course> courses = courseMongoRepository.findByOwnerIdAndOwnerType(
+                ownerId, ownerType, Sort.by(Sort.Direction.ASC, "startDate"));
 
-        Set<String> allDestinationIds = course.getDates().stream()
-                .flatMap(courseDate -> courseDate.getDestinationsIds().stream())
-                .collect(Collectors.toSet());
+        if (courses.isEmpty()) {
+            throw new CustomException(ErrorType.COURSE_NOT_FOUND);
+        }
 
-        List<Destination> destinations = destinationRepository.findAllById(allDestinationIds);
+        LocalDate now = LocalDate.now();
 
-        Map<String, List<TagCount>> topTagsMap = customTagService.getAllTopTags(
-                new ArrayList<>(allDestinationIds),
-                TAG_LIMIT
-        );
+        Course closestCourse = courses.stream()
+                .min(Comparator.comparingLong(
+                        course -> Math.abs(ChronoUnit.DAYS.between(now, course.getStartDate()))
+                ))
+                .orElseThrow(() -> new CustomException(ErrorType.COURSE_NOT_FOUND)); // 예외 방어
 
-        Map<String, RecommendedDestinationDto> destDtoMap = destinations.stream()
-                .collect(Collectors.toMap(
-                        Destination::getId,
-                        dest -> {
-                            List<TagCount> tagCountList = topTagsMap.getOrDefault(dest.getId(), List.of());
-                            return RecommendedDestinationDto.fromDestinationDetail(dest, tagCountList);
-                        }
-                ));
+        return mapCourseToDailyGroupedRes(closestCourse);
 
-        List<CourseDailyGroupedRes.DailySchedule> dailySchedules = course.getDates().stream()
-                .map(courseDate -> {
 
-                    List<RecommendedDestinationDto> dayDestinations = courseDate.getDestinationsIds().stream()
-                            .map(destDtoMap::get)
-                            .filter(Objects::nonNull)
-                            .toList();
-
-                    Map<String, List<RecommendedDestinationDto>> groupedByDistrict = groupDestinationsByDistrict(dayDestinations.stream());
-
-                    return CourseDailyGroupedRes.DailySchedule.builder()
-                            .dayNumber(courseDate.getDayNumber())
-                            .groupedDestinations(groupedByDistrict)
-                            .build();
-                })
-                .toList();
-
-        return CourseDailyGroupedRes.builder()
-                .id(course.getId())
-                .ownerId(course.getOwnerId())
-                .ownerType(course.getOwnerType())
-                .startDate(course.getStartDate())
-                .endDate(course.getEndDate())
-                .duration(course.getDuration())
-                .dailySchedules(dailySchedules)
-                .build();
     }
-
     // 코스 추천 미리 보기
     @Transactional(readOnly = true)
     public Map<String, List<RecommendedDestinationDto>> getCourseRecommendations(UUID ownerId, OwnerType ownerType, CourseRecommendationReq request) {
@@ -170,6 +143,57 @@ public class CourseOrchestrationService {
         }
 
         return new CombinedDestinations(wishlist, aiDestinations);
+    }
+
+    // Course 엔티티 -> DailyGroupedRes로 변환
+    @Transactional(readOnly = true)
+    public CourseDailyGroupedRes mapCourseToDailyGroupedRes(Course course) {
+
+        // 모든 여행지 id 추출
+        Set<String> allDestinationIds = course.getDates().stream()
+                .flatMap(courseDate -> courseDate.getDestinationsIds().stream())
+                .collect(Collectors.toSet());
+
+        List<Destination> destinations = destinationRepository.findAllById(allDestinationIds);
+        Map<String, Destination> destinationMap = destinations.stream()
+                .collect(Collectors.toMap(Destination::getId, Function.identity()));
+        Map<String, List<TagCount>> topTagsMap = customTagService.getAllTopTags(
+                new ArrayList<>(allDestinationIds),
+                TAG_LIMIT
+        );
+
+
+        List<CourseDailyGroupedRes.DailySchedule> dailySchedules = course.getDates().stream()
+                .map(courseDate -> {
+
+                    List<RecommendedDestinationDto> dayDestinations = courseDate.getDestinationsIds().stream()
+                            .map(destId -> {
+                                Destination dest = destinationMap.get(destId);
+                                if (dest == null) return null;
+
+                                List<TagCount> tags = topTagsMap.getOrDefault(destId, List.of());
+                                return RecommendedDestinationDto.fromDestinationDetail(dest, tags);
+                            })
+                            .filter(Objects::nonNull)
+                            .toList();
+
+                    Map<String, List<RecommendedDestinationDto>> groupedByDistrict = groupDestinationsByDistrict(dayDestinations.stream());
+
+                    return CourseDailyGroupedRes.DailySchedule.builder()
+                            .dayNumber(courseDate.getDayNumber())
+                            .groupedDestinations(groupedByDistrict)
+                            .build();
+                })
+                .toList();
+        return CourseDailyGroupedRes.builder()
+                .id(course.getId())
+                .ownerId(course.getOwnerId())
+                .ownerType(course.getOwnerType())
+                .startDate(course.getStartDate())
+                .endDate(course.getEndDate())
+                .duration(course.getDuration())
+                .dailySchedules(dailySchedules)
+                .build();
     }
 
     // 그룹화 메서드
