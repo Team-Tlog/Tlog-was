@@ -34,6 +34,8 @@ public record RecommendedDestinationDto(
                 .description(aiDest.description())
                 .city(aiDest.city())
                 .district(aiDest.district())
+                .imageUrl(aiDest.imageUrl())
+                .location(aiDest.location())
                 .tags(tagNames)
                 .similarityScore(aiDest.similarity_score())
                 .isFromWishlist(false)

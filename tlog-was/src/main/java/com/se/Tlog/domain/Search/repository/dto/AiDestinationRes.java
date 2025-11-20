@@ -1,5 +1,7 @@
 package com.se.Tlog.domain.Search.repository.dto;
 
+import com.se.Tlog.domain.Travel.domain.Location;
+
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +15,7 @@ public record AiDestinationRes (
             String description,
             String city,
             String district,
+            Location location,
             String imageUrl,
             Map<String, Double> tagWeights,
             double similarity_score
