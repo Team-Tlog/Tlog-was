@@ -43,7 +43,8 @@ public class CourseOrchestrationService {
             List<AiDestinationRes.AiDestination> aiDestinations
     ) {}
 
-    public Map<String, List<RecommendedDestinationDto>> getCourseDetail(String courseId) {
+    @Transactional(readOnly = true)
+    public CourseDailyGroupedRes getCourseDetail(String courseId) {
 
         Course course = courseMongoRepository.findById(courseId)
                 .orElseThrow(() -> new CustomException(ErrorType.COURSE_NOT_FOUND));
@@ -59,20 +60,41 @@ public class CourseOrchestrationService {
                 TAG_LIMIT
         );
 
-        List<RecommendedDestinationDto> recommendedDestinations = destinations.stream()
-                .map(dest -> {
-                    List<TagCount> tagCountList = topTagsMap.getOrDefault(dest.getId(), List.of());
-                    return RecommendedDestinationDto.fromDestinationDetail(dest, tagCountList);
+        Map<String, RecommendedDestinationDto> destDtoMap = destinations.stream()
+                .collect(Collectors.toMap(
+                        Destination::getId,
+                        dest -> {
+                            List<TagCount> tagCountList = topTagsMap.getOrDefault(dest.getId(), List.of());
+                            return RecommendedDestinationDto.fromDestinationDetail(dest, tagCountList);
+                        }
+                ));
+
+        List<CourseDailyGroupedRes.DailySchedule> dailySchedules = course.getDates().stream()
+                .map(courseDate -> {
+
+                    List<RecommendedDestinationDto> dayDestinations = courseDate.getDestinationsIds().stream()
+                            .map(destDtoMap::get)
+                            .filter(Objects::nonNull)
+                            .toList();
+
+                    Map<String, List<RecommendedDestinationDto>> groupedByDistrict = groupDestinationsByDistrict(dayDestinations.stream());
+
+                    return CourseDailyGroupedRes.DailySchedule.builder()
+                            .dayNumber(courseDate.getDayNumber())
+                            .groupedDestinations(groupedByDistrict)
+                            .build();
                 })
                 .toList();
 
-        Map<String, List<RecommendedDestinationDto>> groupedDestinations = recommendedDestinations.stream()
-                .collect(Collectors.groupingBy(
-                        dest -> (dest.district() != null ? dest.district() : "기타 지역"),
-                        Collectors.toList()
-                ));
-
-        return groupedDestinations;
+        return CourseDailyGroupedRes.builder()
+                .id(course.getId())
+                .ownerId(course.getOwnerId())
+                .ownerType(course.getOwnerType())
+                .startDate(course.getStartDate())
+                .endDate(course.getEndDate())
+                .duration(course.getDuration())
+                .dailySchedules(dailySchedules)
+                .build();
     }
 
     // 코스 추천 미리 보기
