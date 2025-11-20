@@ -5,13 +5,16 @@ import com.se.Tlog.domain.Course.domain.Course;
 import com.se.Tlog.domain.Course.domain.CourseDate;
 import com.se.Tlog.domain.Course.domain.OwnerType;
 import com.se.Tlog.domain.Course.repository.mongo.CourseMongoRepository;
+import com.se.Tlog.domain.Search.controller.dto.AiTagDetail;
 import com.se.Tlog.domain.Search.repository.api.AiRecApi;
 import com.se.Tlog.domain.Search.repository.dto.AiDestinationRes;
 import com.se.Tlog.domain.Team.repository.jpa.TeamUserRepository;
 import com.se.Tlog.domain.Travel.application.CustomTagService;
 import com.se.Tlog.domain.Travel.domain.Destination;
+import com.se.Tlog.domain.Travel.domain.Tag;
 import com.se.Tlog.domain.Travel.domain.TagCount;
 import com.se.Tlog.domain.Travel.repository.mongo.DestinationRepository;
+import com.se.Tlog.domain.Travel.repository.mongo.TagRepository;
 import com.se.Tlog.domain.Wishlist.domain.dto.WishlistDestinationRes;
 import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
@@ -38,6 +41,7 @@ public class CourseOrchestrationService {
     private final DestinationRepository destinationRepository;
     private final int TAG_LIMIT = 3;
     private final CustomTagService customTagService;
+    private final TagRepository tagRepository;
 
 
     /**
@@ -76,8 +80,26 @@ public class CourseOrchestrationService {
 
         CombinedDestinations combined = fetchAllDestinations(ownerId, ownerType, request);
 
+        Set<String> allAiTagIds = combined.aiDestinations().stream()
+                .flatMap(aiDest -> aiDest.tags().stream())
+                .map(AiTagDetail::id) // AiTagDetail의 id(태그 ID) 추출
+                .collect(Collectors.toSet());
+
+        Map<String, String> tagNameMap = tagRepository.findAllById(allAiTagIds).stream()
+                .collect(Collectors.toMap(Tag::getId, Tag::getName));
+
         Stream<RecommendedDestinationDto> aiStream = combined.aiDestinations().stream()
-                .map(RecommendedDestinationDto::fromAiDestination);
+                .map(aiDest -> {
+                    // 태그 ID 목록을 태그 이름 목록으로 변환
+                    List<String> tagNames = aiDest.tags().stream()
+                            .map(AiTagDetail::id)
+                            .map(tagNameMap::get) // ID로 Name 조회
+                            .filter(Objects::nonNull)
+                            .toList();
+
+                    // AI DTO를 태그 이름이 포함된 DTO로 변환
+                    return RecommendedDestinationDto.fromAiDestination(aiDest, tagNames);
+                });
 
         Stream<RecommendedDestinationDto> wishlistStream = combined.wishlist().stream()
                 .map(RecommendedDestinationDto::fromWishlistDestination);
