@@ -3,7 +3,6 @@ package com.se.Tlog.domain.Course.controller.dto;
 import com.se.Tlog.domain.Search.repository.dto.AiDestinationRes;
 import com.se.Tlog.domain.Travel.domain.Destination;
 import com.se.Tlog.domain.Travel.domain.Location;
-import com.se.Tlog.domain.Travel.domain.Tag;
 import com.se.Tlog.domain.Travel.domain.TagCount;
 import com.se.Tlog.domain.Wishlist.domain.dto.WishlistDestinationRes;
 import lombok.Builder;
@@ -25,8 +24,10 @@ public record RecommendedDestinationDto(
         boolean isFromWishlist
 ) {
 
-    public static RecommendedDestinationDto fromAiDestination(AiDestinationRes.AiDestination aiDest,
-                                                              List<String> tagNames) {
+    public static RecommendedDestinationDto fromAiDestination(AiDestinationRes.AiDestination aiDest) {
+
+        List<String> tagNames = aiDest.tagWeights().keySet().stream().toList();
+
         return RecommendedDestinationDto.builder()
                 .id(aiDest.id())
                 .name(aiDest.name())

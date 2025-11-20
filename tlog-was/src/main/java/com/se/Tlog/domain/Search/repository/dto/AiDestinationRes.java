@@ -1,8 +1,7 @@
 package com.se.Tlog.domain.Search.repository.dto;
 
-import com.se.Tlog.domain.Search.controller.dto.AiTagDetail;
-
 import java.util.List;
+import java.util.Map;
 
 public record AiDestinationRes (
         List<AiDestination> destinations,
@@ -15,7 +14,7 @@ public record AiDestinationRes (
             String city,
             String district,
             String imageUrl,
-            List<AiTagDetail> tags,
+            Map<String, Double> tagWeights,
             double similarity_score
     ) {
     }
