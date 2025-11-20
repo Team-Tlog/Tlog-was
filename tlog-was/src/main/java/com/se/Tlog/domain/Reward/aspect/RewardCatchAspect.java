@@ -7,8 +7,10 @@ import com.se.Tlog.domain.User.controller.dto.TokenDto;
 import com.se.Tlog.domain.Wishlist.domain.OwnerType;
 import com.se.Tlog.domain.Wishlist.domain.UpdateType;
 import com.se.Tlog.domain.Wishlist.domain.dto.WishlistOwnerDto;
+import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -25,7 +28,12 @@ public class RewardCatchAspect {
     private final AccessTokenProvider accessTokenProvider;
 
     private void addRewardToUser(UUID userId, Long rewardId) {
-        rewardService.addRewardToUser(userId, rewardId);
+        try {
+            rewardService.addRewardToUser(userId, rewardId);
+        } catch (CustomException e) {
+            // 이미 보상을 가지고 있거나, 사용자 id가 잘못되었습니다.
+            log.error("보상 지급이 무시되었습니다. {}", e);
+        }
     }
 
     @AfterReturning(value = "execution(* *..SsoAuthService.register(..))", returning = "tokenDto")
