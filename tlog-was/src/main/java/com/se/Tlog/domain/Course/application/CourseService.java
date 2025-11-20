@@ -1,4 +1,3 @@
-/*
 package com.se.Tlog.domain.Course.application;
 
 import java.util.ArrayList;
@@ -44,13 +43,7 @@ public class CourseService {
             if (!teamRepository.existsById(ownerId))
                 throw new CustomException(ErrorType.TEAM_NOT_FOUND);
     }
-    
-    */
-/**
-     * 코스와 관련된 모든 여행지 정보를 <여행지id, dto> 맵으로 반환합니다.
-     * @param courses
-     * @return
-     *//*
+
 
     private Map<String, DestinationSummaryRes> getAllDestinationByCourse(List<Course> courses) {
         // DTO 변환을 위한 DB 로딩
@@ -58,28 +51,22 @@ public class CourseService {
                 // course에서 요구하는 모든 여행지 id 수집
                 courses.stream()
                 .flatMap(course -> course.getDates().stream())
-                .flatMap(date -> date.getDestinations().stream())
+                .flatMap(date -> date.getDestinationsIds().stream())
                 .distinct()
                 .collect(Collectors.toList()));
         Map<String, List<TagCount>> tagCountMap = customTagService.getAllTopTags(
                 destinations.stream().map(Destination::getId).toList(),
                 3);
-        
+
         // 여행지 -> DTO 변환
         return destinations.stream()
                 .map(destination -> DestinationSummaryRes.from(
-                        destination, 
+                        destination,
                         tagCountMap.get(destination.getId())))
                 .collect(Collectors.toMap(DestinationSummaryRes::id, d -> d));
     }
     
-    */
-/**
-     * 여행 코스 정보를 조회합니다.
-     * @param ownerId
-     * @param ownerType
-     * @return
-     *//*
+
 
     public List<CourseResponseDto> getCourseList(UUID ownerId, OwnerType ownerType) {
         validateOwner(ownerId, ownerType);
@@ -95,7 +82,7 @@ public class CourseService {
             for (CourseDate date : course.getDates()) {
                 // 날짜별로 여행지를 표시할 때, 지역 단위로 그룹화됩니다.
                 dateDtos.add(CourseDateDto.groupByCity(
-                        date.getDestinations()
+                        date.getDestinationsIds()
                         .stream()
                         .map(destinations::get)
                         .collect(Collectors.toList())));
@@ -105,29 +92,4 @@ public class CourseService {
         
         return courseResponses;
     }
-    
-    public String createCourse(UUID ownerId, OwnerType ownerType, CreateCourseRequestDto request) {
-        validateOwner(ownerId, ownerType);
-        
-        // verify existence of all destinations
-        List<String> distinctDestinationIds = request.destinationIds().stream()
-            .flatMap(desList -> desList.stream())
-            .distinct()
-            .toList();
-        if (distinctDestinationIds.size()
-            != destinationRepository.findAllById(distinctDestinationIds).size())
-            throw new CustomException(ErrorType.DESTINATION_NOT_FOUND);
-        
-        Course newCourse = Course.create( 
-                ownerId,
-                ownerType,
-                request.startDate(),
-                request.endDate(),
-                request.destinationIds().stream()
-                    .map(desList -> CourseDate.create(desList))
-                    .collect(Collectors.toList()));
-        courseRepository.save(newCourse);
-        return newCourse.getId();
-    }
 }
-*/
