@@ -43,8 +43,8 @@ public class DestinationService {
                 destinationDto.getDistrict(),
                 destinationDto.isHasParking(),
                 destinationDto.isPetFriendly(),
-                destinationDto.getDescription(),
-                destinationDto.getImageUrl());
+                destinationDto.getImageUrl(),
+                destinationDto.getDescription());
         
         UnapprovedDestination newDestination = UnapprovedDestination.create(
                 destinationDto.getCreater(), destinationData, destinationDto.getCustomTags());
