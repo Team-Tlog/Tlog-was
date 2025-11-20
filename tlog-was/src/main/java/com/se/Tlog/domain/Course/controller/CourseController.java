@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.se.Tlog.domain.Course.application.CourseOrchestrationService;
+import com.se.Tlog.domain.Course.application.CourseService;
 import com.se.Tlog.domain.Course.controller.dto.*;
 import com.se.Tlog.global.response.error.ErrorRes;
 import com.se.Tlog.global.response.success.SuccessType;
@@ -35,6 +36,7 @@ import lombok.RequiredArgsConstructor;
         scopes = {"scope1", "scope2"})
 public class CourseController {
     private final CourseOrchestrationService courseOrchestrationService;
+    private final CourseService courseService;
 
 
     @PostMapping("/recommendations") // GET으로 변경
@@ -122,5 +124,35 @@ public class CourseController {
         return ResponseEntity
                 .status(SuccessType.OK.getStatus())
                 .body(SuccessRes.from(courseOrchestrationService.getClosestCourseDetail(ownerId, ownerType)));
+    }
+
+    @GetMapping("/user/{userId}")
+    @Operation (
+            summary = "유저 코스 리스트 조회",
+            description = "사용자가 보유한 코스들의 간략한 정보를 조회합니다.",
+            parameters = { @Parameter(name = "userId", description = "조회할 사용자의 id") },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "처리 성공. 사용자의 코스 리스트를 반환합니다."),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류. 조회에 실패했습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
+    )
+    public ResponseEntity<SuccessRes<List<CourseResponseDto>>> getCourseOfUser(@PathVariable(name = "userId") UUID userId) {
+        return ResponseEntity.ok(SuccessRes.from(
+                courseService.getCourseList(userId, OwnerType.USER)));
+    }
+
+    @GetMapping("/team/{teamId}")
+    @Operation (
+            summary = "팀 코스 리스트 조회",
+            description = "팀이 보유한 코스들의 간략한 정보를 조회합니다.",
+            parameters = { @Parameter(name = "teamId", description = "조회할 팀의 id") },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "처리 성공. 팀의 코스 리스트를 반환합니다."),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류. 조회에 실패했습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorRes.class)))}
+    )
+    public ResponseEntity<SuccessRes<List<CourseResponseDto>>> getCourseOfTeam(@PathVariable(name = "teamId") UUID teamId) {
+        return ResponseEntity.ok(SuccessRes.from(
+                courseService.getCourseList(teamId, OwnerType.TEAM)));
     }
 }
