@@ -26,9 +26,7 @@ import com.se.Tlog.global.exception.CustomException;
 import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
 import com.se.Tlog.global.util.jwt.RefreshTokenProvider;
-import com.se.Tlog.global.util.redis.RedisProperties;
-import com.se.Tlog.global.util.redis.RedisUtil;
-import io.jsonwebtoken.Claims;
+import com.se.Tlog.global.util.redis.RedisTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,7 +47,7 @@ public class SsoAuthService {
     private final PreferPhotoRepository preferPhotoRepository;
     private final AccessTokenProvider accessTokenProvider;
     private final RefreshTokenProvider refreshTokenProvider;
-    private final RedisUtil redisUtil;
+    private final RedisTokenUtil redisTokenUtil;
     
     private SsoUserInfo getSsoUserInfo(SsoType type, String accessToken) {
         SsoService ssoService = Optional.ofNullable(ssoServiceMap.get(type))
@@ -63,16 +61,12 @@ public class SsoAuthService {
     private TokenDto loginUser(User user) {
         String accessToken = accessTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue(), user.getSnsId(), user.getName());
         String refreshToken = refreshTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue());
-
-        String jti = refreshTokenProvider.parseToken(refreshToken).get("jti").toString();
-        String refreshKey = RedisProperties.REFRESH_TOKEN_PREFIX + user.getId() + ":" + jti;
-
-        redisUtil.save(refreshKey, refreshToken, refreshTokenProvider.getRefreshTokenDuration());
+        redisTokenUtil.registerRefreshToken(user.getId(), refreshToken);
 
         String customToken = "";
-        try{
+        try {
             customToken = FirebaseAuth.getInstance().createCustomToken(user.getId().toString());
-        }catch (FirebaseAuthException e) {
+        } catch (FirebaseAuthException e) {
             throw new CustomException(ErrorType.FIREBASE_CUSTOM_TOKEN_ISSUE_FAIL);
         }
 
@@ -127,26 +121,8 @@ public class SsoAuthService {
     }
     
     public void logout(String accessToken,String refreshToken) {
-        Claims accessClaims = accessTokenProvider.parseToken(accessToken);
-        String accessJti = accessClaims.get("jti").toString();
-
-        long remainingTime = accessClaims.getExpiration().getTime() - System.currentTimeMillis();
-
-        Claims refreshClaims = refreshTokenProvider.parseToken(refreshToken);
-        String refreshJti = refreshClaims.get("jti").toString();
-        String refreshKey = RedisProperties.REFRESH_TOKEN_PREFIX + refreshClaims.getSubject() + ":" + refreshJti;
-
-        try {
-            redisUtil.setBlacklistToken(RedisProperties.ACCESS_TOKEN_PREFIX + accessJti, remainingTime);
-        } catch (Exception e) {
-            log.error("블랙리스트 등록 실패: {}", accessJti, e);
-            throw new CustomException(ErrorType.BLACKLIST_SAVE_FAILED);
-        }
-
-        boolean isDeleted = redisUtil.delete(refreshKey);
-        if (!isDeleted) {
-            log.warn("Refresh token 삭제 실패: {}", refreshKey);
-        }
+        redisTokenUtil.disableAccessToken(accessToken);
+        redisTokenUtil.disableRefreshToken(refreshToken);
     }
 
     @Deprecated(since = "테스트 환경 전용입니다.")

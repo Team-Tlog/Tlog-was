@@ -7,8 +7,7 @@ import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.security.dto.AdminDetails;
 import com.se.Tlog.global.security.dto.AppUserDetails;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
-import com.se.Tlog.global.util.redis.RedisProperties;
-import com.se.Tlog.global.util.redis.RedisUtil;
+import com.se.Tlog.global.util.redis.RedisTokenUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AccessTokenProvider accessTokenProvider;
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
-    private final RedisUtil redisUtil;
+    private final RedisTokenUtil redisTokenUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -47,12 +46,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String accessToken = authorization.split(" ")[1];
 
             Claims claims = accessTokenProvider.parseToken(accessToken);
-            String jti = claims.get("jti").toString();
-            String accessKey = RedisProperties.ACCESS_TOKEN_PREFIX + jti;
-
-            boolean isBlacklisted = redisUtil.isTokenBlacklisted(accessKey);
+            boolean isBlacklisted = redisTokenUtil.isAccessTokenBlackListed(accessToken);
 
             if (isBlacklisted) {
+                String jti = claims.get("jti").toString();
                 log.warn("BLOCKED TOKEN (jti = {})", jti);
                 response.setStatus(ErrorType.UN_AUTHORIZATION.getStatusCode());
                 response.setContentType("application/json");
