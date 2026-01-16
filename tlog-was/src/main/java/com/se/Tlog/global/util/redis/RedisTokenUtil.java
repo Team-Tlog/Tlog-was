@@ -5,11 +5,11 @@ import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
 import com.se.Tlog.global.util.jwt.RefreshTokenProvider;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 @Slf4j
 
@@ -20,11 +20,40 @@ public class RedisTokenUtil {
     private final AccessTokenProvider accessTokenProvider;
     private final RefreshTokenProvider refreshTokenProvider;
 
-    public void registerRefreshToken(UUID userId, String refreshToken) {
-        String jti = refreshTokenProvider.parseToken(refreshToken).get("jti").toString();
-        String refreshKey = RedisProperties.REFRESH_TOKEN_PREFIX + userId + ":" + jti;
+    private String getAccessTokenKey(String accessToken) {
+        try {
+            Claims accessClaims = accessTokenProvider.parseToken(accessToken);
+            String accessJti = accessClaims.get("jti").toString();
+            return RedisProperties.ACCESS_TOKEN_PREFIX + accessJti;
+        } catch (ExpiredJwtException e) {
+            log.error("token expired");
+            throw new CustomException(ErrorType.TOKEN_EXPIRED);
+        } catch (JwtException e) {
+            log.error("token authentication failed : " + e.getMessage());
+            throw new CustomException(ErrorType.UN_AUTHENTICATION);
+        }
+    }
 
-        redisUtil.save(refreshKey, refreshToken, refreshTokenProvider.getRefreshTokenDuration());
+    private String getRefreshTokenKey(String refreshToken) {
+        try {
+            Claims refreshClaims = refreshTokenProvider.parseToken(refreshToken);
+            String jti = refreshTokenProvider.parseToken(refreshToken).get("jti").toString();
+            return RedisProperties.REFRESH_TOKEN_PREFIX + refreshClaims.getSubject() + ":" + jti;
+        } catch (ExpiredJwtException e) {
+            log.error("refresh token expired");
+            throw new CustomException(ErrorType.TOKEN_EXPIRED);
+        } catch (JwtException e) {
+            log.error("refresh token authentication failed : " + e.getMessage());
+            throw new CustomException(ErrorType.UN_AUTHENTICATION);
+        }
+    }
+
+
+    public void registerRefreshToken(String refreshToken) {
+        redisUtil.save(
+                getRefreshTokenKey(refreshToken),
+                refreshToken,
+                refreshTokenProvider.getRefreshTokenDuration());
     }
 
     /**
@@ -33,26 +62,21 @@ public class RedisTokenUtil {
      * 블랙리스트 설정에 실패할 경우 에러가 발생합니다.
      */
     public void disableAccessToken(String accessToken) throws CustomException {
+        String accessKey = getAccessTokenKey(accessToken);
         Claims accessClaims = accessTokenProvider.parseToken(accessToken);
-
-        String accessJti = accessClaims.get("jti").toString();
-        String accessKey = RedisProperties.ACCESS_TOKEN_PREFIX + accessJti;
         long remainingTime = accessClaims.getExpiration().getTime() - System.currentTimeMillis();
 
         try {
             redisUtil.setBlacklistToken(accessKey, remainingTime);
         } catch (Exception e) {
+            String accessJti = accessClaims.get("jti").toString();
             log.error("블랙리스트 등록 실패: {}", accessJti, e);
             throw new CustomException(ErrorType.BLACKLIST_SAVE_FAILED);
         }
     }
 
     public void disableRefreshToken(String refreshToken) {
-        Claims refreshClaims = refreshTokenProvider.parseToken(refreshToken);
-
-        String refreshJti = refreshClaims.get("jti").toString();
-        String refreshKey = RedisProperties.REFRESH_TOKEN_PREFIX + refreshClaims.getSubject() + ":" + refreshJti;
-
+        String refreshKey = getRefreshTokenKey(refreshToken);
         boolean isDeleted = redisUtil.delete(refreshKey);
         if (!isDeleted) {
             log.warn("Refresh token 삭제 실패: {}", refreshKey);
@@ -60,10 +84,7 @@ public class RedisTokenUtil {
     }
 
     public boolean isAccessTokenBlackListed(String accessToken) {
-        Claims claims = accessTokenProvider.parseToken(accessToken);
-        String jti = claims.get("jti").toString();
-        String accessKey = RedisProperties.ACCESS_TOKEN_PREFIX + jti;
-
+        String accessKey = getAccessTokenKey(accessToken);
         return redisUtil.isTokenBlacklisted(accessKey);
     }
 }

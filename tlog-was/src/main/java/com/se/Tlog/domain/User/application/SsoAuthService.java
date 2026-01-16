@@ -61,7 +61,7 @@ public class SsoAuthService {
     private TokenDto loginUser(User user) {
         String accessToken = accessTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue(), user.getSnsId(), user.getName());
         String refreshToken = refreshTokenProvider.generateToken(user.getId().toString(), user.getRole().getValue());
-        redisTokenUtil.registerRefreshToken(user.getId(), refreshToken);
+        redisTokenUtil.registerRefreshToken(refreshToken);
 
         String customToken = "";
         try {
