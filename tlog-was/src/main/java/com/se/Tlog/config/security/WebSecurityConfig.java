@@ -7,7 +7,7 @@ import com.se.Tlog.domain.User.repository.jpa.UserRepository;
 import com.se.Tlog.global.security.filter.JwtAuthenticationFilter;
 import com.se.Tlog.global.security.filter.JwtExceptionFilter;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
-import com.se.Tlog.global.util.redis.RedisUtil;
+import com.se.Tlog.global.util.redis.RedisTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +34,7 @@ public class WebSecurityConfig {
     private final CorsConfigurationSource corsConfigurationSource;
     private final AccessTokenProvider accessTokenProvider;
     private final ObjectMapper objectMapper;
-    private final RedisUtil redisUtil;
+    private final RedisTokenUtil redisTokenUtil;
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
@@ -69,7 +69,7 @@ public class WebSecurityConfig {
 
 
                 })
-                .addFilterBefore(new JwtAuthenticationFilter(accessTokenProvider,userRepository,adminRepository,redisUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(accessTokenProvider,userRepository,adminRepository,redisTokenUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(objectMapper), JwtAuthenticationFilter.class);
 
         return http.build();

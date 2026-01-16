@@ -53,6 +53,11 @@ public class AccessTokenProvider implements JwtTokenProvider {
     }
 
     @Override
+    public Claims parseTokenIgnoringExpiration(String token) {
+        return jwtUtil.parseTokenIgnoringExpiration(token);
+    }
+
+    @Override
     public Claims parseAndValidate(String token) {
         Claims claims = parseToken(token);
         if (claims.getExpiration().before(new Date())) {

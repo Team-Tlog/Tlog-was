@@ -1,6 +1,7 @@
 package com.se.Tlog.global.util.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,19 @@ public class JwtUtil {
                 .parseSignedClaims(token)   //jwt 토큰 전체
                 .getPayload();
     }
+
+    public Claims parseTokenIgnoringExpiration(String token) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)   //jwt 토큰 전체
+                    .getPayload();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
+    }
+
     private Date createExpire(Long expiration){
         return new Date(System.currentTimeMillis() + expiration);
     }

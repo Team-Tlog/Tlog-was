@@ -7,8 +7,7 @@ import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.security.dto.AdminDetails;
 import com.se.Tlog.global.security.dto.AppUserDetails;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
-import com.se.Tlog.global.util.redis.RedisProperties;
-import com.se.Tlog.global.util.redis.RedisUtil;
+import com.se.Tlog.global.util.redis.RedisTokenUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,6 +20,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -35,10 +36,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AccessTokenProvider accessTokenProvider;
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
-    private final RedisUtil redisUtil;
+    private final RedisTokenUtil redisTokenUtil;
+
+    private static final RequestMatcher AUTH_REQUEST_MATCHER = new AntPathRequestMatcher("/api/auth/**");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // auth 관련 로직(로그인/로그아웃 등)은 jwt 검증 처리가 필요하지 않습니다.
+        if (AUTH_REQUEST_MATCHER.matches(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -47,12 +56,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String accessToken = authorization.split(" ")[1];
 
             Claims claims = accessTokenProvider.parseToken(accessToken);
-            String jti = claims.get("jti").toString();
-            String accessKey = RedisProperties.ACCESS_TOKEN_PREFIX + jti;
-
-            boolean isBlacklisted = redisUtil.isTokenBlacklisted(accessKey);
+            boolean isBlacklisted = redisTokenUtil.isAccessTokenBlackListed(accessToken);
 
             if (isBlacklisted) {
+                String jti = claims.get("jti").toString();
                 log.warn("BLOCKED TOKEN (jti = {})", jti);
                 response.setStatus(ErrorType.UN_AUTHORIZATION.getStatusCode());
                 response.setContentType("application/json");
