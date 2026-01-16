@@ -149,8 +149,9 @@ public class AuthController {
 
 	@PostMapping("/logout")
 	@Operation(
-			summary = "SSO 로그아웃 요청",
-			description = "사용자 accessToken 과 refreshToken을 쿠키로 받아 처리합니다.",
+			summary = "SSO 로그아웃 요청 (Postman에서 가능)",
+			description = "사용자 accessToken 과 refreshToken을 쿠키로 받아 처리합니다."
+					+ "<br><b>Swagger의 한계로 인해 Header와 Cookie 설정이 불가합니다. Postman에서 요청해주세요.<b>",
 			tags = {"SSO Authentication"},
 			responses = {
 					@ApiResponse(responseCode = "200", description = "로그아웃 성공 (토큰 블랙리스트 처리 완료)"),
@@ -169,8 +170,9 @@ public class AuthController {
 
 	@PostMapping("/refresh")
 	@Operation(
-			summary = "토큰 갱신 요청",
-			description = "사용자의 기존 accessToken과 refreshToken으로부터 토큰을 갱신합니다.",
+			summary = "토큰 갱신 요청 (Postman에서 가능)",
+			description = "사용자의 기존 accessToken(헤더)과 refreshToken(쿠키)으로부터 토큰을 갱신합니다."
+					+ "<br><b>Swagger의 한계로 인해 Header와 Cookie 설정이 불가합니다. Postman에서 요청해주세요.<b>",
 			tags = {"SSO Authentication"},
 			responses = {
 					@ApiResponse(responseCode = "200", description = "갱신 성공 (갱신된 새 토큰 발급)"),
