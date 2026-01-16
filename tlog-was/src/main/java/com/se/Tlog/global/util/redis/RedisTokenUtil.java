@@ -22,12 +22,9 @@ public class RedisTokenUtil {
 
     private String getAccessTokenKey(String accessToken) {
         try {
-            Claims accessClaims = accessTokenProvider.parseToken(accessToken);
+            Claims accessClaims = accessTokenProvider.parseTokenIgnoringExpiration(accessToken);
             String accessJti = accessClaims.get("jti").toString();
             return RedisProperties.ACCESS_TOKEN_PREFIX + accessJti;
-        } catch (ExpiredJwtException e) {
-            log.error("token expired");
-            throw new CustomException(ErrorType.TOKEN_EXPIRED);
         } catch (JwtException e) {
             log.error("token authentication failed : " + e.getMessage());
             throw new CustomException(ErrorType.UN_AUTHENTICATION);
@@ -36,12 +33,9 @@ public class RedisTokenUtil {
 
     private String getRefreshTokenKey(String refreshToken) {
         try {
-            Claims refreshClaims = refreshTokenProvider.parseToken(refreshToken);
-            String jti = refreshTokenProvider.parseToken(refreshToken).get("jti").toString();
+            Claims refreshClaims = refreshTokenProvider.parseTokenIgnoringExpiration(refreshToken);
+            String jti = refreshClaims.get("jti").toString();
             return RedisProperties.REFRESH_TOKEN_PREFIX + refreshClaims.getSubject() + ":" + jti;
-        } catch (ExpiredJwtException e) {
-            log.error("refresh token expired");
-            throw new CustomException(ErrorType.TOKEN_EXPIRED);
         } catch (JwtException e) {
             log.error("refresh token authentication failed : " + e.getMessage());
             throw new CustomException(ErrorType.UN_AUTHENTICATION);
@@ -63,11 +57,12 @@ public class RedisTokenUtil {
      */
     public void disableAccessToken(String accessToken) throws CustomException {
         String accessKey = getAccessTokenKey(accessToken);
-        Claims accessClaims = accessTokenProvider.parseToken(accessToken);
+        Claims accessClaims = accessTokenProvider.parseTokenIgnoringExpiration(accessToken);
         long remainingTime = accessClaims.getExpiration().getTime() - System.currentTimeMillis();
 
         try {
-            redisUtil.setBlacklistToken(accessKey, remainingTime);
+            if (0 < remainingTime)
+                redisUtil.setBlacklistToken(accessKey, remainingTime);
         } catch (Exception e) {
             String accessJti = accessClaims.get("jti").toString();
             log.error("블랙리스트 등록 실패: {}", accessJti, e);

@@ -128,9 +128,10 @@ public class SsoAuthService {
     }
 
     public TokenDto refresh(String accessToken, String refreshToken) {
-        boolean isBlacklisted = redisTokenUtil.isRefreshTokenBlackListed(refreshToken);
-        Claims claims = refreshTokenProvider.parseToken(refreshToken);
-        if (isBlacklisted) {
+        boolean isInvalid = redisTokenUtil.isRefreshTokenBlackListed(refreshToken)
+                || refreshTokenProvider.isTokenExpired(refreshToken);
+        Claims claims = refreshTokenProvider.parseTokenIgnoringExpiration(refreshToken);
+        if (isInvalid) {
             String jti = claims.get("jti").toString();
             log.warn("BLOCKED REFRESH TOKEN (jti = {})", jti);
             throw new CustomException(ErrorType.TOKEN_EXPIRED);
