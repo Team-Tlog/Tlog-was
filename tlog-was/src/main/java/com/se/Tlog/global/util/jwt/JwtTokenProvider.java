@@ -10,6 +10,8 @@ public interface JwtTokenProvider {
 
     Claims parseToken(String token);
 
+    Claims parseTokenIgnoringExpiration(String token);
+
     Claims parseAndValidate(String token);
 
 }
