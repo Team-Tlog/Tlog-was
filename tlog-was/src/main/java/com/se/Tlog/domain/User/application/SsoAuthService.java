@@ -27,12 +27,14 @@ import com.se.Tlog.global.response.error.ErrorType;
 import com.se.Tlog.global.util.jwt.AccessTokenProvider;
 import com.se.Tlog.global.util.jwt.RefreshTokenProvider;
 import com.se.Tlog.global.util.redis.RedisTokenUtil;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -120,9 +122,33 @@ public class SsoAuthService {
         return loginUser(registerNewUser(ssoUserInfo, registerRequest.userProfile()));
     }
     
-    public void logout(String accessToken,String refreshToken) {
+    public void logout(String accessToken, String refreshToken) {
         redisTokenUtil.disableAccessToken(accessToken);
         redisTokenUtil.disableRefreshToken(refreshToken);
+    }
+
+    public TokenDto refresh(String accessToken, String refreshToken) {
+        boolean isBlacklisted = redisTokenUtil.isRefreshTokenBlackListed(refreshToken);
+        Claims claims = refreshTokenProvider.parseToken(refreshToken);
+        if (isBlacklisted) {
+            String jti = claims.get("jti").toString();
+            log.warn("BLOCKED REFRESH TOKEN (jti = {})", jti);
+            throw new CustomException(ErrorType.TOKEN_EXPIRED);
+        }
+
+        redisTokenUtil.disableAccessToken(accessToken);
+        redisTokenUtil.disableRefreshToken(refreshToken);
+
+        UUID userId = null;
+        try {
+            userId = UUID.fromString(claims.getSubject());
+        } catch (Exception e) {
+            throw new CustomException(ErrorType.TOKEN_EXPIRED);
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_REGISTERED));
+        return loginUser(user);
     }
 
     @Deprecated(since = "테스트 환경 전용입니다.")

@@ -87,4 +87,9 @@ public class RedisTokenUtil {
         String accessKey = getAccessTokenKey(accessToken);
         return redisUtil.isTokenBlacklisted(accessKey);
     }
+
+    public boolean isRefreshTokenBlackListed(String refreshToken) {
+        String refreshKey = getRefreshTokenKey(refreshToken);
+        return null == redisUtil.get(refreshKey);
+    }
 }

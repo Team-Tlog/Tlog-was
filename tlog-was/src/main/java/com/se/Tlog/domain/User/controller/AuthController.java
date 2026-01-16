@@ -166,4 +166,29 @@ public class AuthController {
 		return ResponseEntity.ok()
 					.body(SuccessRes.from(SuccessType.LOGOUT_SUCCESS));
 	}
+
+	@PostMapping("/refresh")
+	@Operation(
+			summary = "토큰 갱신 요청",
+			description = "사용자의 기존 accessToken과 refreshToken으로부터 토큰을 갱신합니다.",
+			tags = {"SSO Authentication"},
+			responses = {
+					@ApiResponse(responseCode = "200", description = "갱신 성공 (갱신된 새 토큰 발급)"),
+					@ApiResponse(responseCode = "401", description = "갱신 실패 (RefreshToken 만료)"),
+					@ApiResponse(responseCode = "500", description = "갱신 실패")
+			}
+	)
+	public ResponseEntity<?> refreshJwt(
+			@RequestHeader("Authorization") String authorizationHeader,
+			@CookieValue(value = "refreshToken") String refreshToken) {
+		String accessToken = jwtUtil.resolveToken(authorizationHeader);
+		TokenDto tokenDto = ssoAuthService.refresh(accessToken, refreshToken);
+
+		return ResponseEntity.ok()
+				.header("Authorization",tokenDto.accessToken())
+				.header("Set-Cookie",tokenDto.refreshToken())
+				.body(SuccessRes.of(SuccessType.LOGIN_SSO_SUCCESS, Map.of(
+						"firebaseCustomToken", tokenDto.firebaseCustomToken()
+				)));
+	}
 }
